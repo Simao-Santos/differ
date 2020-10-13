@@ -7,42 +7,47 @@ The product owner is Marco Sousa (marco.sousa@zerozero.pt) of zerozero.pt /ZOS L
 
 
 
-#Docker
+# Docker
 To use Docker on your computer start by:
 
-Installing Docker:
-    It is recommended that you install Docker on your linux distribution. Alternatively, if you want to use windows and do not own neither windows 10 pro nor windowns 10 entreprise, you may want to use windows subsistems for linux 2 (wsl 2).
+## Installing Docker:
 
-    For either case follow the instructions in this link https://docs.docker.com/get-docker/
+It is recommended that you install Docker on your linux distribution. Alternatively, if you want to use windows and do not own neither windows 10 pro nor windowns 10 entreprise, you may want to use windows subsistems for linux 2 (wsl 2).
 
-    To learn how to enable wsl 2 on your machine go to https://docs.microsoft.com/en-us/windows/wsl/install-win10 and to learn how to integrate docker and wsl 2 go to https://docs.docker.com/docker-for-windows/wsl/ and follow the innstructions.
-    Note that even though your are using wsl 2 you want to install Docker in windows 10 and only the docker-compose in linux.
+For either case follow the instructions in this link https://docs.docker.com/get-docker/
 
-Installing docker-compose:
-    After completing the instalation of Docker you need to install docker-compose. In the link https://docs.docker.com/compose/install/ you will find all the instructions you need to do that, just make sure you are following the instrutions to your OS.
+To learn how to enable wsl 2 on your machine go to https://docs.microsoft.com/en-us/windows/wsl/install-win10 and to learn how to integrate docker and wsl 2 go to https://docs.docker.com/docker-for-windows/wsl/ and follow the innstructions.
 
-Using Docker:
-    To use Docker you must be on the project directory and use the comand to build the images that will alow you to see the code working:
+Note that even though your are using wsl 2 you want to install Docker in windows 10 and only the docker-compose in linux.
 
-    ```
-        docker-compose build
-    ```
+## Installing docker-compose:
 
-    Then to start the containers use the command:
+After completing the instalation of Docker you need to install docker-compose. In the link https://docs.docker.com/compose/install/ you will find all the instructions you need to do that, just make sure you are following the instrutions to your OS.
 
-    ```
-        docker-compose up
-    ```
+## Using Docker:
 
-    After everything initializes you can check the frontend in the port 3000 and the backend in the port 8000. (insert the url localhost:3000 or similar in your browser)
+To use Docker you must be on the project directory and use the comand to build the images that will alow you to see the code working:
 
-    To stop the containers hit ctrl+C or the equivalent in your OS. If you use the following command you will need to rebuild the containers:
+```
+    docker-compose build
+```
 
-    ```
-        docker-compose down
-    ```
-    Use this command only if you are having problems with the containers and you need a clean build.
+Then to start the containers use the command:
 
-    Normaly if you made changes to the code you would have to rebuild the containers but if the docker-compose.yml is correctly set, the containers are build with pointers to the actuall code so the changes you make can be seen in real time by refreshing the browser you are using.
+```
+    docker-compose up
+```
 
-    Be warned the clean builds take their time. Don't be surprised if the first time you are running the build command or after a down commad the operation takes time.
+After everything initializes you can check the frontend in the port 3000 and the backend in the port 8000. (insert the url localhost:3000 or similar in your browser)
+
+To stop the containers hit ctrl+C or the equivalent in your OS. If you use the following command you will need to rebuild the containers:
+
+```
+    docker-compose down
+```
+
+Use this command only if you are having problems with the containers and you need a clean build.
+
+Normaly if you made changes to the code you would have to rebuild the containers but if the docker-compose.yml is correctly set, the containers are build with pointers to the actuall code so the changes you make can be seen in real time by refreshing the browser you are using.
+
+Be warned the clean builds take their time. Don't be surprised if the first time you are running the build command or after a down commad the operation takes time.
