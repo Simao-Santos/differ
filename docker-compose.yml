@@ -1,0 +1,52 @@
+version: '3.7'
+
+services:
+  frontend:
+    image: ldso/frontend
+    build:
+      context: ./fe
+      dockerfile: Dockerfile
+    tty: true
+    ports:
+      - 3000:3000
+    volumes:
+      - ./fe:/app/fe
+    depends_on:
+      - backend
+    networks:
+      - app
+
+  backend:
+    image: ldso/backend
+    build:
+      context: ./be
+      dockerfile: Dockerfile
+    
+    tty: true
+    environment:
+      DB_HOST: db
+      DB_DATABASE: laravel
+      DB_USERNAME: root
+      DB_PASSWORD: root
+    ports:
+      - 8000:8000
+    volumes:
+      - ./be:/app/be
+    depends_on:
+      - db
+    networks:
+      - app
+
+  db:
+    image: mariadb:10.2
+    environment:
+      MYSQL_DATABASE:
+      MYSQL_USER: 'root'
+      MYSQL_PASSWORD: 'root'
+      MYSQL_ROOT_PASSWORD: 'root'
+    networks:
+      - app
+
+networks:
+  app:
+    driver: bridge
