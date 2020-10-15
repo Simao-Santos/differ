@@ -1,15 +1,16 @@
 import React from 'react';
 import '../CSS/HomePage.css';
-import Header from '../Components/Header';
+import Layout from '../Components/Layout';
 
 function HomePage() {
   return (
     <div className="App">
-      <Header />
+      <Layout>
 
       <div className="MainContainer">
-        <p>hELLO</p>
+        <p>Body of App</p>
       </div>
+      </Layout>
     </div>
   );
 }
