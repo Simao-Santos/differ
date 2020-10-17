@@ -51,3 +51,5 @@ Use this command only if you are having problems with the containers and you nee
 Normaly if you made changes to the code you would have to rebuild the containers but if the docker-compose.yml is correctly set, the containers are build with pointers to the actuall code so the changes you make can be seen in real time by refreshing the browser you are using.
 
 Be warned the clean builds take their time. Don't be surprised if the first time you are running the build command or after a down commad the operation takes time.
+
+If there is an error when the container attempts to run .node/bin/www you must run npm install from your terminal in the be/ directory and then use docker-compose build and try again. It should work this time. It is necessary so that npm updates package.json.

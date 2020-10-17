@@ -1,11 +1,12 @@
 FROM node:latest
 
-WORKDIR /app/frontend
+WORKDIR /app/fe
 
 COPY package.json package-lock.json ./
+
 RUN npm install
 
-COPY . .
+COPY . ./
 
 EXPOSE 3000
 

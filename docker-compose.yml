@@ -7,10 +7,11 @@ services:
       context: ./fe
       dockerfile: Dockerfile
     tty: true
+    volumes:
+      - ./fe/src/:/app/fe/src/
+      - ./fe/public/:/app/fe/public/
     ports:
       - 3000:3000
-    volumes:
-      - ./fe:/app/fe
     depends_on:
       - backend
     networks:
@@ -21,13 +22,7 @@ services:
     build:
       context: ./be
       dockerfile: Dockerfile
-    
     tty: true
-    environment:
-      DB_HOST: db
-      DB_DATABASE: laravel
-      DB_USERNAME: root
-      DB_PASSWORD: root
     ports:
       - 8000:8000
     volumes:
@@ -38,12 +33,13 @@ services:
       - app
 
   db:
-    image: mariadb:10.2
+    image: postgres:latest
     environment:
-      MYSQL_DATABASE:
-      MYSQL_USER: 'root'
-      MYSQL_PASSWORD: 'root'
-      MYSQL_ROOT_PASSWORD: 'root'
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: auto-testing
+    ports:
+      - 5432:5432
     networks:
       - app
 

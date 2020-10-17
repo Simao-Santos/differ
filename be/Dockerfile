@@ -1,12 +1,12 @@
 FROM node:latest
 
-WORKDIR /app/backend
+WORKDIR /app/be
 
 COPY package.json package-lock.json ./
+
+
 RUN npm install
 
-COPY . .
-
-EXPOSE 8000
+COPY . ./
 
 CMD npm start
