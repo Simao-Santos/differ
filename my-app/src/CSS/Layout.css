@@ -3,9 +3,12 @@
 }
 
 .App-logo {
-  height: 7.5vmin;
+  height: 9vmin;
   pointer-events: none;
-  border-radius: 50%;
+}
+
+h1 {
+  margin: 0;
 }
 
 /*@media (prefers-reduced-motion: no-preference) {
@@ -23,17 +26,23 @@
   justify-content: space-between;
   font-size: calc(10px + 2vmin);
   color: white;
-  padding-left: 5em;
-  padding-right: 5em;
+  padding-left: 3em;
+  padding-right: 3em;
+}
+
+.App-pageContent{
+  min-height: calc(100vh - 7.5vh - 25px);
+  background-color: yellow;
 }
 
 .App-footer {
-
-  padding: 0.5em;
+  height: 25px;
+  margin-top: -25px;
   background-color: #282c34;
+
+  justify-content: space-between;
   align-items: center;
   color: white;
-
 }
 .App-link {
   color: #61dafb;

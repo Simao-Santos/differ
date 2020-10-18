@@ -4,14 +4,11 @@ import Layout from '../Components/Layout';
 
 function HomePage() {
   return (
-    <div className="App">
       <Layout>
-
-      <div className="MainContainer">
-        <p>Body of App</p>
-      </div>
+        <h1>I am a homepage</h1>
+        <h1>Test text</h1>
+        <h1>Footers suck</h1>
       </Layout>
-    </div>
   );
 }
 

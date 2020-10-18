@@ -7,8 +7,8 @@ const Layout = ({ children }) => {
     return (
       <>
         <Header />
-        <div id="pageContent">
-          <main>{children}</main>
+        <div className="App-pageContent">
+          {children}
         </div>
         <Footer/>
       </>
