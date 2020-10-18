@@ -2,7 +2,7 @@ A very common problem in software development is to fix something and create a n
 
 Work developed by Andreia Gouveia (up201706430@fe.up.pt), Filipe Barbosa (up201909573@fe.up.pt), Gonçalo Pereira(up201705971@fe.up.pt), José Matias(up201706413@fe.up.pt), Pedro Teixeira(up201505916@fe.up.pt), Ricardo Pinto (up201909580@fe.up.pt), Simão Santos (up201504695@fe.up.pt) and Tiago Cardoso (up201605762@fe.up.pt), for the course of LDSO at FEUP. 
 
-The product owner is Marco Sousa (marco.sousa@zerozero.pt) of zerozero.pt /ZOS Lda.
+The product owner is **Marco Sousa (marco.sousa@zerozero.pt)** of zerozero.pt /ZOS Lda.
 
 
 
