@@ -1,0 +1,48 @@
+version: '3.7'
+
+services:
+  frontend:
+    image: ldso/frontend
+    build:
+      context: ./fe
+      dockerfile: Dockerfile
+    tty: true
+    volumes:
+      - ./fe/src/:/app/fe/src/
+      - ./fe/public/:/app/fe/public/
+    ports:
+      - 3000:3000
+    depends_on:
+      - backend
+    networks:
+      - app
+
+  backend:
+    image: ldso/backend
+    build:
+      context: ./be
+      dockerfile: Dockerfile
+    tty: true
+    ports:
+      - 8000:8000
+    volumes:
+      - ./be:/app/be
+    depends_on:
+      - db
+    networks:
+      - app
+
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: auto-testing
+    ports:
+      - 5432:5432
+    networks:
+      - app
+
+networks:
+  app:
+    driver: bridge
