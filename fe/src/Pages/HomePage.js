@@ -7,7 +7,6 @@ function HomePage() {
       <Layout>
         <h1>I am a homepage</h1>
         <h1>Test text</h1>
-        <h1>Footers suck</h1>
       </Layout>
   );
 }

@@ -32,7 +32,6 @@ h1 {
 
 .App-pageContent{
   min-height: calc(100vh - 7.5vh - 25px);
-  background-color: yellow;
 }
 
 .App-footer {
