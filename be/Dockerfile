@@ -5,6 +5,7 @@ WORKDIR /app/be
 COPY package.json package-lock.json ./
 
 # Dependencies needed for running Chromium headless
+# https://github.com/puppeteer/puppeteer/issues/1345#issuecomment-343538927
 RUN apt-get update && apt-get install -y \
   wget \
   unzip \
