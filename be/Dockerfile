@@ -54,4 +54,21 @@ RUN npm install
 
 COPY . ./
 
+# To overcome the "No usable sandbox!" error that prevents Chrome from launching
+# https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#recommended-enable-user-namespace-cloning
+RUN echo 'kernel.unprivileged_userns_clone=1' > /etc/sysctl.d/userns.conf
+
+# This last line requires that the container is started with '--cap-add=SYS_ADMIN' (added to docker-composer)
+# https://github.com/puppeteer/puppeteer/issues/3451#issuecomment-523961368
+
+# To overcome the "Running as root without --no-sandbox is not supported" error that prevents Chrome from launching
+# The goal is to use another user that is not root
+# https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-in-docker
+RUN groupadd -r differuser && useradd -r -g differuser differuser \
+    && chown -R differuser:differuser ./
+
+USER differuser
+
+# PROBLEM: by running with differuser, there are permission errors when running with 'docker-composer up' (strangely, not when running the Dockerfile directly)
+
 CMD npm start
