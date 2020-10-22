@@ -65,10 +65,11 @@ RUN echo 'kernel.unprivileged_userns_clone=1' > /etc/sysctl.d/userns.conf
 # The goal is to use another user that is not root
 # https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-in-docker
 RUN groupadd -r differuser && useradd -r -g differuser differuser \
-    && chown -R differuser:differuser ./
+    && chown differuser:differuser ./
 
 USER differuser
 
-# PROBLEM: by running with differuser, there are permission errors when running with 'docker-composer up' (strangely, not when running the Dockerfile directly)
+# PROBLEM: by running with differuser, there are permission errors when running this container in a volume
+# This is solved with start.sh
 
 CMD npm start
