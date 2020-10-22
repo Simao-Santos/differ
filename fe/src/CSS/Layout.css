@@ -18,7 +18,7 @@ h1 {
 }*/
 
 .App-header {
-  background-color: #282c34;
+  background-color: #333366;
   min-height: 9vh;
   display: flex;
   flex-direction: row;
@@ -30,19 +30,17 @@ h1 {
   padding-right: 3em;
 }
 
-.App-pageContent{
-  min-height: calc(100vh - 7.5vh - 25px);
+
+.App-pageContent {
+  background-color: #ffba8c;
 }
 
-.App-footer {
-  height: 25px;
-  margin-top: -25px;
-  background-color: #282c34;
-
-  justify-content: space-between;
-  align-items: center;
+.pb-3, .py-3{
+  background-color: #333366;
   color: white;
+  font-weight: bold;
 }
+
 .App-link {
   color: #61dafb;
 }
@@ -54,4 +52,43 @@ h1 {
   to {
     transform: rotate(360deg);
   }
+}
+
+.nav-pills .nav-link {
+  padding: 2e,m;
+  border-radius: 0;
+  background-color: #ffba8c;
+  color: white;
+  padding-top: 3em;
+  padding-bottom: 3em;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+  color: white;
+  background-color: #ff9853;
+}
+
+.col-sm-3 {
+  flex: 0 0 10%;
+  max-width: 10%;
+  padding: 0;
+}
+
+.col-sm-9 {
+  background-color: white;
+  flex: 0 0 90%;
+  max-width: 90%;
+  padding: 0;
+  min-height: 85vh;
+}
+
+.nav {
+  text-align: center;
+  font-weight: bold;
+}
+
+.row {
+  margin: 0;
 }

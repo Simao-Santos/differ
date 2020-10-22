@@ -2,7 +2,6 @@ import React from 'react';
 import '../CSS/Layout.css';
 import Header from './Header';
 import Footer from './Footer';
-
 const Layout = ({ children }) => {
     return (
       <>

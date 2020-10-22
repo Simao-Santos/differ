@@ -1,12 +1,12 @@
 import React from 'react';
 import '../CSS/HomePage.css';
 
-function HomePage() {
+function UrlsComparison() {
   return (
      <>
-      <h1>View Page</h1>
+      <h1>URLS page</h1>
      </>
   );
 }
 
-export default HomePage;
+export default UrlsComparison;

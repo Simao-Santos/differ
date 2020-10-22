@@ -1,13 +1,51 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './CSS/index.css';
-//import HomePage from './Pages/HomePage';
-import CodeChangesPage from './Pages/CodeChangesPage';
 import * as serviceWorker from './serviceWorker';
+
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
+import Tab from 'react-bootstrap/Tab'
+import Nav from 'react-bootstrap/Nav'
+import HomePage from './Pages/HomePage';
+import CodeChangesPage from './Pages/CodeChangesPage';
+import Layout from './Components/Layout';
+import UrlsComparison from './Pages/UrlsComparison';
 
 ReactDOM.render(
   <React.StrictMode>
-    <CodeChangesPage />
+     <Layout>
+        <Tab.Container id="left-tabs-example" defaultActiveKey="first">
+          <Row>
+            <Col sm={3}>
+              <Nav variant="pills" className="flex-column">
+                <Nav.Item>
+                  <Nav.Link eventKey="first">URLs</Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="second">View</Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="third">Code</Nav.Link>
+                </Nav.Item>
+              </Nav>
+            </Col>
+            <Col sm={9}>
+              <Tab.Content>
+                <Tab.Pane eventKey="first">
+                  <UrlsComparison />
+                </Tab.Pane>
+                <Tab.Pane eventKey="second">
+                  <HomePage />
+                </Tab.Pane>
+                <Tab.Pane eventKey="third">
+                <CodeChangesPage /> 
+                </Tab.Pane>
+              </Tab.Content>
+            </Col>
+          </Row>
+        </Tab.Container>
+      </Layout>
   </React.StrictMode>,
   document.getElementById('root')
 );
