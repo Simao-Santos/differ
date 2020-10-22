@@ -18,7 +18,7 @@ h1 {
 }*/
 
 .App-header {
-  background-color: #333366;
+  background-color: #282c34;
   min-height: 9vh;
   display: flex;
   flex-direction: row;
@@ -36,7 +36,7 @@ h1 {
 }
 
 .pb-3, .py-3{
-  background-color: #333366;
+  background-color: #282c34;
   color: white;
   font-weight: bold;
 }
