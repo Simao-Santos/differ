@@ -12,7 +12,7 @@ image: node:latest
 test_compilation:
   stage: build
   artifacts:
-    path:
+    paths:
       - be/
   script:
     - npm install
