@@ -9,7 +9,8 @@ image: node:latest
 # This folder is cached between builds
 # http://docs.gitlab.com/ee/ci/yaml/README.html#cache
 
-test_compilation:
+# tests the express backend (I think)
+test_express:
   stage: build
   #artifacts:
   #  paths:
