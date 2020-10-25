@@ -75,3 +75,5 @@ docker-compose down
 docker rm -fv $(docker ps -aq)
 sudo lsof -i -P -n | grep 5432
 ```
+
+In order to run the application you are required to be using Linux OS. Windows users can smoothly run the application by using WSL.
