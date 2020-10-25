@@ -18,7 +18,6 @@ build_express:
     - echo "Start building App"
     - cd be/
     - npm install
-    - npm start
     - echo "Build successfully!"
 
 # # tests the express backend (I think)
