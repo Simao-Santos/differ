@@ -20,12 +20,12 @@ build_express:
     - npm build
     - echo "Build successfully!"
 
-# tests the express backend (I think)
-test_express:
-  stage: test
-  image: node
-  script:
-    - echo "Testing App"
-    - npm install
-    - CI=true npm test
-    - echo "Test successfully!"
+# # tests the express backend (I think)
+# test_express:
+#   stage: test
+#   image: node
+#   script:
+#     - echo "Testing App"
+#     - npm install
+#     - CI=true npm test
+#     - echo "Test successfully!"
