@@ -15,6 +15,7 @@ build_express:
   stage: build
   image: node
   script:
+    - cd be/
     - echo "Start building App"
     - npm install
     - npm build
