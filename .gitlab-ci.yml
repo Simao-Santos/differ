@@ -23,11 +23,12 @@ build_express:
 # builds the express backend (I think)
 build_react:
   stage: build
-  image: react
+  image: node
   script:
     - echo "Start building Frontend"
     - cd fe/
     - npm install
+    - npm run build
     - echo "Build successful!"
 
 # # tests the express backend (I think)
