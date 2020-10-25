@@ -26,8 +26,8 @@ h1 {
   justify-content: space-between;
   font-size: calc(10px + 2vmin);
   color: white;
-  padding-left: 3em;
-  padding-right: 3em;
+  padding-left: 1.7em;
+  padding-right: 1.7em;
 }
 
 
@@ -39,6 +39,8 @@ h1 {
   background-color: #282c34;
   color: white;
   font-weight: bold;
+  padding-top: 0!important;
+  padding-bottom: 0!important;
 }
 
 .App-link {
@@ -81,7 +83,7 @@ h1 {
   flex: 0 0 90%;
   max-width: 90%;
   padding: 0;
-  min-height: 85vh;
+  min-height: 90vh;
 }
 
 .nav {

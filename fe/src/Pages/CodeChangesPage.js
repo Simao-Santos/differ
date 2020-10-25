@@ -1,5 +1,4 @@
 import React from 'react';
-import Layout from '../Components/Layout';
 import UrlForm from '../Components/UrlForm';
 
 function CodeChangesPage() {

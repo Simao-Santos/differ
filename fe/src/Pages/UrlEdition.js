@@ -1,12 +1,12 @@
 import React from 'react';
 import '../CSS/HomePage.css';
 
-function UrlsComparison() {
+function UrlEdition() {
   return (
      <>
-      <h1>URLS page</h1>
+      <h1> URLS page</h1>
      </>
   );
 }
 
-export default UrlsComparison;
+export default UrlEdition;

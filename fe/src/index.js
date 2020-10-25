@@ -10,7 +10,7 @@ import Nav from 'react-bootstrap/Nav'
 import HomePage from './Pages/HomePage';
 import CodeChangesPage from './Pages/CodeChangesPage';
 import Layout from './Components/Layout';
-import UrlsComparison from './Pages/UrlsComparison';
+import UrlEdition from './Pages/UrlEdition';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -33,7 +33,7 @@ ReactDOM.render(
             <Col sm={9}>
               <Tab.Content>
                 <Tab.Pane eventKey="first">
-                  <UrlsComparison />
+                  <UrlEdition />
                 </Tab.Pane>
                 <Tab.Pane eventKey="second">
                   <HomePage />
