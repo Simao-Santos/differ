@@ -15,5 +15,5 @@ test_express:
   #artifacts:
   #  paths:
    #   - be/
-  script:
-    - npm install
+  # script:
+  #   - npm install
