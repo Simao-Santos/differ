@@ -15,10 +15,20 @@ build_express:
   stage: build
   image: node
   script:
-    - echo "Start building App"
+    - echo "Start building Backend"
     - cd be/
     - npm install
-    - echo "Build successfully!"
+    - echo "Build successful!"
+
+# builds the express backend (I think)
+build_react:
+  stage: build
+  image: react
+  script:
+    - echo "Start building Frontend"
+    - cd fe/
+    - npm install
+    - echo "Build successful!"
 
 # # tests the express backend (I think)
 # test_express:
