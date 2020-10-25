@@ -1,19 +1,31 @@
 stages:
   - build
+  - test
   
 # This file is a template, and might need editing before it works on your project.
 # Official framework image. Look for the different tagged releases at:
 # https://hub.docker.com/r/library/node/tags/
-image: node:latest
+
 
 # This folder is cached between builds
 # http://docs.gitlab.com/ee/ci/yaml/README.html#cache
 
+# builds the express backend (I think)
+build_express:
+  stage: build
+  image: node
+  script:
+    - echo "Start building App"
+    - npm install
+    - npm build
+    - echo "Build successfully!"
+
 # tests the express backend (I think)
 test_express:
-  stage: build
-  #artifacts:
-  #  paths:
-   #   - be/
-  # script:
-  #   - npm install
+  stage: test
+  image: node
+  script:
+    - echo "Testing App"
+    - npm install
+    - CI=true npm test
+    - echo "Test successfully!"
