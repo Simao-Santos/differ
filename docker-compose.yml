@@ -24,6 +24,9 @@ services:
     build:
       context: ./be
       dockerfile: Dockerfile
+    # Check Dockerfile for cap_add explanation
+    cap_add:
+      - SYS_ADMIN
     tty: true
     ports:
       - 8000:8000

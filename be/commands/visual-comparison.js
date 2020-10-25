@@ -21,9 +21,12 @@ module.exports = {
 				year + "_" + mon + "_" + day + "_" +
 				hour + "_" + min + "_" + sec + "_" + millisec;
 		
+			// A rare bug can occur when launching Chrome. From what I understand it's related to the GNU C library, don't know what we can do about it.
+			// It is very rare though. As of now, it has only happened once.
+			// https://github.com/puppeteer/puppeteer/issues/2207
 			await new Pageres({delay: 2})
-				.src('data:text/html,' + firstPageContent, ['w3counter'], {filename: filename + "-before"})
-				.src('data:text/html,' + secondPageContent, ['w3counter'], {filename: filename + "-after"})
+				.src('data:text/html,' + firstPageContent, ['1920x1080'], {filename: filename + "-before"})
+				.src('data:text/html,' + secondPageContent, ['1920x1080'], {filename: filename + "-after"})
 				.dest("./shots")
 				.run();
 				
