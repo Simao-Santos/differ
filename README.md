@@ -60,7 +60,11 @@ Normaly if you made changes to the code you would have to rebuild the containers
 
 Be warned the clean builds take their time. Don't be surprised if the first time you are running the build command or after a down commad the operation takes time.
 
+**Run the application with** `sh start.sh`, which grants the needed permissions and runs docker-compose (see !5).
+
 ## Errors:
+
+Node 10.18.1 minimum version is needed.
 
 If there is an error when the container attempts to run .node/bin/www (or if the backend doesn't launch) you must run npm install from your terminal in the be/ directory and then use docker-compose build and try again. It should work this time. It is necessary so that npm updates package.json.
 
@@ -71,3 +75,5 @@ docker-compose down
 docker rm -fv $(docker ps -aq)
 sudo lsof -i -P -n | grep 5432
 ```
+
+In order to run the application you are required to be using Linux OS. Windows users can smoothly run the application by using WSL.
