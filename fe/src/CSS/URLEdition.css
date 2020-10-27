@@ -1,0 +1,42 @@
+h1, p {
+    text-align: center;
+    margin-top: 1em;
+}
+
+h1 {
+    font-size: 55px;
+}
+
+p {
+    font-size: 20px;
+}
+
+form {
+    margin-top: 3em;
+    display: grid;
+    grid-template-columns: 0.3fr 0.2fr 0.2fr 0.3fr;
+    grid-template-areas:
+        ". input input ."
+        ". button . .";
+}
+
+input {
+    grid-area: input;
+}
+
+button {
+    grid-area: button;
+    margin-top: 0.5em; 
+    
+    border-radius: 5px;
+    border: none;
+    height: 2em;
+    width: 10em;
+
+    background-color: #ff9853;
+    color: white;
+
+}
+
+
+
