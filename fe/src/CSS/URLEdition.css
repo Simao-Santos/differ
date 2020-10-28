@@ -1,42 +1,66 @@
-h1, p {
+/* header */
+
+header h1, header p {
     text-align: center;
     margin-top: 1em;
 }
 
-h1 {
+header h1 {
     font-size: 55px;
 }
 
-p {
+header p {
     font-size: 20px;
 }
 
-form {
-    margin-top: 3em;
-    display: grid;
-    grid-template-columns: 0.3fr 0.2fr 0.2fr 0.3fr;
-    grid-template-areas:
-        ". input input ."
-        ". button . .";
-}
-
-input {
-    grid-area: input;
-}
+/* buttons */
 
 button {
-    grid-area: button;
-    margin-top: 0.5em; 
     
     border-radius: 5px;
     border: none;
-    height: 2em;
-    width: 10em;
 
     background-color: #ff9853;
     color: white;
 
 }
 
+input[type="text"] {
+    width: 40em;
+}
 
+.next-to-input-button {
+    width: 5%;
+    height: 18%; 
+}
+
+/* main section */ 
+
+.container {
+    margin-left: 10em;
+    margin-top: 5em;
+}
+
+.left-side {
+    text-align: left;
+}
+
+.right-side {
+    text-align: center;
+    margin-top: 6em;
+}
+
+.right-side p {
+    font-size: 30px;
+}
+
+/* URL list */
+
+
+
+/* colors - maybe should be written in another file */
+
+.orange-text {
+    color: #ff9853;
+}
 

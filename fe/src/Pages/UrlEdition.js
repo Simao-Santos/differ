@@ -39,7 +39,6 @@ function UrlEdition() {
   function handleDeleteUrls() {
     const newUrls = urls.filter(url => !url.selected)
     setUrls(newUrls)
-    
   }
 
   return (
@@ -48,13 +47,20 @@ function UrlEdition() {
         <h1> Insert your URL's here!</h1>
         <p> Each page will be saved on our database. In the future, all you need to do is run the tests and we will use this version to run the comparisons.</p>
       </header>
-      <form>
-        <input type="text" ref={ urlAddressRef } placeholder="Insert your URL here"></input>
-        <button type = "button" onClick = {handleAddURL}>Add</button>
-      </form>
-      <button type="button" onClick={ handleDeleteUrls }>Delete</button>
-      <div>{ urls.filter(url => url.selected).length } URL's selected</div>
-      <URLList urls={ urls } toggleSelected={ toggleSelected }/>
+      <div class="container">
+        <div class="row">
+          <div class="left-side col-9">
+                <input type="text" ref={ urlAddressRef } placeholder="Insert your URL here"></input>
+                <button type = "button" onClick = {handleAddURL} class="next-to-input-button">+</button>
+                <p>or <span class="orange-text">submit</span> a file.</p>
+                <URLList urls={ urls } toggleSelected={ toggleSelected }/>
+            </div>
+            <div class="right-side col-3">
+              <p>{ urls.filter(url => url.selected).length } URL's selected</p>
+              <button type="button" onClick={ handleDeleteUrls }>Delete</button>
+            </div>    
+        </div>
+      </div>
      </>
   );
 }
