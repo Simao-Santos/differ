@@ -30,8 +30,8 @@ input[type="text"] {
 }
 
 .next-to-input-button {
-    width: 5%;
-    height: 18%; 
+    width: 3rem;
+    height: 2.2rem; 
 }
 
 /* main section */ 
@@ -43,6 +43,10 @@ input[type="text"] {
 
 .left-side {
     text-align: left;
+}
+
+.left-side .under-input-text {
+    padding-left: 0.3em;
 }
 
 .right-side {
@@ -63,4 +67,5 @@ input[type="text"] {
 .orange-text {
     color: #ff9853;
 }
+
 
