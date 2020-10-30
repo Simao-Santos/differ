@@ -29,7 +29,7 @@ ALTER TABLE public."User"
 -- Table: public.Page
 CREATE TABLE public."Page"
 (
-    "ID" integer NOT NULL,
+    "ID" integer GENERATED ALWAYS AS IDENTITY NOT NULL,
     "URL" text COLLATE pg_catalog."default",
     "Username" character varying(32) COLLATE pg_catalog."default",
     CONSTRAINT "Page_pkey" PRIMARY KEY ("ID"),
@@ -48,7 +48,7 @@ ALTER TABLE public."Page"
 -- Table: public.Capture
 CREATE TABLE public."Capture"
 (
-    "ID" integer NOT NULL,
+    "ID" integer GENERATED ALWAYS AS IDENTITY NOT NULL,
     "PageID" integer,
     "ImageLocation" text COLLATE pg_catalog."default",
     "TextLocation" text COLLATE pg_catalog."default",
@@ -69,7 +69,7 @@ ALTER TABLE public."Capture"
 -- Table: public.Comparison
 CREATE TABLE public."Comparison"
 (
-    "ID" integer NOT NULL,
+    "ID" integer GENERATED ALWAYS AS IDENTITY NOT NULL,
     "Capture1ID" integer,
     "Capture2ID" integer,
     "ImageLocation" text COLLATE pg_catalog."default",
