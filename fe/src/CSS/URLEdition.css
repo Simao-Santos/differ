@@ -58,6 +58,10 @@ input[type="text"] {
     font-size: 30px;
 }
 
+.right-side button {
+    font-size: 25px;
+}
+
 /* URL list */
 
 
@@ -68,4 +72,6 @@ input[type="text"] {
     color: #ff9853;
 }
 
-
+.igor {
+    background-color: yellow;
+}
