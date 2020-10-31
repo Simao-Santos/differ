@@ -3,7 +3,6 @@ import '../CSS/HomePage.css'
 import '../CSS/URLEdition.css'
 import URLList from '../Components/URLList.js'
 import uuidv4 from 'uuid/v4'
-import axios from 'axios'
 
 const LOCAL_STORAGE_KEY = 'differ.links'
 
@@ -13,6 +12,8 @@ function UrlEdition() {
   const [file, setFile] = useState([])
   const urlAddressRef = useRef()
 
+  // useEffects 1. load urls from local storage
+  // 2. save new url on local storage 
   useEffect(() => {
     const storedUrls = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY))
     if (storedUrls) setUrls(storedUrls)
@@ -26,6 +27,7 @@ function UrlEdition() {
     //setFile({ selectedFile: e.target.files[0] })
   }, [file])
 
+  // checking/unchecking checkbox
   function toggleSelected(address){ /* to be changed from address to id */
     const newUrls = [...urls]
     const url = newUrls.find(url => url.address === address)
@@ -33,31 +35,30 @@ function UrlEdition() {
     setUrls(newUrls)
   }
 
+  // adding a new url
   function handleAddURL(e) {
       const address = urlAddressRef.current.value
       if( address === '') return
+      var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+                  '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+                  '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+                  '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+                  '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+                  '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+      if (! pattern.test(address)) {
+        alert('Please insert a valid URL.')
+        return
+      }
       setUrls(prevUrls => {
         return [...prevUrls, {id: uuidv4(), address: address, selected: true}] /* in the future, url's will be added to the DB which auto increments the id */
       })
       urlAddressRef.current.value = null
   } 
 
+  // deleting urls
   function handleDeleteUrls() {
     const newUrls = urls.filter(url => !url.selected)
     setUrls(newUrls)
-  }
-
-  function handleFileUpload() {
-
-    const formData = new FormData();
-  
-    formData.append("urls", file.selectedFile, file.selectedFile.name)
-
-    console.log(file.selectedFile)
-
-    axios.post("api/uploadfile", formData)
-
-
   }
 
   return (
@@ -71,7 +72,7 @@ function UrlEdition() {
           <div class="left-side col-9">
                 <input type="text" ref={ urlAddressRef } placeholder="Insert your URL here"></input>
                 <button type = "button" onClick = {handleAddURL} class="next-to-input-button">+</button>
-                <input type="file" name="file" id="file" hidden></input>                              
+                <input type="file" name="file" id="file" accept=".txt" hidden></input>                              
                 <label class="under-input-text" for="file">or <span class="orange-text">submit</span> a file.</label>
                 <URLList urls={ urls } toggleSelected={ toggleSelected }/>
             </div>
