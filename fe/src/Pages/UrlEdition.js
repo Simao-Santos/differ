@@ -109,7 +109,7 @@ function UrlEdition() {
           <div class="left-side col-9">
                 <input type="text" ref={ urlAddressRef } placeholder="Insert your URL here"></input>
                 <button type = "button" onClick = {handleAddURL} class="next-to-input-button">+</button>
-                <input type="file" name="file" id="file" accept=".txt" hidden></input>                              
+                <input type="file" name="file" id="file" accept=".txt" hidden></input><br/>                             
                 <label class="under-input-text" for="file">or <span class="orange-text">submit</span> a file.</label>
                 <URLList urls={ urls } toggleSelected={ toggleSelected }/>
             </div>
