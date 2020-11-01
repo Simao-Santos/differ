@@ -87,7 +87,7 @@ function UrlEdition() {
       const newUrls = urls.filter(url => !url.selected)
       setUrls(newUrls)
 
-      if(newUrls.length === 0 || newUrls.filter(url => url.selected).length === 0) setStyle(["grey", "none", "0.25"])
+      setStyle(["grey", "none", "0.25"])
     }
   }
 
