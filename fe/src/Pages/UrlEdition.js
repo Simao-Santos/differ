@@ -9,7 +9,7 @@ const LOCAL_STORAGE_KEY = 'differ.links'
 function UrlEdition() {
 
   const [urls, setUrls] = useState([])
-  const [file, setFile] = useState([])
+  const [file] = useState([])
   const [delete_button_style, setStyle] = useState([" ", " ", " "]) // delete_button_style[0] => background | delete_button_style[1] => pointerEvents
   const urlAddressRef = useRef()
 
@@ -48,13 +48,13 @@ function UrlEdition() {
     // once a URL is checked/unchecked update delete button style
     const selectedUrls = newUrls.filter(url => url.selected)
     console.log('checking if needs change')
-    if(delete_button_style[0].localeCompare(" ") != 0){
+    if(delete_button_style[0].localeCompare(" ") !== 0){
       if(selectedUrls.length > 0) {
         setStyle([" ", " ", " "]) 
       }
     }
     else  {
-      if(selectedUrls.length == 0) {
+      if(selectedUrls.length === 0) {
         setStyle(["grey", "none", "0.25"]) 
       }
     }
@@ -66,7 +66,7 @@ function UrlEdition() {
       if( address === '') return
       var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
                   '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
-                  '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+                  '((\\d{1,3}\\.){3}\\d{1,3})|localhost)'+ // OR ip (v4) address
                   '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
                   '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
                   '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
@@ -87,7 +87,7 @@ function UrlEdition() {
       const newUrls = urls.filter(url => !url.selected)
       setUrls(newUrls)
 
-      if(newUrls.length === 0) setStyle(["grey", "none", "0.25"])
+      if(newUrls.length === 0 || newUrls.filter(url => url.selected).length === 0) setStyle(["grey", "none", "0.25"])
     }
   }
 
