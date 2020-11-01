@@ -14,7 +14,7 @@ export default function URLLink( { URLLink, toggleSelected }) {
 
     function handleUrlSize(URLLink) {
         if(isUrlTooBig(URLLink)){
-            return URLLink.address.substring(0, 70) + " (...)" 
+            return URLLink.address.substring(0, 65) + " (...)" 
         }
         else{
             return URLLink.address

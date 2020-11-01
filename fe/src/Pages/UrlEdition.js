@@ -10,13 +10,24 @@ function UrlEdition() {
 
   const [urls, setUrls] = useState([])
   const [file, setFile] = useState([])
+  const [delete_button_style, setStyle] = useState([" ", " ", " "]) // delete_button_style[0] => background | delete_button_style[1] => pointerEvents
   const urlAddressRef = useRef()
+
 
   // useEffects 1. load urls from local storage
   // 2. save new url on local storage 
   useEffect(() => {
     const storedUrls = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY))
     if (storedUrls) setUrls(storedUrls)
+
+    //check to see starting state of delete button
+    const selectedUrls = storedUrls.filter(url => url.selected)
+    if(selectedUrls.length > 0) {
+      setStyle([" ", " ", " "]) 
+    }    
+    else  {
+      setStyle(["grey", "none", "0.25"])       
+    }
   }, []) 
 
   useEffect(() => {
@@ -33,6 +44,20 @@ function UrlEdition() {
     const url = newUrls.find(url => url.address === address)
     url.selected = !url.selected
     setUrls(newUrls)
+    
+    // once a URL is checked/unchecked update delete button style
+    const selectedUrls = newUrls.filter(url => url.selected)
+    console.log('checking if needs change')
+    if(delete_button_style[0].localeCompare(" ") != 0){
+      if(selectedUrls.length > 0) {
+        setStyle([" ", " ", " "]) 
+      }
+    }
+    else  {
+      if(selectedUrls.length == 0) {
+        setStyle(["grey", "none", "0.25"]) 
+      }
+    }
   }
 
   // adding a new url
@@ -53,12 +78,15 @@ function UrlEdition() {
         return [...prevUrls, {id: uuidv4(), address: address, selected: true}] /* in the future, url's will be added to the DB which auto increments the id */
       })
       urlAddressRef.current.value = null
+      setStyle([" ", " ", " "])
   } 
 
   // deleting urls
   function handleDeleteUrls() {
     const newUrls = urls.filter(url => !url.selected)
     setUrls(newUrls)
+
+    if(newUrls.length === 0) setStyle(["grey", "none", "0.25"])
   }
 
   return (
@@ -78,7 +106,7 @@ function UrlEdition() {
             </div>
             <div class="right-side col-3">
               <p>{ urls.filter(url => url.selected).length } URL's selected</p>
-              <button type="button" onClick={ handleDeleteUrls }>Delete</button>
+              <button type="button" onClick={ handleDeleteUrls } style={ { background: delete_button_style[0], pointerEvents: delete_button_style[1], opacity: delete_button_style[2] } }>Delete</button>
             </div>    
         </div>
       </div>
