@@ -10,7 +10,8 @@ function UrlEdition() {
 
   const [urls, setUrls] = useState([])
   const [file] = useState([])
-  const [delete_button_style, setStyle] = useState([" ", " ", " "]) // delete_button_style[0] => background | delete_button_style[1] => pointerEvents
+  const [delete_button_style, setStyle] = useState([" ", " ", " "]) // delete_button_style[0] => background | delete_button_style[1] => pointerEvents | delete_button_style[2] => opacity
+  const [select_all_button, setSelectAll] = useState([false, false]) // select_all_button[0] => message | select_all_button[1] => hidden
   const urlAddressRef = useRef()
 
 
@@ -22,7 +23,20 @@ function UrlEdition() {
 
     //check to see starting state of delete button
     const selectedUrls = storedUrls.filter(url => url.selected)
+    
+    if(storedUrls.length > 0){
+      if(storedUrls.length === selectedUrls.length){
+        setSelectAll([false, false])
+      }
+      else{
+        setSelectAll([true, false])
+      }
+    } else {
+      setSelectAll([false, true])
+    }
+    
     if(selectedUrls.length > 0) {
+      
       setStyle([" ", " ", " "]) 
     }    
     else  {
@@ -47,9 +61,21 @@ function UrlEdition() {
     
     // once a URL is checked/unchecked update delete button style
     const selectedUrls = newUrls.filter(url => url.selected)
-    console.log('checking if needs change')
+    
+    if(newUrls.length > 0){
+      if(newUrls.length === selectedUrls.length){
+        setSelectAll([false, false])
+      }
+      else {
+        setSelectAll([true, false])
+      }
+    } else {
+      setSelectAll([false, true])
+    }
+
     if(delete_button_style[0].localeCompare(" ") !== 0){
       if(selectedUrls.length > 0) {
+
         setStyle([" ", " ", " "]) 
       }
     }
@@ -79,6 +105,9 @@ function UrlEdition() {
       })
       urlAddressRef.current.value = null
       setStyle([" ", " ", " "])
+
+      setSelectAll([false, false])
+      
   } 
 
   // deleting urls
@@ -88,6 +117,10 @@ function UrlEdition() {
       setUrls(newUrls)
 
       setStyle(["grey", "none", "0.25"])
+
+      if(newUrls.length > 0){
+        setSelectAll([true, false])
+      } else setSelectAll([false, true])
     }
   }
 
@@ -96,6 +129,23 @@ function UrlEdition() {
     if(window.confirm('You are about to update all information on ' + urls.filter(url => url.selected).length + ' pages.\nAre you sure you want to proceed?')){
       return
     }
+  }
+
+  function handleToggleSelectAll() {
+
+    if(select_all_button[0]){
+      urls.forEach(function(url) {
+        if(!url.selected){
+          toggleSelected(url.address)
+        }
+      })
+    } 
+    else {
+      urls.forEach(function(url) {
+        toggleSelected(url.address)
+      })
+    }
+
   }
 
   return (
@@ -110,7 +160,8 @@ function UrlEdition() {
                 <input type="text" ref={ urlAddressRef } placeholder="Insert your URL here"></input>
                 <button type = "button" onClick = {handleAddURL} class="next-to-input-button">+</button>
                 <input type="file" name="file" id="file" accept=".txt" hidden></input><br/>                             
-                <label class="under-input-text" for="file">or <span class="orange-text">submit</span> a file.</label>
+                <label class="under-input-text" for="file">or <span class="orange-text">submit</span> a file.</label><br/><br/>
+                <button onClick={ handleToggleSelectAll } hidden={ select_all_button[1] }>{ select_all_button[0] ? 'Select all' : 'Unselect all' }</button>
                 <URLList urls={ urls } toggleSelected={ toggleSelected }/>
             </div>
             <div class="right-side col-3">
