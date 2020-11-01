@@ -15,7 +15,7 @@ function VisualComparison(props) {
                         <Card>
                             <Card.Header>
                             <Accordion.Toggle as={Button} variant="link" eventKey="1">
-                            Link
+                            Link ⌄
                             </Accordion.Toggle>
                             </Card.Header>
                             <Accordion.Collapse eventKey="1">
@@ -25,11 +25,16 @@ function VisualComparison(props) {
                     </Accordion>
 
                     <div className="Visual-Content">
-                    <img src="../logo.png" className="App-logo" alt="logo" />
-                    <h1>{"->"}</h1>
-                    <img src="../logo.png" className="App-logo" alt="logo" />
+                    <img src={props.image1.name} className="App-logo" alt="logo" />
+                    <img src="../arrow.png" className="Arrow" alt="logo" />
+                    <img src={props.image2.name} className="App-logo" alt="logo" />
                     </div>
 
+                </div>
+
+                <div className="TimeStamp">
+                    <h3>{props.image1.timeStamp}</h3>
+                    <h3>{props.image2.timeStamp}</h3>
                 </div>
         </div>        
         </>

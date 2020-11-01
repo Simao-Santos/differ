@@ -7,7 +7,7 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Tab from 'react-bootstrap/Tab'
 import Nav from 'react-bootstrap/Nav'
-import HomePage from './Pages/HomePage';
+import VisualChangesPage from './Pages/VisualChangesPage';
 import CodeChangesPage from './Pages/CodeChangesPage';
 import Layout from './Components/Layout';
 import UrlEdition from './Pages/UrlEdition';
@@ -36,7 +36,7 @@ ReactDOM.render(
                   <UrlEdition />
                 </Tab.Pane>
                 <Tab.Pane eventKey="second">
-                  <HomePage />
+                  <VisualChangesPage />
                 </Tab.Pane>
                 <Tab.Pane eventKey="third">
                 <CodeChangesPage /> 
