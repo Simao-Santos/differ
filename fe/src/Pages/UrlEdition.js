@@ -83,10 +83,19 @@ function UrlEdition() {
 
   // deleting urls
   function handleDeleteUrls() {
-    const newUrls = urls.filter(url => !url.selected)
-    setUrls(newUrls)
+    if(window.confirm('You are about to delete all information on ' + urls.filter(url => url.selected).length + ' pages.\nAre you sure you want to proceed?')){
+      const newUrls = urls.filter(url => !url.selected)
+      setUrls(newUrls)
 
-    if(newUrls.length === 0) setStyle(["grey", "none", "0.25"])
+      if(newUrls.length === 0) setStyle(["grey", "none", "0.25"])
+    }
+  }
+
+  // updating url information
+  function handleUpdateUrls() {
+    if(window.confirm('You are about to update all information on ' + urls.filter(url => url.selected).length + ' pages.\nAre you sure you want to proceed?')){
+      return
+    }
   }
 
   return (
@@ -106,7 +115,10 @@ function UrlEdition() {
             </div>
             <div class="right-side col-3">
               <p>{ urls.filter(url => url.selected).length } URL's selected</p>
-              <button type="button" onClick={ handleDeleteUrls } style={ { background: delete_button_style[0], pointerEvents: delete_button_style[1], opacity: delete_button_style[2] } }>Delete</button>
+              <div class="row justify-content-center" id="selection-buttons">
+                <button type="button" onClick={ handleDeleteUrls } style={ { background: delete_button_style[0], pointerEvents: delete_button_style[1], opacity: delete_button_style[2] } }>Delete</button>
+                <button onClick={ handleUpdateUrls } style={ { background: delete_button_style[0], pointerEvents: delete_button_style[1], opacity: delete_button_style[2] } }>Update</button>
+              </div>
             </div>    
         </div>
       </div>

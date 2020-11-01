@@ -34,6 +34,10 @@ input[type="text"] {
     height: 2.2rem; 
 }
 
+#selection-buttons button {
+    margin: 0em 0.5em;
+}
+
 /* main section */ 
 
 .container {
