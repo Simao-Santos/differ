@@ -1,15 +1,15 @@
 import React from 'react';
 import {Accordion, Card, Button} from 'react-bootstrap';
-import '../CSS/VisualComparison.css'
+import '../CSS/ComparisonComponents.css'
 
 
 function VisualComparison(props) {
     return(
         <>
-        <div className="Visual-Component">
+        <div className="Comparison-Component">
             <h2>{props.pageName}</h2>
 
-                <div className="Visual-Card">
+                <div className="Comparison-Card">
 
                     <Accordion defaultActiveKey="0">
                         <Card>
@@ -24,7 +24,7 @@ function VisualComparison(props) {
                         </Card>
                     </Accordion>
 
-                    <div className="Visual-Content">
+                    <div className="Comparison-Content">
                     <img src={props.image1.name} className="App-logo" alt="logo" />
                     <img src="../arrow.png" className="Arrow" alt="logo" />
                     <img src={props.image2.name} className="App-logo" alt="logo" />

@@ -1,5 +1,5 @@
 import React from 'react';
-import '../CSS/VisualChangesPage.css';
+import '../CSS/ChangesPage.css';
 import VisualComparison from '../Components/VisualComparison';
 
 var visualData = [
@@ -39,7 +39,7 @@ var visualData = [
 function VisualChangesPage() {
   return (
      <>
-      <div className="Visual-Cards">
+      <div className="Comparison-Cards">
       {
         visualData.map(function(ub) {
 

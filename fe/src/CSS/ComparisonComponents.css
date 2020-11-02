@@ -1,12 +1,12 @@
 
-.Visual-Component{
+.Comparison-Component{
     width: 70%;
     margin: 3em;
     border-style: solid;
     border-color:  #ff9853;
 }
 
-.Visual-Component h2{
+.Comparison-Component h2{
     background-color: #ff9853;
     color: white;
     margin: 0;
@@ -22,7 +22,7 @@ button.btn.btn-link {
     font-weight: bold;
 }
 
-.Visual-Content{
+.Comparison-Content{
     display:flex;
     flex-direction: row;
     justify-content: space-around;
