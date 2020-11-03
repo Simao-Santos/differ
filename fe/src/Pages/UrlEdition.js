@@ -19,28 +19,31 @@ function UrlEdition() {
   // 2. save new url on local storage 
   useEffect(() => {
     const storedUrls = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY))
-    if (storedUrls) setUrls(storedUrls)
+    if (storedUrls) {
 
-    //check to see starting state of delete button
-    const selectedUrls = storedUrls.filter(url => url.selected)
-    
-    if(storedUrls.length > 0){
-      if(storedUrls.length === selectedUrls.length){
-        setSelectAll([false, false])
-      }
-      else{
-        setSelectAll([true, false])
-      }
-    } else {
-      setSelectAll([false, true])
-    }
-    
-    if(selectedUrls.length > 0) {
+      setUrls(storedUrls)
+
+      //check to see starting state of delete button
+      const selectedUrls = storedUrls.filter(url => url.selected)
       
-      setStyle([" ", " ", " "]) 
-    }    
-    else  {
-      setStyle(["grey", "none", "0.25"])       
+      if(storedUrls.length > 0){
+        if(storedUrls.length === selectedUrls.length){
+          setSelectAll([false, false])
+        }
+        else{
+          setSelectAll([true, false])
+        }
+      } else {
+        setSelectAll([false, true])
+      }
+      
+      if(selectedUrls.length > 0) {
+        
+        setStyle([" ", " ", " "]) 
+      }    
+      else  {
+        setStyle(["grey", "none", "0.25"])       
+      }
     }
   }, []) 
 
