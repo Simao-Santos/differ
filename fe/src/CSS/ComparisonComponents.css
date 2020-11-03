@@ -42,3 +42,16 @@ button.btn.btn-link {
 .TimeStamp h3{
     font-size: small;
 }
+
+.Update_Button{
+        background-color: #ff9853;
+        border: 2px solid white;
+        color: white;
+        padding: 10px 24px;
+        text-align: center;
+        display: inline-block;
+        font-size: 16px;
+        display: flex;
+        justify-content: 'center';
+        align-items: 'center';
+}
