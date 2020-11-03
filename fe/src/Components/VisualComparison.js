@@ -7,7 +7,12 @@ function VisualComparison(props) {
     return(
         <>
         <div className="Comparison-Component">
-            <h2>{props.pageName}</h2>
+                <div className="Component-Header">
+                    <h2>{props.pageName}</h2>
+                    <div style={{ float: 'right'}} className="Update_Button">
+                        Update
+                    </div>
+                </div>
 
                 <div className="Comparison-Card">
 

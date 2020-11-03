@@ -7,9 +7,12 @@ function CodeComparison(props) {
     return (
         <>
             <div className="Comparison-Component">
-                <h2>{props.pageName}{<div style={{ float: 'right'}} className="Update_Button">
+                <div className="Component-Header">
+                <h2>{props.pageName}</h2>
+                <div style={{ float: 'right'}} className="Update_Button">
                     Update
-                </div>}</h2>
+                </div>
+                </div>
 
                 <div className="Comparison-Card">
 

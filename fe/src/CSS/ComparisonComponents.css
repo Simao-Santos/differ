@@ -6,11 +6,18 @@
     border-color:  #ff9853;
 }
 
-.Comparison-Component h2{
+.Component-Header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
     background-color: #ff9853;
     color: white;
     margin: 0;
     padding: 0.5rem;
+}
+
+.Component-Header h2{
+    margin: 0;
 }
 
 div.card-header {
