@@ -166,9 +166,12 @@ function UrlEdition() {
             </div>
             <div class="right-side col-3">
               <p>{ urls.filter(url => url.selected).length } URL's selected</p>
-              <div class="row justify-content-center" id="selection-buttons">
+              <div class="row justify-content-center selection-buttons">
                 <button type="button" onClick={ handleDeleteUrls } style={ { background: delete_button_style[0], pointerEvents: delete_button_style[1], opacity: delete_button_style[2] } }>Delete</button>
-                <button onClick={ handleUpdateUrls } style={ { background: delete_button_style[0], pointerEvents: delete_button_style[1], opacity: delete_button_style[2] } }>Update</button>
+                <button onClick={ handleUpdateUrls } style={ { background: delete_button_style[0], pointerEvents: delete_button_style[1], opacity: delete_button_style[2] } }>Update</button><br/>
+              </div><br/>
+              <div class="row justify-content-center selection-buttons">
+                <button id="compare-button" style={ { background: delete_button_style[0], pointerEvents: delete_button_style[1], opacity: delete_button_style[2] } }>Run Comparison</button>
               </div>
             </div>    
         </div>
