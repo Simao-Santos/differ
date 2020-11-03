@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import '../CSS/HomePage.css'
+import '../CSS/ChangesPage.css'
 import '../CSS/URLEdition.css'
 import URLList from '../Components/URLList.js'
 import uuidv4 from 'uuid/v4'

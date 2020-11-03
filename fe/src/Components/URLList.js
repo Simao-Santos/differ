@@ -1,6 +1,6 @@
 import React from 'react';
 import URLLink from '../Components/URLLink.js'
-import '../CSS/VisualComparison.css'
+import '../CSS/ComparisonComponents.css'
 
 
 function URLList( { urls, toggleSelected } ) {
