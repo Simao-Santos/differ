@@ -1,0 +1,44 @@
+
+.Comparison-Component{
+    width: 70%;
+    margin: 3em;
+    border-style: solid;
+    border-color:  #ff9853;
+}
+
+.Comparison-Component h2{
+    background-color: #ff9853;
+    color: white;
+    margin: 0;
+    padding: 0.5rem;
+}
+
+div.card-header {
+    background-color: white;
+}
+
+button.btn.btn-link {
+    color: #ff9853;
+    font-weight: bold;
+}
+
+.Comparison-Content{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 2em;
+}
+
+.Arrow{
+    height: 9vmin;
+}
+
+.TimeStamp {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.TimeStamp h3{
+    font-size: small;
+}

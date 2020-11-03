@@ -3,7 +3,7 @@ import {Accordion, Card, Button} from 'react-bootstrap';
 import '../CSS/ComparisonComponents.css'
 
 
-function VisualComparison(props) {
+function CodeComparison(props) {
     return(
         <>
         <div className="Comparison-Component">
@@ -25,16 +25,16 @@ function VisualComparison(props) {
                     </Accordion>
 
                     <div className="Comparison-Content">
-                    <img src={props.image1.name} className="App-logo" alt="logo" />
+                    <img src={props.code1.name} className="App-logo" alt="logo" />
                     <img src="../arrow.png" className="Arrow" alt="logo" />
-                    <img src={props.image2.name} className="App-logo" alt="logo" />
+                    <img src={props.code1.name} className="App-logo" alt="logo" />
                     </div>
 
                 </div>
 
                 <div className="TimeStamp">
-                    <h3>{props.image1.timeStamp}</h3>
-                    <h3>{props.image2.timeStamp}</h3>
+                    <h3>{props.code1.timeStamp}</h3>
+                    <h3>{props.code1.timeStamp}</h3>
                 </div>
         </div>        
         </>
@@ -42,4 +42,4 @@ function VisualComparison(props) {
 
 }
 
-export default VisualComparison;
+export default CodeComparison;
