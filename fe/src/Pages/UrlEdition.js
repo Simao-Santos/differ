@@ -10,8 +10,8 @@ function UrlEdition() {
 
   const [urls, setUrls] = useState([])
   const [file] = useState([])
-  const [delete_button_style, setStyle] = useState([" ", " ", " "]) // delete_button_style[0] => background | delete_button_style[1] => pointerEvents | delete_button_style[2] => opacity
-  const [select_all_button, setSelectAll] = useState([false, false]) // select_all_button[0] => message | select_all_button[1] => hidden
+  const [delete_button_style, setStyle] = useState(["grey", "none", "0.25"]) // delete_button_style[0] => background | delete_button_style[1] => pointerEvents | delete_button_style[2] => opacity
+  const [select_all_button, setSelectAll] = useState([false, true]) // select_all_button[0] => message | select_all_button[1] => hidden
   const urlAddressRef = useRef()
 
 
