@@ -1,5 +1,6 @@
 const database = require('../database');
 const request = require('../html_request');
+const Pageres = require('pageres');
 const fs = require('fs');
 
 // Get URLs added by a specific user from the database
@@ -100,6 +101,8 @@ async function captureUrlAsync(id, url) {
     year + "_" + mon + "_" + day + "_" +
     hour + "_" + min + "_" + sec + "_" + millisec;
 
+  const filename = 'url_' + url_id + '_' + date;
+
   // Get content from url
   let body = await request.getRequest(url);
 
@@ -108,19 +111,42 @@ async function captureUrlAsync(id, url) {
   const regex = /"\/(?!\/)/gi;
   body = body.replace(regex, '\"' + url + ((url.endsWith('/')) ? '' : '/'));
 
+  const contentPath = folder + ((folder.endsWith('/')) ? '' : '/') + filename + ".html";
+
   // Saves the url content to file
-  if(fs.existsSync(folder + ((folder.endsWith('/')) ? '' : '/') + date + ".html")) {
+  if(fs.existsSync(contentPath)) {
     console.log('Error: can\'t save url content (file with this name already exists)');
   }
   else {
     console.log('Saving page content for ' + url + '...');
 
     try {
-      fs.writeFileSync(folder + ((folder.endsWith('/')) ? '' : '/') + date + ".html", body);
+      fs.writeFileSync(contentPath, body);
       console.log('Page content saved!');
+
+      const screenshotPath = await saveUrlScreenshot(contentPath, filename, folder);
     }
     catch (err) {
       console.log('Error saving page content: ' + err)
     }
   }
+}
+
+// Function that will screenshot the url page
+async function saveUrlScreenshot(codeFilePath, filename, saveFolder) {
+  console.log('Generating page screenshot...');
+
+  // A rare bug can occur when launching Chrome. From what I understand it's related to the GNU C library, don't know what we can do about it.
+  // It is very rare though. As of now, it has only happened once.
+  // https://github.com/puppeteer/puppeteer/issues/2207
+  //
+  // There are still problems with some characters and some images that aren't displayed correctly
+  await new Pageres({delay: 2})
+    .src(codeFilePath, ['1920x1080'], {filename: filename + '.png'})
+    .dest(saveFolder)
+    .run();
+    
+  console.log('Finished generating screenshot!');
+
+  return saveFolder + ((saveFolder.endsWith('/')) ? '' : '/') + filename + '.png';
 }
