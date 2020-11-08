@@ -101,7 +101,7 @@ async function captureUrlAsync(id, url) {
     year + "_" + mon + "_" + day + "_" +
     hour + "_" + min + "_" + sec + "_" + millisec;
 
-  const filename = 'url_' + url_id + '_' + date;
+  const filename = 'url_' + id + '_' + date;
 
   // Get content from url
   let body = await request.getRequest(url);
@@ -125,6 +125,18 @@ async function captureUrlAsync(id, url) {
       console.log('Page content saved!');
 
       const screenshotPath = await saveUrlScreenshot(contentPath, filename, folder);
+
+      const query = {
+        text: 'INSERT INTO public.\"Capture\" (\"PageID\", \"ImageLocation\", \"TextLocation\", \"Date\") VALUES ($1, $2, $3, $4) RETURNING \"ID\"',
+        values: [id, screenshotPath, contentPath, today]
+      };
+    
+      database.query(query, (err, resultInsert) => {
+        if(err || resultInsert.rowCount == 0)
+          console.log('Couldn\'t save capture');
+        else
+          console.log('Capture saved with ID ' + resultInsert.rows[0].ID)
+      });
     }
     catch (err) {
       console.log('Error saving page content: ' + err)
