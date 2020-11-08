@@ -11,8 +11,8 @@ exports.get_urls = function(req, res, next) {
     username = req.body.username;
 
   const query = {
-    text: 'SELECT \"ID\", \"URL\" FROM public.\"Page\" WHERE \"Username\"=$1',
-    values: [username]
+    text: 'SELECT id, url FROM page WHERE username=$1 AND deleted=$2',
+    values: [username, false]
   };
 
   let response = 'Error';
@@ -36,7 +36,7 @@ exports.add_url = function(req, res, next) {
 
   if(req.body.url) {
     const queryInsert = {
-      text: 'INSERT INTO public.\"Page\" (\"Username\", \"URL\") VALUES ($1, $2) RETURNING \"ID\"',
+      text: 'INSERT INTO page (username, url) VALUES ($1, $2) RETURNING id',
       values: [username, req.body.url]
     };
 
@@ -47,18 +47,21 @@ exports.add_url = function(req, res, next) {
         res.send('Error adding URL');
       else {
         const querySelect = {
-          text: 'SELECT \"ID\", \"URL\" FROM public.\"Page\" WHERE \"Username\"=$1',
-          values: [username]
+          text: 'SELECT id, url FROM page WHERE username=$1 AND deleted=$2',
+          values: [username, false]
         };
 
         database.query(querySelect, (err, resultSelect) => {
-          if(err)
+          if(err) {
+            console.log('URL added, but couldn\'t retrieve URL list');
             res.send('URL added, but couldn\'t retrieve URL list');
+          }
           else
             res.send(resultSelect.rows);
         });
 
-        captureUrl(resultInsert.rows[0].ID);
+        console.log('URL saved with ID ' + resultInsert.rows[0].id);
+        captureUrl(resultInsert.rows[0].id);
       }
     });
   }
@@ -70,15 +73,15 @@ exports.add_url = function(req, res, next) {
 // Synchronous function that will retrieve the URL and call the asynchronous function
 function captureUrl(id) {
   const querySelect = {
-    text: 'SELECT \"URL\" FROM public.\"Page\" WHERE \"ID\"=$1',
-    values: [id]
+    text: 'SELECT url FROM page WHERE id=$1 AND deleted=$2',
+    values: [id, false]
   };
 
   database.query(querySelect, (err, resultSelect) => {
     if(err || resultSelect.rowCount == 0)
-      res.send('Couldn\'t get URL to capture');
+      console.log('Couldn\'t get URL to capture');
     else {
-      captureUrlAsync(id, resultSelect.rows[0].URL)
+      captureUrlAsync(id, resultSelect.rows[0].url)
     }
   });
 }
@@ -127,7 +130,7 @@ async function captureUrlAsync(id, url) {
       const screenshotPath = await saveUrlScreenshot(contentPath, filename, folder);
 
       const query = {
-        text: 'INSERT INTO public.\"Capture\" (\"PageID\", \"ImageLocation\", \"TextLocation\", \"Date\") VALUES ($1, $2, $3, $4) RETURNING \"ID\"',
+        text: 'INSERT INTO capture (page_id, image_location, text_location, date) VALUES ($1, $2, $3, $4) RETURNING id',
         values: [id, screenshotPath, contentPath, today]
       };
     
@@ -135,7 +138,7 @@ async function captureUrlAsync(id, url) {
         if(err || resultInsert.rowCount == 0)
           console.log('Couldn\'t save capture');
         else
-          console.log('Capture saved with ID ' + resultInsert.rows[0].ID)
+          console.log('Capture saved with ID ' + resultInsert.rows[0].id)
       });
     }
     catch (err) {

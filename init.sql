@@ -12,80 +12,75 @@ CREATE DATABASE postgres
     
 \c postgres
 
--- Table: public.User
-CREATE TABLE public."User"
+-- Table: app_user
+CREATE TABLE app_user
 (
-    "Username" character varying(32) COLLATE pg_catalog."default" NOT NULL,
-    "Password" text COLLATE pg_catalog."default" NOT NULL,
-    CONSTRAINT "Username" PRIMARY KEY ("Username")
+    username character varying(32) NOT NULL,
+    password text NOT NULL,
+    PRIMARY KEY (username)
 )
 
 TABLESPACE pg_default;
 
-ALTER TABLE public."User"
+ALTER TABLE app_user
     OWNER to postgres;
 
 
--- Table: public.Page
-CREATE TABLE public."Page"
+-- Table: page
+CREATE TABLE page
 (
-    "ID" integer GENERATED ALWAYS AS IDENTITY NOT NULL,
-    "URL" text COLLATE pg_catalog."default",
-    "Username" character varying(32) COLLATE pg_catalog."default",
-    CONSTRAINT "Page_pkey" PRIMARY KEY ("ID"),
-    CONSTRAINT "Username" FOREIGN KEY ("Username")
-        REFERENCES public."User" ("Username") MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
+    id integer GENERATED ALWAYS AS IDENTITY NOT NULL,
+    url text,
+    username character varying(32),
+    deleted boolean NOT NULL DEFAULT FALSE,
+    PRIMARY KEY (id),
+    FOREIGN KEY (username)
+        REFERENCES app_user (username)
 )
 
 TABLESPACE pg_default;
 
-ALTER TABLE public."Page"
+ALTER TABLE page
     OWNER to postgres;
 
 
--- Table: public.Capture
-CREATE TABLE public."Capture"
+-- Table: capture
+CREATE TABLE capture
 (
-    "ID" integer GENERATED ALWAYS AS IDENTITY NOT NULL,
-    "PageID" integer,
-    "ImageLocation" text COLLATE pg_catalog."default",
-    "TextLocation" text COLLATE pg_catalog."default",
-    "Date" timestamp with time zone,
-    CONSTRAINT "Capture_pkey" PRIMARY KEY ("ID"),
-    CONSTRAINT "PageID" FOREIGN KEY ("PageID")
-        REFERENCES public."Page" ("ID") MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
+    id integer GENERATED ALWAYS AS IDENTITY NOT NULL,
+    page_id integer,
+    image_location text,
+    text_location text,
+    date timestamp with time zone,
+    deleted boolean NOT NULL DEFAULT FALSE,
+    PRIMARY KEY (id),
+    FOREIGN KEY (page_id)
+        REFERENCES page (id)
 )
 
 TABLESPACE pg_default;
 
-ALTER TABLE public."Capture"
+ALTER TABLE capture
     OWNER to postgres;
 
 
--- Table: public.Comparison
-CREATE TABLE public."Comparison"
+-- Table: comparison
+CREATE TABLE comparison
 (
-    "ID" integer GENERATED ALWAYS AS IDENTITY NOT NULL,
-    "Capture1ID" integer,
-    "Capture2ID" integer,
-    "ImageLocation" text COLLATE pg_catalog."default",
-    "TextLocation" text COLLATE pg_catalog."default",
-    CONSTRAINT "Comparison_pkey" PRIMARY KEY ("ID"),
-    CONSTRAINT "Capture1ID" FOREIGN KEY ("Capture1ID")
-        REFERENCES public."Capture" ("ID") MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
-    CONSTRAINT "Capture2ID" FOREIGN KEY ("Capture2ID")
-        REFERENCES public."Capture" ("ID") MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
+    id integer GENERATED ALWAYS AS IDENTITY NOT NULL,
+    capture_1_id integer,
+    capture_2_id integer,
+    image_location text,
+    text_location text,
+    deleted boolean NOT NULL DEFAULT FALSE,
+    PRIMARY KEY (id),
+    FOREIGN KEY (capture_1_id)
+        REFERENCES capture (id),
+    FOREIGN KEY (capture_2_id)
+        REFERENCES capture (id)
 )
 
 TABLESPACE pg_default;
 
-ALTER TABLE public."Comparison"
+ALTER TABLE comparison
     OWNER to postgres;
