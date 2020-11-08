@@ -77,6 +77,14 @@ input[type="text"] {
     color: #ff9853;
 }
 
+.orange-text:hover {
+    cursor: pointer; 
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+}
+
 .igor {
     background-color: yellow;
 }
+
+
