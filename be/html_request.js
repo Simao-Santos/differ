@@ -19,7 +19,7 @@ const instance = got.extend({
 
 // Makes GET request to URL
 async function getRequest(url) {
-    console.log("Retrieving page content for " + url + "...");
+    console.log('Retrieving page content for ' + url + '...');
 
     try {
         // The content will be outputted as a buffer, that will consequently be decoded to an UTF-8 string
@@ -49,12 +49,12 @@ async function getRequest(url) {
             }
         }
 
-        console.log("Page content retrieved");
+        console.log('Page content retrieved');
 
         return stringContent;
     }
     catch (error) {
-        console.log("Error retrieving page content: " + error);
+        console.log('Error retrieving page content: ' + error);
         return null;
     }
 }
@@ -62,7 +62,7 @@ async function getRequest(url) {
 // Makes a POST request to URL
 // TODO: not yet implemented
 async function postRequest(url) {
-    console.log("Not implemented...");
+    console.log('Not implemented...');
     return null;
 }
 
