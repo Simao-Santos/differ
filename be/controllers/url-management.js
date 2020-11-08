@@ -1,5 +1,6 @@
 const database = require('../database');
 const request = require('../html_request');
+const fs = require('fs');
 
 // Get URLs added by a specific user from the database
 exports.get_urls = function(req, res, next) {
@@ -83,6 +84,8 @@ function captureUrl(id) {
 
 // Asynchronous function that will capture the url content and screenshot
 async function captureUrlAsync(id, url) {
+  const folder = './shots';
+
   // Build filename for files
   const today = new Date();
   const year = String(today.getFullYear());
@@ -98,10 +101,26 @@ async function captureUrlAsync(id, url) {
     hour + "_" + min + "_" + sec + "_" + millisec;
 
   // Get content from url
-  const body = await request.getRequest(url);
+  let body = await request.getRequest(url);
 
   // The following code will identify every link that starts with a single "/", which refers to the root of the website,
   // And add the url before it (so it can actually get the content, which won't be saved locally)
   const regex = /"\/(?!\/)/gi;
   body = body.replace(regex, '\"' + url + ((url.endsWith('/')) ? '' : '/'));
+
+  // Saves the url content to file
+  if(fs.existsSync(folder + ((folder.endsWith('/')) ? '' : '/') + date + ".html")) {
+    console.log('Error: can\'t save url content (file with this name already exists)');
+  }
+  else {
+    console.log('Saving page content for ' + url + '...');
+
+    try {
+      fs.writeFileSync(folder + ((folder.endsWith('/')) ? '' : '/') + date + ".html", body);
+      console.log('Page content saved!');
+    }
+    catch (err) {
+      console.log('Error saving page content: ' + err)
+    }
+  }
 }
