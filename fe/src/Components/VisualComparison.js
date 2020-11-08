@@ -9,9 +9,9 @@ function VisualComparison(props) {
         <div className="Comparison-Component">
                 <div className="Component-Header">
                     <h2>{props.pageName}</h2>
-                    <div style={{ float: 'right'}} className="Update_Button">
+                    <Button style={{ float: 'right'}} type="submit" className="btn btn-outline-light">
                         Update
-                    </div>
+                    </Button>
                 </div>
 
                 <div className="Comparison-Card">

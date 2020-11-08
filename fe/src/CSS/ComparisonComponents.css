@@ -49,9 +49,8 @@ button.btn.btn-link {
 .TimeStamp h3{
     font-size: small;
 }
-
-.Update_Button{
-        background-color: #ff9853;
+.btn-primary{
+      background-color: #ff9853;
         border: 2px solid white;
         color: white;
         padding: 10px 24px;
@@ -62,3 +61,25 @@ button.btn.btn-link {
         justify-content: 'center';
         align-items: 'center';
 }
+
+.btn-primary:hover {
+    background-color: white;
+    border-color: #ff9853;
+    color: #ff9853;
+}
+
+.btn-primary:active {
+    background-color: #ff9853;
+    border-color: white;
+    color: white;
+}
+
+.btn-primary:focus {
+    background-color: #ff9853;
+    border-color: white;
+    color: white;
+    box-shadow: none;
+    text-decoration: underline;
+}
+
+
