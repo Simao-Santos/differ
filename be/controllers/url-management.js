@@ -70,6 +70,52 @@ exports.add_url = function(req, res, next) {
   }
 }
 
+// Deletes urls from the database
+exports.delete_url = function(req, res, next) {
+  let username = 'default';
+
+  if(req.body.username)
+    username = req.body.username;
+
+  console.log('Deleting urls...');
+
+  if(req.body.url_ids && req.body.url_ids.length > 0) {
+    const url_ids = req.body.url_ids;
+
+    let i = 0;
+    let deleted = 0;
+    let failed = 0;
+
+    while(i < url_ids.length) {
+      const query = {
+        text: 'UPDATE page SET deleted=$1 WHERE id=$2 AND deleted=$3 RETURNING id',
+        values: [true, url_ids[i], false]
+      };
+  
+      const fixed_i = i;
+
+      database.query(query, (err, result) => {
+        if(err || result.rowCount == 0) {
+          console.log('Couldn\'t mark page with ID ' + url_ids[fixed_i] + ' as deleted');
+          failed++;
+        }
+        else {
+          console.log('Page with ID ' + url_ids[fixed_i] + ' marked as deleted');
+          deleted++;
+        }
+
+        if(failed + deleted == url_ids.length)
+          res.send('Deleted ' + deleted + ' of the ' + url_ids.length + ' selected URLs');
+      });
+
+      i++;
+    }
+  }
+  else {
+    res.send('Error: no specified URLs');
+  }
+}
+
 // Synchronous function that will retrieve the URL and call the asynchronous function
 function captureUrl(id) {
   const querySelect = {
