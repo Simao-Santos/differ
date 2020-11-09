@@ -38,6 +38,9 @@ build_express:
     - cd be/
     - npm install
     - echo "Build successful!"
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+    - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend .
+    - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
 
 # builds the react frontend (I think)
 build_react:
@@ -49,13 +52,16 @@ build_react:
     - npm install
     - npm run build
     - echo "Build successful!"
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+    - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend .
+    - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
 
-build:
-    stage: build
-    script:
-      - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-      - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1 .
-      - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
+#build:
+#    stage: build
+#    script:
+#      - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+#      - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend .
+#      - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
 
 # # tests the express backend (I think)
 # test_express:
