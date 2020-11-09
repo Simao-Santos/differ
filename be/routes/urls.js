@@ -1,10 +1,10 @@
 var express = require('express');
 var router = express.Router();
 
-var url_management = require('../controllers/url-management');
+var url_controller = require('../controllers/url-controller');
 
-router.get('/', url_management.get_urls);
-router.post('/add', url_management.add_url);
-router.post('/delete', url_management.delete_url);
+router.get('/', url_controller.get_urls);
+router.post('/add', url_controller.add_url);
+router.post('/delete', url_controller.delete_url);
 
 module.exports = router;
