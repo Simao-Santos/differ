@@ -13,7 +13,7 @@ stages:
 eslint:
   stage: lint
   script:
-    #- npm i eslint
+    - npm install eslint
     - cd fe/
     - npm run lint-fix --silent
 
