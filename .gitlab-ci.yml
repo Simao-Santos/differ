@@ -15,7 +15,7 @@ stages:
 eslint:
   stage: lint
   script:
-    - npm install eslint
+    - npm install eslint --save-dev
     - cd fe/
     - npm run lint-fix --silent
 
