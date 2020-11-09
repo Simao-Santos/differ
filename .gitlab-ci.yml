@@ -54,7 +54,7 @@ test_express:
     - echo "Testing Backend..."
     - cd be/
     - npm install
-    - npm test
+    - npm run test
     - echo "All Tests successful!"
 
 # tests the react frontend
