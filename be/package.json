@@ -16,6 +16,7 @@
     "morgan": "~1.9.1",
     "pageres": "^5.2.1",
     "pg": "^8.4.2",
-    "pixelmatch": "^5.2.1"
+    "pixelmatch": "^5.2.1",
+    "resize-img": "^2.0.0"
   }
 }
