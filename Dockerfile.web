@@ -2,7 +2,7 @@ FROM node:latest
 
 WORKDIR /app/be
 
-COPY package.json package-lock.json ./
+COPY be/package.json be/package-lock.json ./
 
 # Dependencies needed for running Chromium headless
 # https://github.com/puppeteer/puppeteer/issues/1345#issuecomment-343538927
@@ -52,7 +52,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN npm install
 
-COPY . ./
+COPY be/. ./
 
 # To overcome the "No usable sandbox!" error that prevents Chrome from launching
 # https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#recommended-enable-user-namespace-cloning
@@ -74,11 +74,11 @@ USER differuser
 
 WORKDIR /app/fe
 
-COPY package.json package-lock.json ./
+COPY fe/package.json fe/package-lock.json ./
 
 RUN npm install
 
-COPY . ./
+COPY fe/. ./
 
 EXPOSE 3000
 
