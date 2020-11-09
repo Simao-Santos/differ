@@ -44,7 +44,7 @@ build_express:
     - npm install
     - echo "Build successful!"
     - apt-get update
-    - apt install docker -y
+    - apt install docker.io -y
     - docker version
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend .
