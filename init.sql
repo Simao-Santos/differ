@@ -25,6 +25,8 @@ TABLESPACE pg_default;
 ALTER TABLE app_user
     OWNER to postgres;
 
+INSERT INTO app_user (username, password) VALUES ('default', 'default');
+
 
 -- Table: page
 CREATE TABLE page
