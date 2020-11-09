@@ -52,6 +52,7 @@ test_express:
   image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend
   script:
     - echo "Testing Backend..."
+    - cd be/
     - npm install
     - npm test
     - echo "All Tests successful!"
@@ -62,6 +63,7 @@ test_react:
   image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend
   script:
     - echo "Testing Frontend..."
+    - cd fe/
     - npm install
     - npm run test-jest
     - echo "All Tests successful!"
