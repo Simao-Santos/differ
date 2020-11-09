@@ -9,14 +9,14 @@ stages:
   - build
   - test
 
-# run eslint and attempt to fix the linting erros
-eslint:
-  stage: lint
-  image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend
-  script:
-    # - npm install eslint --save-dev
-    - cd fe/
-    - npm run lint-fix --silent
+# # run eslint and attempt to fix the linting erros
+# eslint:
+#   stage: lint
+#   image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend
+#   script:
+#     # - npm install eslint --save-dev
+#     - cd fe/
+#     - npm run lint-fix --silent
 
 # builds the express backend (I think)
 build_express:
