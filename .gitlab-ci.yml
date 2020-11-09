@@ -16,19 +16,9 @@ eslint:
   script:
     - cd fe/
     - npm install eslint --save-dev
-    - npm run lint-fix --silent
+    - npm run lint-fix
 
-# builds the express backend (I think)
-build_express:
-  stage: build
-  image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend
-  script:
-    - echo "Start building Backend"
-    - cd be/
-    - npm install
-    - echo "Build successful!"
-
-# builds the react backend (I think)
+# builds the react frontend
 build_react:
   stage: build
   image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend
@@ -39,12 +29,12 @@ build_react:
     - npm run build
     - echo "Build successful!"
 
-# # tests the express backend (I think)
-# test_express:
-#   stage: test
-#   image: node
-#   script:
-#     - echo "Testing App"
-#     - npm install
-#     - CI=true npm test
-#     - echo "Test successfully!"
+# tests the express backend
+test_express:
+  stage: test
+  image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend
+  script:
+    - echo "Testing Backend..."
+    - npm install
+    - npm test
+    - echo "All Tests successful!"
