@@ -35,3 +35,143 @@ RUN apt-get update && apt-get install -y \
 ### Running the server
 
 To run the server just do `npm start`.
+
+## API Specification
+
+This backend uses an API to communicate with the frontend.
+
+### **GET** /urls/ - Get URLs
+
+#### Response
+
+* **type**: String (`'get_urls'` when successful, `'error'` when not successful)
+* **urls**\*: Array
+    * **id**: Integer
+    * **url**: String
+* **msg**: String
+
+###### * not always present
+
+Example:
+```
+{
+    "type": "get_urls",
+    "urls": [
+        {
+            "id": 1,
+            "url": "http://localhost:8000/"
+        },
+        {
+            "id": 3,
+            "url": "http://localhost:3000/"
+        }
+    ],
+    "msg": "Operation successful"
+}
+```
+
+```
+{
+    "type": "error",
+    "msg": "Couldn't access database"
+}
+```
+
+### **POST** /urls/ - Add URL
+
+#### Parameters
+
+* **url**: String
+
+Example:
+```
+{
+    "url": http://localhost:3000
+}
+```
+
+#### Response
+
+* **type**: String (`'post_urls'` when successful, `'error'` when not successful)
+* **urls**\*: Array (updated list of URLs)
+    * **id**: Integer
+    * **url**: String
+* **msg**: String
+
+###### * not always present
+
+Example:
+```
+{
+    "type": "post_urls",
+    "urls": [
+        {
+            "id": 1,
+            "url": "http://localhost:8000/"
+        },
+        {
+            "id": 3,
+            "url": "http://localhost:3000/"
+        }
+    ],
+    "msg": "Operation successful"
+}
+```
+
+```
+{
+    "type": "error",
+    "msg": "No specified URL"
+}
+```
+
+### **DELETE** /urls/ - Delete URLs
+
+#### Parameters
+
+* **url_ids**: Array\[Integer\]
+
+Example:
+```
+{
+    "url_ids": [1, 2, 4,...]
+}
+```
+
+#### Response
+
+* **type**: String (`'delete_urls'` when successful, `'error'` when not successful)
+* **num_deleted**\*: Integer (number of deleted URLs)
+* **num_query**\*: Integer (number of URLs asked to be deleted)
+* **msg**: String
+
+###### * not always present
+
+Example:
+```
+{
+    "type": "delete_urls",
+    "num_deleted": 3,
+    "num_query": 4,
+    "msg": "Operation successful, not all URLs were deleted"
+}
+```
+
+```
+{
+    "type": "error",
+    "msg": "No specified URL ids"
+}
+```
+
+### **POST** /urls/capture/ - Capture URLs
+TODO
+
+### **POST** /urls/compare/ - Compare URLs
+TODO
+
+### **GET** /capture/ - Get Captures
+TODO
+
+### **GET** /comparisons/ - Get Comparisons
+TODO
