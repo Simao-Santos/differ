@@ -9,7 +9,7 @@ class CodeComparison extends Component {
         <>
             <div className="Comparison-Component">
                 <div className="Component-Header">
-                <h2>{props.pageName}</h2>
+                <h2>{this.props.pageName}</h2>
                 <Button style={{ float: 'right'}} type="submit" className="btn btn-outline-light">
                         Update
                 </Button>
@@ -25,22 +25,22 @@ class CodeComparison extends Component {
                             </Accordion.Toggle>
                             </Card.Header>
                             <Accordion.Collapse eventKey="1">
-                                <Card.Body>{props.link}</Card.Body>
+                                <Card.Body>{this.props.link}</Card.Body>
                             </Accordion.Collapse>
                         </Card>
                     </Accordion>
 
                     <div className="Comparison-Content">
-                        <img src={props.code1.name} className="App-logo" alt="logo" />
+                        <img src={this.props.code1.name} className="App-logo" alt="logo" />
                         <img src="../arrow.png" className="Arrow" alt="logo" />
-                        <img src={props.code1.name} className="App-logo" alt="logo" />
+                        <img src={this.props.code1.name} className="App-logo" alt="logo" />
                     </div>
 
                 </div>
 
                 <div className="TimeStamp">
-                    <h3>{props.code1.timeStamp}</h3>
-                    <h3>{props.code1.timeStamp}</h3>
+                    <h3>{this.props.code1.timeStamp}</h3>
+                    <h3>{this.props.code1.timeStamp}</h3>
                 </div>
             </div>
         </>

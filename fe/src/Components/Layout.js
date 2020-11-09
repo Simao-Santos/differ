@@ -5,9 +5,8 @@ import Footer from './Footer';
 
 
 class Layout extends Component{
-    renders()
-    {
-      return (
+  render(){  
+    return (
       <>
         <Header />
         <div className="App-pageContent">
@@ -17,7 +16,6 @@ class Layout extends Component{
       </>
     )
   }
-}
-
+}  
   
   export default Layout  

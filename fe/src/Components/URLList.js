@@ -3,16 +3,16 @@ import URLLink from '../Components/URLLink.js'
 import '../CSS/ComparisonComponents.css'
 
 
-class URLList extends Component{
-    renders() {
+class URLList extends Component {
+    render()
+    {
         return(
         this.props.urls.map(url => {
-            return <URLLink key = { this.props.url.id } URLLink = { this.props.url } toggleSelected = { this.props.toggleSelected }/>
+            return <URLLink key = {url.id } URLLink = { url } toggleSelected = { this.props.toggleSelected }/>
         })
-    );
+        );
     }
 
 }
-
 
 export default URLList;
