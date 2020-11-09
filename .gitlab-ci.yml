@@ -55,24 +55,30 @@ build_react:
     - npm run build
     - echo "Build successful!"
  
-build_back_end:
-    stage: build
-    script:
-      - cd be/
-      - docker version
-      - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-      - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend .
-      - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
+# build_back_end:
+#     stage: build
+#     script:
+#       - cd be/
+#       - docker version
+#       - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+#       - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend .
+#       - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
  
-build_front_end:
-    stage: build
-    script:
-      - cd fe/
-      - docker version
-      - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-      - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend .
-      - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
+# build_front_end:
+#     stage: build
+#     script:
+#       - cd fe/
+#       - docker version
+#       - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+#       - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend .
+#       - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
 
+build_mlg:
+    stage: build
+    - docker version
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+    - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1 .
+    - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
 
 # # tests the express backend (I think)
 # test_express:
