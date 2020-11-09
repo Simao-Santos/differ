@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { Component } from 'react';
 
-function Header(){
+class Header extends Component{
+  render(){ 
     return (
         <div className="App-header">
         <img src="../icon.png" className="App-logo" alt="logo" />
@@ -9,6 +10,8 @@ function Header(){
         </p>
         </div>
     );
+  }
 }
+
 
 export default Header;

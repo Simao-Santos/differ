@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { Component } from 'react';
 
-function Footer(){
+class Footer extends Component{
+  render(){  
     return(
         <>
         <footer className="page-footer font-small blue fixed-bottom">
@@ -11,7 +12,8 @@ function Footer(){
         </>
 
     );
-
+  }
 }
+
 
 export default Footer;

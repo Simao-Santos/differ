@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Accordion, Card, Button } from 'react-bootstrap';
 import '../CSS/ComparisonComponents.css'
 
 
-function CodeComparison(props) {
+class CodeComparison extends Component {
+    render(){
     return (
         <>
             <div className="Comparison-Component">
@@ -44,7 +45,9 @@ function CodeComparison(props) {
             </div>
         </>
     );
+    }
 
 }
+
 
 export default CodeComparison;
