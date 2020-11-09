@@ -1,7 +1,10 @@
 const database = require('../database');
 const request = require('../html_request');
 const Pageres = require('pageres');
+const pixelmatch = require('pixelmatch');
+const resizeImg = require('resize-img');
 const fs = require('fs');
+const PNG = require('pngjs').PNG;
 
 // Get URLs added by a specific user from the database
 exports.get_urls = function(req, res, next) {
@@ -142,6 +145,74 @@ exports.capture_url = function(req, res, next) {
   }
 }
 
+// Compares the last capture of an URL with the current state
+exports.compare_url = function(req, res, next) {
+  let username = 'default';
+
+  if(req.body.username)
+    username = req.body.username;
+
+  console.log('Starting url comparison...');
+
+  if(req.body.url_ids && req.body.url_ids.length > 0) {
+    const url_ids = req.body.url_ids;
+
+    let i = 0;
+
+    while(i < url_ids.length) {
+      compareUrl(url_ids[i]);
+      i++;
+    }
+
+    res.send('Comparison started');
+  }
+  else {
+    res.send('Error: no specified URL id');
+  }
+}
+
+// Synchronous function that will order capture of the current state, before comparing
+function compareUrl(id) {
+  const querySelect = {
+    text: 'SELECT url FROM page WHERE id=$1 AND deleted=$2',
+    values: [id, false]
+  };
+
+  database.query(querySelect, (err, resultSelect) => {
+    if(err || resultSelect.rowCount == 0)
+      console.log('Couldn\'t get URL to compare');
+    else {
+      captureUrlAsync(id, resultSelect.rows[0].url, true);
+    }
+  });
+}
+
+// Asynchronous function that will order comparison of the 2 most recent captures
+async function compareUrlAsync(id) {
+  const folder = './shots';
+
+  const querySelect = {
+    text: 'SELECT id, image_location, text_location FROM capture WHERE page_id=$1 AND deleted=$2 ORDER BY date DESC LIMIT 2',
+    values: [id, false]
+  };
+
+  database.query(querySelect, (err, resultSelect) => {
+    if(err || resultSelect.rowCount != 2)
+      console.log('Couldn\'t get captures to compare');
+    else {
+      const old_capture_id = resultSelect.rows[0].id;
+      const old_capture_img_loc = resultSelect.rows[0].image_location;
+      const old_capture_text_loc = resultSelect.rows[0].text_location;
+
+      const new_capture_id = resultSelect.rows[1].id;
+      const new_capture_img_loc = resultSelect.rows[1].image_location;
+      const new_capture_text_loc = resultSelect.rows[1].text_location;
+
+      compareCaptures(old_capture_id, new_capture_id, old_capture_text_loc, new_capture_text_loc, old_capture_img_loc, new_capture_img_loc, folder);
+    }
+  });
+}
+
 // Synchronous function that will retrieve the URL and call the asynchronous function
 function captureUrl(id) {
   const querySelect = {
@@ -153,13 +224,13 @@ function captureUrl(id) {
     if(err || resultSelect.rowCount == 0)
       console.log('Couldn\'t get URL to capture');
     else {
-      captureUrlAsync(id, resultSelect.rows[0].url)
+      captureUrlAsync(id, resultSelect.rows[0].url, false);
     }
   });
 }
 
 // Asynchronous function that will capture the url content and screenshot
-async function captureUrlAsync(id, url) {
+async function captureUrlAsync(id, url, compareNext) {
   const folder = './shots';
 
   // Build filename for files
@@ -209,8 +280,13 @@ async function captureUrlAsync(id, url) {
       database.query(query, (err, resultInsert) => {
         if(err || resultInsert.rowCount == 0)
           console.log('Couldn\'t save capture');
-        else
+        else {
           console.log('Capture saved with ID ' + resultInsert.rows[0].id)
+
+          // If the captures are supposed to be compared immediatelly, call the function
+          if(compareNext)
+            compareUrlAsync(id);
+        }
       });
     }
     catch (err) {
@@ -229,11 +305,97 @@ async function saveUrlScreenshot(codeFilePath, filename, saveFolder) {
   //
   // There are still problems with some characters and some images that aren't displayed correctly
   await new Pageres({delay: 2})
-    .src(codeFilePath, ['1920x1080'], {filename: filename + '.png'})
+    .src(codeFilePath, ['1920x1080'], {filename: filename})
     .dest(saveFolder)
     .run();
     
   console.log('Finished generating screenshot!');
 
   return saveFolder + ((saveFolder.endsWith('/')) ? '' : '/') + filename + '.png';
+}
+
+// Function that compares two captures
+async function compareCaptures(id_1, id_2, text_location_1, text_location_2, image_location_1, image_location_2, saveFolder) {
+  console.log('Starting comparison on captures ' + id_1 + ' and ' + id_2 + '...');
+  
+  // Build filename for files
+  const today = new Date();
+  const year = String(today.getFullYear());
+  const mon = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  const hour = String(today.getHours()).padStart(2, '0');
+  const min = String(today.getMinutes()).padStart(2, '0');
+  const sec = String(today.getSeconds()).padStart(2, '0');
+  const millisec = String(today.getMilliseconds()).padStart(3, '0');
+
+  const date =
+    year + "_" + mon + "_" + day + "_" +
+    hour + "_" + min + "_" + sec + "_" + millisec;
+
+  const filename = 'comparison_' + id_1 + '_' + id_2 + '_' + date;
+  const textFile = null;
+  const imageFile = saveFolder + ((saveFolder.endsWith('/')) ? '' : '/') + filename + '.png';
+
+  // TODO: compare text
+
+  console.log('Comparing screenshots...');
+		
+  let img1 = PNG.sync.read(fs.readFileSync(image_location_1));
+  let img2 = PNG.sync.read(fs.readFileSync(image_location_2));
+  let img1Raw = fs.readFileSync(image_location_1);
+  let img2Raw = fs.readFileSync(image_location_2);
+
+  // This will check if the images are the same size (they have to be for the comparison to work)
+  // They sometimes differ by only a few pixels for various reasons, so it adjusts
+  // By decreasing the width and/or width of the larger image
+
+  let temp1 = false;
+  let temp2 = false;
+
+  if(img1.width > img2.width) {
+    img1Raw = await resizeImg(img1Raw, {width: img2.width});
+    temp1 = true;
+  }
+  else if(img1.width < img2.width) {
+    img2Raw = await resizeImg(img2Raw, {width: img1.width});
+    temp2 = true;
+  }
+
+  if(img1.height > img2.height) {
+    img1Raw = await resizeImg(img1Raw, {height: img2.height});
+    temp1 = true;
+  }
+  else if(img1.height < img2.height) {
+    img2Raw = await resizeImg(img2Raw, {height: img1.height});
+    temp2 = true;
+  }
+
+  img1 = PNG.sync.read(img1Raw);
+  img2 = PNG.sync.read(img2Raw);
+
+  const {width, height} = img1;
+  const diff = new PNG({width, height});
+
+  const diff_pixels = 
+    pixelmatch(img1.data, img2.data, diff.data, width, height,
+      {threshold: 0.1, diffColorAlt: [0, 200, 0], alpha: 0.5});
+
+
+  fs.writeFileSync(imageFile, PNG.sync.write(diff));
+
+  console.log('Finished comparing screenshots!');
+  console.log(diff_pixels + ' different pixels (' + (diff_pixels / (width*height) * 100) + '%)');
+
+  const queryInsert = {
+    text: 'INSERT INTO comparison (capture_1_id, capture_2_id, image_location, text_location, diff_pixels, total_pixels, date) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',
+    values: [id_1, id_2, imageFile, textFile, diff_pixels, width*height, today]
+  }
+
+  database.query(queryInsert, (err, resultInsert) => {
+    if(err || resultInsert.rowCount == 0)
+      console.log('Error adding comparison');
+    else {
+      console.log('Inserted comparison with ID ' + resultInsert.rows[0].id);
+    }
+  });
 }

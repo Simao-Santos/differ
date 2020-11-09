@@ -7,5 +7,6 @@ router.get('/', url_controller.get_urls);
 router.post('/add', url_controller.add_url);
 router.post('/delete', url_controller.delete_url);
 router.post('/capture', url_controller.capture_url);
+router.post('/compare', url_controller.compare_url);
 
 module.exports = router;
