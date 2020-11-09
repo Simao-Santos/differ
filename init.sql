@@ -84,3 +84,51 @@ TABLESPACE pg_default;
 
 ALTER TABLE comparison
     OWNER to postgres;
+
+
+-- FUNCTIONS
+CREATE OR REPLACE FUNCTION delete_page_connections()
+  RETURNS TRIGGER 
+  LANGUAGE PLPGSQL
+  AS
+$$
+BEGIN
+    IF OLD.deleted = FALSE AND NEW.deleted = TRUE THEN
+        UPDATE capture
+        SET deleted = TRUE
+        WHERE page_id = NEW.id AND deleted = FALSE;
+	END IF;
+
+	RETURN NEW;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION delete_capture_connections()
+  RETURNS TRIGGER 
+  LANGUAGE PLPGSQL
+  AS
+$$
+BEGIN
+    IF OLD.deleted = FALSE AND NEW.deleted = TRUE THEN
+        UPDATE comparison
+        SET deleted = TRUE
+        WHERE (capture_1_id = NEW.id OR capture_2_id = NEW.id) AND deleted = FALSE;
+	END IF;
+
+	RETURN NEW;
+END;
+$$;
+
+
+-- TRIGGERS
+CREATE TRIGGER delete_page_trigger
+    BEFORE UPDATE
+    ON page
+    FOR EACH ROW
+    EXECUTE PROCEDURE delete_page_connections();
+
+CREATE TRIGGER delete_capture_trigger
+    BEFORE UPDATE
+    ON capture
+    FOR EACH ROW
+    EXECUTE PROCEDURE delete_capture_connections();
