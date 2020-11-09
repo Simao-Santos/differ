@@ -116,6 +116,32 @@ exports.delete_url = function(req, res, next) {
   }
 }
 
+// Takes a capture of the specified urls
+exports.capture_url = function(req, res, next) {
+  let username = 'default';
+
+  if(req.body.username)
+    username = req.body.username;
+
+  console.log('Capturing url...');
+
+  if(req.body.url_ids && req.body.url_ids.length > 0) {
+    const url_ids = req.body.url_ids;
+
+    let i = 0;
+
+    while(i < url_ids.length) {
+      captureUrl(url_ids[i]);
+      i++;
+    }
+
+    res.send('Capturing started');
+  }
+  else {
+    res.send('Error: no specified URL id');
+  }
+}
+
 // Synchronous function that will retrieve the URL and call the asynchronous function
 function captureUrl(id) {
   const querySelect = {
