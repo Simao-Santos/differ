@@ -1,7 +1,7 @@
 const database = require('../database');
 
-// Get Captures
-exports.get_captures = function(req, res, next) {
+// Get Comparisons
+exports.get_comparisons = function(req, res, next) {
     let username = 'default';
 
     if(req.body.username)
@@ -10,7 +10,7 @@ exports.get_captures = function(req, res, next) {
     // Should we check username?
     if(req.body.page_id) {
         const query = {
-            text: 'SELECT id, text_location, image_location, date FROM capture WHERE page_id=$1 AND deleted=$2',
+            text: 'SELECT * FROM comparison WHERE (capture_1_id IN (SELECT id FROM capture WHERE page_id=$1 AND deleted=$2) OR capture_1_id IN (SELECT id FROM capture WHERE page_id=$1 AND deleted=$2)) AND deleted=$2 ORDER BY date DESC',
             values: [req.body.page_id, false]
         };
         
