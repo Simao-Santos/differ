@@ -1,0 +1,85 @@
+
+.Comparison-Component{
+    width: 70%;
+    margin: 3em;
+    border-style: solid;
+    border-color:  #ff9853;
+}
+
+.Component-Header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: #ff9853;
+    color: white;
+    margin: 0;
+    padding: 0.5rem;
+}
+
+.Component-Header h2{
+    margin: 0;
+}
+
+div.card-header {
+    background-color: white;
+}
+
+button.btn.btn-link {
+    color: #ff9853;
+    font-weight: bold;
+}
+
+.Comparison-Content{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 2em;
+}
+
+.Arrow{
+    height: 9vmin;
+}
+
+.TimeStamp {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.TimeStamp h3{
+    font-size: small;
+}
+.btn-primary{
+      background-color: #ff9853;
+        border: 2px solid white;
+        color: white;
+        padding: 10px 24px;
+        text-align: center;
+        display: inline-block;
+        font-size: 16px;
+        display: flex;
+        justify-content: 'center';
+        align-items: 'center';
+}
+
+.btn-primary:hover {
+    background-color: white;
+    border-color: #ff9853;
+    color: #ff9853;
+}
+
+.btn-primary:active {
+    background-color: #ff9853;
+    border-color: white;
+    color: white;
+}
+
+.btn-primary:focus {
+    background-color: #ff9853;
+    border-color: white;
+    color: white;
+    box-shadow: none;
+    text-decoration: underline;
+}
+
+
