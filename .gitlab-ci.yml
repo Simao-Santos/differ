@@ -4,6 +4,9 @@ include:
   - template: Security/SAST.gitlab-ci.yml
   - template: Security/Secret-Detection.gitlab-ci.yml
 
+services:
+  - docker:dind
+
 stages:
   - lint
   - build
