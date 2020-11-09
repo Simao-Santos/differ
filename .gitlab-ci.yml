@@ -1,4 +1,4 @@
-image: docker:latest
+image: ubuntu:latest
 
 include:
   - template: Security/Dependency-Scanning.gitlab-ci.yml
@@ -43,6 +43,7 @@ build_express:
     - cd be/
     - npm install
     - echo "Build successful!"
+    - apt install docker -y
     - docker version
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend .
