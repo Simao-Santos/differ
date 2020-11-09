@@ -23,5 +23,8 @@
         "react"
     ],
     "rules": {
+        "react/jsx-filename-extension": [0],
+        // stop the console error
+        "no-console": [0]
     }
 }
