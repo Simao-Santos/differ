@@ -38,6 +38,7 @@ build_express:
     - cd be/
     - npm install
     - echo "Build successful!"
+    - docker version
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend .
     - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
@@ -52,6 +53,7 @@ build_react:
     - npm install
     - npm run build
     - echo "Build successful!"
+    - docker version
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend .
     - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
