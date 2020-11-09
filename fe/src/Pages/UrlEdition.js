@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react'
 import '../CSS/ChangesPage.css'
 import '../CSS/URLEdition.css'
 import URLList from '../Components/URLList.js'
-import uuidv4 from 'uuid/v4'
 
 const LOCAL_STORAGE_KEY = 'differ.links'
 
@@ -12,22 +11,20 @@ function UrlEdition() {
   const [file] = useState([])
   const [delete_button_style, setStyle] = useState(["grey", "none", "0.25"]) // delete_button_style[0] => background | delete_button_style[1] => pointerEvents | delete_button_style[2] => opacity
   const [select_all_button, setSelectAll] = useState([false, true]) // select_all_button[0] => message | select_all_button[1] => hidden
+  const [be_reply, setBeReply] = useState('nothing to say')
+  const [new_urls_json, setJsonUrls] = useState([])
   const urlAddressRef = useRef()
 
 
   // useEffects 1. load urls from local storage
   // 2. save new url on local storage 
   useEffect(() => {
-    const storedUrls = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY))
-    if (storedUrls) {
+      getListOfUrls()
 
-      setUrls(storedUrls)
-
-      //check to see starting state of delete button
-      const selectedUrls = storedUrls.filter(url => url.selected)
+      const selectedUrls = urls.filter(url => url.selected)
       
-      if(storedUrls.length > 0){
-        if(storedUrls.length === selectedUrls.length){
+      if(urls.length > 0){
+        if(urls.length === selectedUrls.length){
           setSelectAll([false, false])
         }
         else{
@@ -43,28 +40,44 @@ function UrlEdition() {
       }    
       else  {
         setStyle(["grey", "none", "0.25"])       
-      }
-    }
+      }   
+
+
   }, []) 
 
   useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(urls))
-  }, [urls]) /* whenever a change occurs in 'urls', execute line above */ 
+    console.log('saved urls')
+  }, [urls]) 
 
   useEffect(() => {
-    //setFile({ selectedFile: e.target.files[0] })
   }, [file])
 
+  useEffect(() => {
+    console.log('be reply update post opt')
+    if(be_reply[0] !== '[' && be_reply[0] !== 'D') return
+    console.log('passed conditional')
+    getListOfUrls()
+  }, [be_reply])
+
+  useEffect(() => {
+    console.log('json urls update post opt')
+    if(new_urls_json.length === 0) return
+    console.log('passed conditional')
+    const new_urls = JSON.parse(new_urls_json)
+    setUrls(new_urls)
+  }, [new_urls_json])
+
   // checking/unchecking checkbox
-  function toggleSelected(address){ /* to be changed from address to id */
+  function toggleSelected(url_id){
     const newUrls = [...urls]
-    const url = newUrls.find(url => url.address === address)
+    const url = newUrls.find(url => url.id === url_id)
     url.selected = !url.selected
     setUrls(newUrls)
     
     // once a URL is checked/unchecked update delete button style
     const selectedUrls = newUrls.filter(url => url.selected)
-    
+    console.log('there are these many selected => ' + selectedUrls.length)
+
     if(newUrls.length > 0){
       if(newUrls.length === selectedUrls.length){
         setSelectAll([false, false])
@@ -103,27 +116,56 @@ function UrlEdition() {
         alert('Please insert a valid URL.')
         return
       }
-      setUrls(prevUrls => {
-        return [...prevUrls, {id: uuidv4(), address: address, selected: true}] /* in the future, url's will be added to the DB which auto increments the id */
-      })
+      
       urlAddressRef.current.value = null
       setStyle([" ", " ", " "])
 
-      setSelectAll([false, false])
+      setSelectAll([true, false])
+
+      const requestDelOptions = {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        body: JSON.stringify({ url: address })
+      }
+      fetch("http://localhost:8000/urls", requestDelOptions)
+      .then(res => res.text())
+      .then(res => setBeReply(res))
       
   } 
 
   // deleting urls
   function handleDeleteUrls() {
     if(window.confirm('You are about to delete all information on ' + urls.filter(url => url.selected).length + ' pages.\nAre you sure you want to proceed?')){
-      const newUrls = urls.filter(url => !url.selected)
-      setUrls(newUrls)
+      const selectedUrls = urls.filter(url => url.selected)
+
+      let my_url_ids = []
+      for(let i = 0; i < selectedUrls.length; i++){
+        my_url_ids[i] = selectedUrls[i].id
+      }
+
+      console.log('so in delete there are these many => ' + selectedUrls)
 
       setStyle(["grey", "none", "0.25"])
 
-      if(newUrls.length > 0){
+      if(selectedUrls.length !== urls.length){
         setSelectAll([true, false])
       } else setSelectAll([false, true])
+
+      const requestOptions = {
+        method: 'DELETE',
+        headers: {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        body: JSON.stringify({ url_ids: my_url_ids })
+        
+      }
+      fetch("http://localhost:8000/urls", requestOptions)
+      .then(res => res.text())
+      .then(res => setBeReply(res))
+
+      console.log('delete the mf after this')
     }
   }
 
@@ -139,22 +181,40 @@ function UrlEdition() {
     if(select_all_button[0]){
       urls.forEach(function(url) {
         if(!url.selected){
-          toggleSelected(url.address)
+          toggleSelected(url.id)
         }
       })
     } 
     else {
       urls.forEach(function(url) {
-        toggleSelected(url.address)
+        toggleSelected(url.id)
       })
     }
 
   }
 
+  function getListOfUrls() {
+
+    console.log('getting urls from db')
+
+    const requestOptions = {
+      method: 'GET'
+    }
+
+    fetch("http://localhost:8000/urls/", requestOptions)
+    .then(res => res.text())
+    .then(res => setJsonUrls(res))
+  
+
+  }
+
+  
+
   return (
      <>
       <header>
         <h1> Insert your URL's here!</h1>
+        <p>Backend replies: <span class="text-danger">{ be_reply }</span></p>
         <p> Each page will be saved in our database. In the future, all you need to do is run the tests and we will use this version to run the comparisons.</p>
       </header>
       <div class="container">
