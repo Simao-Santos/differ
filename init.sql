@@ -72,6 +72,9 @@ CREATE TABLE comparison
     capture_2_id integer,
     image_location text,
     text_location text,
+    diff_pixels integer,
+    total_pixels integer,
+    date timestamp with time zone,
     deleted boolean NOT NULL DEFAULT FALSE,
     PRIMARY KEY (id),
     FOREIGN KEY (capture_1_id)
