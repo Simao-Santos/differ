@@ -67,8 +67,6 @@ RUN echo 'kernel.unprivileged_userns_clone=1' > /etc/sysctl.d/userns.conf
 RUN groupadd -r differuser && useradd -r -g differuser differuser \
     && chown differuser:differuser ./
 
-USER differuser
-
 # PROBLEM: by running with differuser, there are permission errors when running this container in a volume
 # This is solved with start.sh
 
@@ -81,5 +79,7 @@ RUN npm install
 COPY fe/. ./
 
 EXPOSE 3000
+
+USER differuser
 
 CMD npm start
