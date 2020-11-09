@@ -193,6 +193,29 @@ function UrlEdition() {
 
   }
 
+  function handleRunComparison() {
+
+    const selectedUrls = urls.filter(url => url.selected)
+
+    let my_url_ids = []
+    for(let i = 0; i < selectedUrls.length; i++){
+      my_url_ids[i] = selectedUrls[i].id
+    }
+
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json; charset=utf-8"
+      },
+      body: JSON.stringify({ url_ids: my_url_ids })
+      
+    }
+    fetch("http://localhost:8000/urls/capture", requestOptions)
+    .then(res => res.text())
+    .then(res => console.log(res))
+
+  }
+
   function getListOfUrls() {
 
     console.log('getting urls from db')
@@ -234,7 +257,7 @@ function UrlEdition() {
                 <button onClick={ handleUpdateUrls } style={ { background: delete_button_style[0], pointerEvents: delete_button_style[1], opacity: delete_button_style[2] } }>Update</button><br/>
               </div><br/>
               <div class="row justify-content-center selection-buttons">
-                <button id="compare-button" style={ { background: delete_button_style[0], pointerEvents: delete_button_style[1], opacity: delete_button_style[2] } }>Run Comparison</button>
+                <button onClick={ handleRunComparison } id="compare-button" style={ { background: delete_button_style[0], pointerEvents: delete_button_style[1], opacity: delete_button_style[2] } }>Run Comparison</button>
               </div>
             </div>    
         </div>

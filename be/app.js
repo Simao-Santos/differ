@@ -8,6 +8,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var urlsRoute = require('./routes/urls');
 var capturesRoute = require('./routes/captures');
+var cors = require('cors')
 
 var app = express();
 
@@ -15,7 +16,8 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-// USE CORS?
+app.use(cors())
+app.options('*', cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
