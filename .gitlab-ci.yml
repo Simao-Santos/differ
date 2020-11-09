@@ -4,6 +4,8 @@ include:
   - template: Security/SAST.gitlab-ci.yml
   - template: Security/Secret-Detection.gitlab-ci.yml
 
+image: node
+
 stages:
   - lint
   - build
@@ -20,7 +22,6 @@ eslint:
 # builds the express backend (I think)
 build_express:
   stage: build
-  image: node
   script:
     - echo "Start building Backend"
     - cd be/
@@ -30,7 +31,6 @@ build_express:
 # builds the react backend (I think)
 build_react:
   stage: build
-  image: node
   script:
     - echo "Start building Frontend"
     - cd fe/
