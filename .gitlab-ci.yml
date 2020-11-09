@@ -10,7 +10,7 @@ services:
   - docker:dind
  
 stages:
-  #- lint
+  - lint
   - build
   - test
  
@@ -64,7 +64,7 @@ build_back_end:
       - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend .
       - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
  
-build_back_end:
+build_front_end:
     stage: build
     script:
       - cd fe/
