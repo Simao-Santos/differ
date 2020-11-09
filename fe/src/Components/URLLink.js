@@ -9,20 +9,20 @@ export default function URLLink( { URLLink, toggleSelected }) {
     const [showFull, setShowFull] = useState(false)
 
     function handleUrlSelect() {
-        return toggleSelected( URLLink.address )
+        return toggleSelected( URLLink.id )
     }
 
     function handleUrlSize(URLLink) {
         if(isUrlTooBig(URLLink)){
-            return URLLink.address.substring(0, 65) + " (...)" 
+            return URLLink.url.substring(0, 65) + " (...)" 
         }
         else{
-            return URLLink.address
+            return URLLink.url
         }
     }
 
     function isUrlTooBig(URLLink){
-        if(URLLink.address.length > 80){
+        if(URLLink.url.length > 80){
             return true
         }
         else{
@@ -47,7 +47,7 @@ export default function URLLink( { URLLink, toggleSelected }) {
             {
                 showFull && isUrlTooBig(URLLink) && (
                     <div class="full-url-box">
-                        { URLLink.address }
+                        { URLLink.url }
                     </div>
                 )
             }
