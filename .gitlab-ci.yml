@@ -1,13 +1,11 @@
 image: gitlab/dind
 
-# include:
-#   - template: Security/Dependency-Scanning.gitlab-ci.yml
-#   - template: Security/License-Scanning.gitlab-ci.yml
-#   - template: Security/SAST.gitlab-ci.yml
-#   - template: Security/Secret-Detection.gitlab-ci.yml
+ include:
+   - template: Security/Dependency-Scanning.gitlab-ci.yml
+   - template: Security/License-Scanning.gitlab-ci.yml
+   - template: Security/SAST.gitlab-ci.yml
+   - template: Security/Secret-Detection.gitlab-ci.yml
 
-# services:
-#   - docker:dind
 
 stages:
   - lint
@@ -16,53 +14,44 @@ stages:
   - deploy
 
 
-# # builds the express backend (I think)
-# build_express:
-#   stage: build
-#   image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend
-#   script:
-#     - echo "Start building Backend"
-#     - cd be/
-#     - npm install
-#     - echo "Build successful!"
-#     - apt-get update
-#     #- sudo curl -sSL https://get.docker.com/ | sh
-#     - docker version
-#     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-#     - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend .
-#     - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
-
-# # builds the react frontend (I think)
-# build_react:
-#   stage: build
-#   image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend
-#   script:
-#     - echo "Start building Frontend"
-#     - cd fe/
-#     - npm install
-#     - npm run build
-#     - echo "Build successful!"
-#     - docker version
-#     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-#     - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend .
-#     - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
-
-update_docker_container:
-  stage: deploy
+# builds the express backend (I think)
+build_express:
+  stage: build
+  image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend
   script:
+    - echo "Start building Backend"
+    - cd be/
+    - npm install
+    - echo "Build successful!"
+    - apt-get update
+    #- sudo curl -sSL https://get.docker.com/ | sh
+    - docker version
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+    - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend .
+    - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
+
+# builds the react frontend (I think)
+build_react:
+  stage: build
+  image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend
+  script:
+    - echo "Start building Frontend"
     - cd fe/
+    - npm install
+    - npm run build
+    - echo "Build successful!"
     - docker version
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend .
     - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
-
+ 
 #build:
 #    stage: build
 #    script:
 #      - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
 #      - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend .
 #      - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
-
+ 
 # # tests the express backend (I think)
 # test_express:
 #   stage: test
