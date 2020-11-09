@@ -2,7 +2,7 @@ const database = require('../database');
 const request = require('../html_request');
 const Pageres = require('pageres');
 const pixelmatch = require('pixelmatch');
-const resizeImg = require('resize-img');
+const sharp = require('sharp');
 const fs = require('fs');
 const PNG = require('pngjs').PNG;
 
@@ -345,33 +345,32 @@ async function compareCaptures(id_1, id_2, text_location_1, text_location_2, ima
   let img1Raw = fs.readFileSync(image_location_1);
   let img2Raw = fs.readFileSync(image_location_2);
 
+  console.log('Capture 1 original size: ' + img1.width + 'x' + img1.height);
+  console.log('Capture 2 original size: ' + img2.width + 'x' + img2.height);
+
   // This will check if the images are the same size (they have to be for the comparison to work)
   // They sometimes differ by only a few pixels for various reasons, so it adjusts
   // By decreasing the width and/or width of the larger image
 
-  let temp1 = false;
-  let temp2 = false;
-
   if(img1.width > img2.width) {
-    img1Raw = await resizeImg(img1Raw, {width: img2.width});
-    temp1 = true;
+    img1Raw = await sharp(img1Raw).resize(img2.width, img1.height, {fit: 'cover', position: 'left top'}).toBuffer();
   }
   else if(img1.width < img2.width) {
-    img2Raw = await resizeImg(img2Raw, {width: img1.width});
-    temp2 = true;
+    img2Raw = await sharp(img2Raw).resize(img1.width, img2.height, {fit: 'cover', position: 'left top'}).toBuffer();
   }
 
   if(img1.height > img2.height) {
-    img1Raw = await resizeImg(img1Raw, {height: img2.height});
-    temp1 = true;
+    img1Raw = await sharp(img1Raw).resize(img1.width, img2.height, {fit: 'cover', position: 'left top'}).toBuffer();
   }
   else if(img1.height < img2.height) {
-    img2Raw = await resizeImg(img2Raw, {height: img1.height});
-    temp2 = true;
+    img2Raw = await sharp(img2Raw).resize(img2.width, img1.height, {fit: 'cover', position: 'left top'}).toBuffer();
   }
 
   img1 = PNG.sync.read(img1Raw);
   img2 = PNG.sync.read(img2Raw);
+
+  console.log('Capture 1 size after crop: ' + img1.width + 'x' + img1.height);
+  console.log('Capture 2 size after crop: ' + img2.width + 'x' + img2.height);
 
   const {width, height} = img1;
   const diff = new PNG({width, height});
