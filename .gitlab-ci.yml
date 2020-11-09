@@ -5,8 +5,17 @@ include:
   - template: Security/Secret-Detection.gitlab-ci.yml
 
 stages:
+  - lint
   - build
   - test
+
+# run eslint and attempt to fix the linting erros
+eslint:
+  stage: lint
+  script:
+    #- npm i eslint
+    - cd fe/
+    - npm run lint-fix --silent
 
 # builds the express backend (I think)
 build_express:
