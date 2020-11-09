@@ -33,7 +33,9 @@ stages:
 #     - npm run lint-fix
 
 
+########################################################################
 
+<<<<<<< HEAD
 # builds the express backend (I think)
 build_express:
   stage: build
@@ -49,6 +51,8 @@ build_express:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend .
     - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
+=======
+>>>>>>> 16-setting-up-pipeline
 
 # builds the react frontend (I think)
 build_react:
@@ -65,19 +69,16 @@ build_react:
     - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend .
     - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
 
-#build:
-#    stage: build
-#    script:
-#      - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-#      - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend .
-#      - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
 
-# # tests the express backend (I think)
-# test_express:
-#   stage: test
-#   image: node
-#   script:
-#     - echo "Testing App"
-#     - npm install
-#     - CI=true npm test
-#     - echo "Test successfully!"
+########################################################################
+
+
+# tests the express backend
+test_express:
+  stage: test
+  image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend
+  script:
+    - echo "Testing Backend..."
+    - npm install
+    - npm test
+    - echo "All Tests successful!"
