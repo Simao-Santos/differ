@@ -55,3 +55,13 @@ test_express:
     - npm install
     - npm test
     - echo "All Tests successful!"
+
+# tests the react frontend
+test_react:
+  stage: test
+  image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend
+  script:
+    - echo "Testing Frontend..."
+    - npm install
+    - npm run test-jest
+    - echo "All Tests successful!"
