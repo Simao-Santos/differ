@@ -16,7 +16,7 @@ eslint:
   script:
     - cd fe/
     - npm install eslint --save-dev
-    - npm run lint-fix --silent
+    - npm run lint-fix
 
 # builds the express backend (I think)
 build_express:
