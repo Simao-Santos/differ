@@ -18,13 +18,24 @@ exports.get_urls = function(req, res, next) {
     values: [username, false]
   };
 
-  let response = 'Error';
-
-  database.query(query, (err, result) => {      
-    if(!err)
-      response = result.rows;
-
-    res.send(response);
+  database.query(query, (err, result) => { 
+    if(err) {
+      const json = {
+        type: 'error',
+        msg: 'Couldn\'t access database'
+      }
+  
+      res.send(json);
+    }
+    else {
+      const json = {
+        type: 'get_urls',
+        urls: result.rows,
+        msg: 'Operation successful'
+      }
+  
+      res.send(json);
+    }
   });
 }
 
@@ -46,8 +57,14 @@ exports.add_url = function(req, res, next) {
     console.log('URL: ' + req.body.url)
   
     database.query(queryInsert, (err, resultInsert) => {
-      if(err)
-        res.send('Error adding URL');
+      if(err) {
+        const json = {
+          type: "error",
+          msg: 'Couldn\'t add URL'
+        }
+
+        res.send(json);
+      }
       else {
         const querySelect = {
           text: 'SELECT id, url FROM page WHERE username=$1 AND deleted=$2',
@@ -57,10 +74,23 @@ exports.add_url = function(req, res, next) {
         database.query(querySelect, (err, resultSelect) => {
           if(err) {
             console.log('URL added, but couldn\'t retrieve URL list');
-            res.send('URL added, but couldn\'t retrieve URL list');
+
+            const json = {
+              type: "post_urls",
+              msg: 'Operation successful, but couldn\'t retrieve URL list'
+            }
+        
+            res.send(json);
           }
-          else
-            res.send(resultSelect.rows);
+          else {
+            const json = {
+              type: "post_urls",
+              urls: resultSelect.rows,
+              msg: 'Operation successful'
+            }
+        
+            res.send(json);
+          }
         });
 
         console.log('URL saved with ID ' + resultInsert.rows[0].id);
@@ -69,7 +99,12 @@ exports.add_url = function(req, res, next) {
     });
   }
   else {
-    res.send('Error: no specified URL');
+    const json = {
+      type: "error",
+      msg: 'No specified URL'
+    }
+
+    res.send(json);
   }
 }
 
@@ -107,15 +142,35 @@ exports.delete_url = function(req, res, next) {
           deleted++;
         }
 
-        if(failed + deleted == url_ids.length)
-          res.send('Deleted ' + deleted + ' of the ' + url_ids.length + ' selected URLs');
+        if(failed + deleted == url_ids.length) {
+          let message = 'Operation successful';
+
+          if(deleted == 0)
+            message = 'Operation unsuccessful';
+          else if(failed > 0)
+            message += ', not all URLs were deleted';
+
+          let json = {
+            type: 'delete_urls',
+            num_deleted: deleted,
+            num_query: url_ids.length,
+            msg: message
+          };
+
+          res.send(json);
+        }
       });
 
       i++;
     }
   }
   else {
-    res.send('Error: no specified URLs');
+    let json = {
+      type: 'error',
+      msg: 'No specified URL ids'
+    };
+
+    res.send(json);
   }
 }
 
