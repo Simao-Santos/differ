@@ -86,7 +86,8 @@ deploy_mlg:
     stage: deploy
     script:
     - echo $HEROKU
-    - docker build -f Dockerfile.web -t registry.heroku.com/t1g1/web .
+    - docker build -f Dockerfile.web --iidfile imageid.txt -t registry.heroku.com/t1g1/web .
+    - echo "Docker Image ID is $(cat imageid.txt)"
     - docker login -u _ -p $HEROKU registry.heroku.com
     - docker tag registry.heroku.com/t1g1/web
     - docker push registry.heroku.com/t1g1/web    
