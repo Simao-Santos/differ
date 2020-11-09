@@ -13,6 +13,7 @@ stages:
   - lint
   - build
   - test
+  - deploy
  
 # run eslint and attempt to fix the linting erros (in front end)
 # eslint-frontend:
@@ -73,13 +74,21 @@ stages:
 #       - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend .
 #       - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
 
-build_mlg:
-    stage: build
+# build_mlg:
+#     stage: build
+#     script:
+#     - docker version
+#     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+#     - docker build -f Dockerfile.web -t registry.gitlab.com/feup-tbs/ldso2021/t1g1 .
+#     - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
+
+deploy_mlg:
+    stage: deploy
     script:
-    - docker version
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-    - docker build -f Dockerfile.web -t registry.gitlab.com/feup-tbs/ldso2021/t1g1 .
-    - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
+    - echo $HEROKU
+    - docker login --username=_ --password=$HEROKU registry.heroku.com
+    - docker build -t registry.heroku.com/t1g1/web .
+    - docker push registry.heroku.com/t1g1/web    
 
 # # tests the express backend (I think)
 # test_express:
