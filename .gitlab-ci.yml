@@ -10,27 +10,27 @@ services:
   - docker:dind
  
 stages:
-  - lint
+  #- lint
   - build
   - test
  
 # run eslint and attempt to fix the linting erros (in front end)
-eslint-frontend:
-  stage: lint
-  image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend
-  script:
-    - cd fe/
-    - npm install eslint --save-dev
-    - npm run lint-fix
+# eslint-frontend:
+#   stage: lint
+#   image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend
+#   script:
+#     - cd fe/
+#     - npm install eslint --save-dev
+#     - npm run lint-fix
  
-# run eslint and attempt to fix the linting erros (in backend)
-eslint-backend:
-  stage: lint
-  image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend
-  script:
-    - cd be/
-    - npm install eslint --save-dev
-    - npm run lint-fix
+# # run eslint and attempt to fix the linting erros (in backend)
+# eslint-backend:
+#   stage: lint
+#   image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend
+#   script:
+#     - cd be/
+#     - npm install eslint --save-dev
+#     - npm run lint-fix
  
  
  
@@ -43,10 +43,6 @@ build_express:
     - cd be/
     - npm install
     - echo "Build successful!"
-    - docker version
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-    - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend .
-    - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
  
 # builds the react frontend (I think)
 build_react:
@@ -58,18 +54,26 @@ build_react:
     - npm install
     - npm run build
     - echo "Build successful!"
-    - docker version
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-    - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend .
-    - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
  
-#build:
-#    stage: build
-#    script:
-#      - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-#      - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend .
-#      - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
+build_back_end:
+    stage: build
+    script:
+      - cd be/
+      - docker version
+      - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+      - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend .
+      - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
  
+build_back_end:
+    stage: build
+    script:
+      - cd fe/
+      - docker version
+      - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+      - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend .
+      - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
+
+
 # # tests the express backend (I think)
 # test_express:
 #   stage: test
