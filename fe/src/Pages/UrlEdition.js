@@ -180,8 +180,25 @@ function UrlEdition() {
   // updating url information
   function handleUpdateUrls() {
     if(window.confirm('You are about to update all information on ' + urls.filter(url => url.selected).length + ' pages.\nAre you sure you want to proceed?')){
-      return
-    }
+      const selectedUrls = urls.filter(url => url.selected)
+
+      let my_url_ids = []
+      for(let i = 0; i < selectedUrls.length; i++){
+        my_url_ids[i] = selectedUrls[i].id
+      }
+
+      const requestOptions = {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        body: JSON.stringify({ url_ids: my_url_ids })
+        
+      }
+      fetch("http://localhost:8000/urls/capture", requestOptions)
+      .then(res => res.text())
+      .then(res => console.log(res))
+      }
   }
 
   function handleToggleSelectAll() {
@@ -218,7 +235,7 @@ function UrlEdition() {
       body: JSON.stringify({ url_ids: my_url_ids })
       
     }
-    fetch("http://localhost:8000/urls/capture", requestOptions)
+    fetch("http://localhost:8000/urls/compare", requestOptions)
     .then(res => res.text())
     .then(res => console.log(res))
 
