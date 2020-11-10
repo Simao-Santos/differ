@@ -39,6 +39,8 @@ stages:
  
 build_backend_develop:
     stage: build
+    only:
+      - develop
     script:
       - cd be/
       - docker version
@@ -48,6 +50,8 @@ build_backend_develop:
  
 build_frontend_develop:
     stage: build
+    only:
+      - develop
     script:
       - cd fe/
       - docker version
