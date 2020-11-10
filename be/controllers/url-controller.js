@@ -178,20 +178,17 @@ exports.capture_url = function(req, res, next) {
 
   console.log('Capturing url...');
 
-  if(req.body.url_ids && req.body.url_ids.length > 0) {
-    const url_ids = req.body.url_ids;
-
-    let i = 0;
-
-    while(i < url_ids.length) {
-      captureUrl(url_ids[i]);
-      i++;
-    }
-
-    res.send('Capturing started');
+  if(req.params.id) {
+    captureUrl(req.params.id, res);
   }
   else {
-    res.send('Error: no specified URL id');
+    const json = {
+      type: 'error',
+      id: -1,
+      msg: 'No specified URL id'
+    };
+
+    res.send(json);
   }
 }
 
@@ -210,7 +207,7 @@ exports.compare_url = function(req, res, next) {
     let i = 0;
 
     while(i < url_ids.length) {
-      compareUrl(url_ids[i]);
+      compareUrl(url_ids[i], null);
       i++;
     }
 
@@ -264,17 +261,38 @@ async function compareUrlAsync(id) {
 }
 
 // Synchronous function that will retrieve the URL and call the asynchronous function
-function captureUrl(id) {
+function captureUrl(id, res) {
   const querySelect = {
     text: 'SELECT url FROM page WHERE id=$1 AND deleted=$2',
     values: [id, false]
   };
 
   database.query(querySelect, (err, resultSelect) => {
-    if(err || resultSelect.rowCount == 0)
+    if(err || resultSelect.rowCount == 0) {
       console.log('Couldn\'t get URL to capture');
+
+      if(res) {
+        const json = {
+          type: 'error',
+          id: id,
+          msg: 'Couldn\'t get URL to capture'
+        };
+    
+        res.send(json);
+      }
+    }
     else {
       captureUrlAsync(id, resultSelect.rows[0].url, false);
+
+      if(res) {
+        const json = {
+          type: 'capture_url',
+          id: id,
+          msg: 'Capture started'
+        };
+    
+        res.send(json);
+      }
     }
   });
 }

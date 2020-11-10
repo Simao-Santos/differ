@@ -183,8 +183,40 @@ or
 }
 ```
 
-### **POST** /urls/capture/ - Capture URLs
-TODO
+### **GET** /urls/capture/{id} - Capture URL
+
+#### Parameters
+
+* **id**: Integer
+
+Examples:
+
+`GET .../urls/capture/{id}`
+
+#### Response
+
+* **type**: String (`'capture_url'` when successful, `'error'` when not successful)
+* **id**: Integer (ID of the URL requested to be captured)
+* **msg**: String
+
+Example:
+```
+{
+    "type": "capture_url",
+    "id": 5,
+    "msg": "Capture started"
+}
+```
+
+or
+
+```
+{
+    "type": "error",
+    "id": 5,
+    "msg": "Couldn't capture URL"
+}
+```
 
 ### **POST** /urls/compare/ - Compare URLs
 TODO
