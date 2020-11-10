@@ -1,3 +1,5 @@
 
 be/node_modules/
 be/bin/
+be/shots/
+pgdata
