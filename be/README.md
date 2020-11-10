@@ -40,19 +40,33 @@ To run the server just do `npm start`.
 
 This backend uses an API to communicate with the frontend.
 
-### **GET** /urls/ - Get URLs
+### **GET** /urls/{id} - Get URLs
+
+#### Parameters
+
+* **id**\*: Integer
+
+###### * optional
+
+Examples:
+
+`GET .../urls/`
+
+or
+
+`GET .../urls/2`
 
 #### Response
 
 * **type**: String (`'get_urls'` when successful, `'error'` when not successful)
-* **urls**\*: Array
+* **urls**\*: Array (list of URLs)
     * **id**: Integer
     * **url**: String
 * **msg**: String
 
 ###### * not always present
 
-Example:
+Examples:
 ```
 {
     "type": "get_urls",
@@ -70,6 +84,8 @@ Example:
 }
 ```
 
+or
+
 ```
 {
     "type": "error",
@@ -85,6 +101,9 @@ Example:
 
 Example:
 ```
+- POST .../urls/
+
+Body:
 {
     "url": http://localhost:3000
 }
@@ -92,7 +111,7 @@ Example:
 
 #### Response
 
-* **type**: String (`'post_urls'` when successful, `'error'` when not successful)
+* **type**: String (`'post_url'` when successful, `'error'` when not successful)
 * **urls**\*: Array (updated list of URLs)
     * **id**: Integer
     * **url**: String
@@ -100,10 +119,10 @@ Example:
 
 ###### * not always present
 
-Example:
+Examples:
 ```
 {
-    "type": "post_urls",
+    "type": "post_url",
     "urls": [
         {
             "id": 1,
@@ -118,6 +137,8 @@ Example:
 }
 ```
 
+or
+
 ```
 {
     "type": "error",
@@ -125,24 +146,19 @@ Example:
 }
 ```
 
-### **DELETE** /urls/ - Delete URLs
+### **DELETE** /urls/{id} - Delete URLs
 
-#### Parameters
+#### Parameters (use Path or use Body)
 
-* **url_ids**: Array\[Integer\]
+* **id**: Integer
 
-Example:
-```
-{
-    "url_ids": [1, 2, 4,...]
-}
-```
+Examples:
+
+`DELETE .../urls/{id}`
 
 #### Response
 
-* **type**: String (`'delete_urls'` when successful, `'error'` when not successful)
-* **num_deleted**\*: Integer (number of deleted URLs)
-* **num_query**\*: Integer (number of URLs asked to be deleted)
+* **type**: String (`'delete_url'` when successful, `'error'` when not successful)
 * **msg**: String
 
 ###### * not always present
@@ -150,17 +166,17 @@ Example:
 Example:
 ```
 {
-    "type": "delete_urls",
-    "num_deleted": 3,
-    "num_query": 4,
-    "msg": "Operation successful, not all URLs were deleted"
+    "type": "delete_url",
+    "msg": "Operation successful"
 }
 ```
+
+or
 
 ```
 {
     "type": "error",
-    "msg": "No specified URL ids"
+    "msg": "No specified URL id"
 }
 ```
 
