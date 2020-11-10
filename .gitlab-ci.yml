@@ -82,8 +82,8 @@ stages:
 #     - docker build -f Dockerfile.web -t registry.gitlab.com/feup-tbs/ldso2021/t1g1 .
 #     - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
 
-deploy_mlg:
-    stage: deploy
+#deploy_mlg:
+#    stage: deploy
     
 deploy_production:
     stage: deploy
