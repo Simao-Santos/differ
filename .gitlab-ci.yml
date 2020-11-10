@@ -1,10 +1,10 @@
 image: gitlab/dind
  
-include:
-  - template: Security/Dependency-Scanning.gitlab-ci.yml
-  - template: Security/License-Scanning.gitlab-ci.yml
-  - template: Security/SAST.gitlab-ci.yml
-  - template: Security/Secret-Detection.gitlab-ci.yml
+# include:
+#   - template: Security/Dependency-Scanning.gitlab-ci.yml
+#   - template: Security/License-Scanning.gitlab-ci.yml
+#   - template: Security/SAST.gitlab-ci.yml
+#   - template: Security/Secret-Detection.gitlab-ci.yml
  
 services:
   - docker:dind
@@ -16,22 +16,22 @@ stages:
   - deploy
  
 # run eslint and attempt to fix the linting erros (in front end)
-# eslint-frontend:
-#   stage: lint
-#   image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:latest
-#   script:
-#     - cd fe/
-#     - npm install eslint --save-dev
-#     - npm run lint-fix
+eslint-frontend:
+  stage: lint
+  image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:latest
+  script:
+    - cd fe/
+    - npm install eslint --save-dev
+    - npm run lint-fix
  
-# # run eslint and attempt to fix the linting erros (in backend)
-# eslint-backend:
-#   stage: lint
-#   image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:latest
-#   script:
-#     - cd be/
-#     - npm install eslint --save-dev
-#     - npm run lint-fix
+# run eslint and attempt to fix the linting erros (in backend)
+eslint-backend:
+  stage: lint
+  image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:latest
+  script:
+    - cd be/
+    - npm install eslint --save-dev
+    - npm run lint-fix
  
  
  
@@ -82,13 +82,13 @@ stages:
 #     - docker build -f Dockerfile.web -t registry.gitlab.com/feup-tbs/ldso2021/t1g1 .
 #     - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
 
-deploy_mlg:
-    stage: build
-    only:
-      - master
-    script:
-      - echo "test"
-      - dpl --provider=heroku --app=t1g1-production --api-key=$HEROKU_API_KEY
+# deploy_mlg:
+#     stage: build
+#     only:
+#       - master
+#     script:
+#       - echo "test"
+#       - dpl --provider=heroku --app=t1g1-production --api-key=$HEROKU_API_KEY
     
 
 
