@@ -83,7 +83,7 @@ stages:
 #     - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
 
 deploy_mlg:
-    stage: deploy
+    stage: build
     only:
       - master
     script:
