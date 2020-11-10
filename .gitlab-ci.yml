@@ -1,4 +1,4 @@
-image: gitlab/dind
+# image: gitlab/dind
  
 # include:
 #   - template: Security/Dependency-Scanning.gitlab-ci.yml
