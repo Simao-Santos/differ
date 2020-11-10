@@ -14,8 +14,8 @@ function UrlEdition() {
   const [select_all_button, setSelectAll] = useState([false, true]) // select_all_button[0] => message | select_all_button[1] => hidden
   const [be_reply, setBeReply] = useState('{}')
   const [new_urls_json, setJsonUrls] = useState([])
+  const [do_animation, setAnimationState] = useState(true)
   const urlAddressRef = useRef()
-
 
   // useEffects 1. load urls from local storage
   // 2. save new url on local storage 
@@ -52,6 +52,9 @@ function UrlEdition() {
 
   useEffect(() => {
   }, [file])
+
+  useEffect(() => {
+  }, [do_animation])
 
   useEffect(() => {
     switch(be_reply.type){
@@ -140,6 +143,8 @@ function UrlEdition() {
       fetch("http://localhost:8000/urls", requestDelOptions)
       .then(res => res.text())
       .then(res => setBeReply(JSON.parse(res)))
+
+      setAnimationState(false)
       
   } 
 
@@ -174,6 +179,8 @@ function UrlEdition() {
       .then(res => setBeReply(JSON.parse(res)))
 
       console.log('delete the mf after this')
+
+      setAnimationState(false)
     }
   }
 
@@ -198,7 +205,10 @@ function UrlEdition() {
       fetch("http://localhost:8000/urls/capture", requestOptions)
       .then(res => res.text())
       .then(res => console.log(res))
-      }
+      
+      setAnimationState(false)
+
+    }
   }
 
   function handleToggleSelectAll() {
@@ -239,6 +249,8 @@ function UrlEdition() {
     .then(res => res.text())
     .then(res => console.log(res))
 
+    setAnimationState(false)
+
   }
 
   function getListOfUrls() {
@@ -263,6 +275,7 @@ function UrlEdition() {
   return (
      <>
       <header>
+        <Notification message={ be_reply.msg } toggleAnimation={ setAnimationState } animate={ do_animation }/>
         <h1> Insert your URL's here!</h1>
         <p>Backend replies: <span class="text-danger">{ be_reply.msg }</span></p>
         <p> Each page will be saved in our database. In the future, all you need to do is run the tests and we will use this version to run the comparisons.</p>
