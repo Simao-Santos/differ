@@ -70,7 +70,7 @@ exports.captureUrlSync = captureUrl;
 
 // Asynchronous function that will capture the url content and screenshot
 async function captureUrlAsync(id, url, compareNext) {
-    const folder = './shots';
+    const folder = '/shots';
 
     // Build filename for files
     const today = new Date();
@@ -106,7 +106,7 @@ async function captureUrlAsync(id, url, compareNext) {
         console.log('Saving page content for ' + url + '...');
 
         try {
-            fs.writeFileSync(contentPath, body);
+            fs.writeFileSync('./public' + contentPath, body);
             console.log('Page content saved!');
 
             const screenshotPath = await saveUrlScreenshot(contentPath, filename, folder);
@@ -194,7 +194,7 @@ function compareUrl(id, res) {
 
 // Asynchronous function that will order comparison of the 2 most recent captures
 async function compareUrlAsync(id) {
-    const folder = './shots';
+    const folder = '/shots';
 
     const querySelect = {
         text: 'SELECT id, image_location, text_location FROM capture WHERE page_id=$1 AND deleted=$2 ORDER BY date DESC LIMIT 2',
@@ -228,8 +228,8 @@ async function saveUrlScreenshot(codeFilePath, filename, saveFolder) {
     //
     // There are still problems with some characters and some images that aren't displayed correctly
     await new Pageres({delay: 2})
-        .src(codeFilePath, ['1920x1080'], {filename: filename})
-        .dest(saveFolder)
+        .src('./public' + codeFilePath, ['1920x1080'], {filename: filename})
+        .dest('./public' + saveFolder)
         .run();
         
     console.log('Finished generating screenshot!');
@@ -263,10 +263,10 @@ async function compareCaptures(id_1, id_2, text_location_1, text_location_2, ima
 
     console.log('Comparing screenshots...');
             
-    let img1 = PNG.sync.read(fs.readFileSync(image_location_1));
-    let img2 = PNG.sync.read(fs.readFileSync(image_location_2));
-    let img1Raw = fs.readFileSync(image_location_1);
-    let img2Raw = fs.readFileSync(image_location_2);
+    let img1 = PNG.sync.read(fs.readFileSync('./public' + image_location_1));
+    let img2 = PNG.sync.read(fs.readFileSync('./public' + image_location_2));
+    let img1Raw = fs.readFileSync('./public' + image_location_1);
+    let img2Raw = fs.readFileSync('./public' + image_location_2);
 
     console.log('Capture 1 original size: ' + img1.width + 'x' + img1.height);
     console.log('Capture 2 original size: ' + img2.width + 'x' + img2.height);
@@ -303,7 +303,7 @@ async function compareCaptures(id_1, id_2, text_location_1, text_location_2, ima
         {threshold: 0.1, diffColorAlt: [0, 200, 0], alpha: 0.5});
 
 
-    fs.writeFileSync(imageFile, PNG.sync.write(diff));
+    fs.writeFileSync('./public' + imageFile, PNG.sync.write(diff));
 
     console.log('Finished comparing screenshots!');
     console.log(diff_pixels + ' different pixels (' + (diff_pixels / (width*height) * 100) + '%)');
