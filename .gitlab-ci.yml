@@ -87,7 +87,8 @@ deploy_mlg:
     only:
       - master
     script:
-    - dpl --provider=heroku --app=t1g1-production --api-key=$HEROKU_API_KEY
+      - echo "test"
+      - dpl --provider=heroku --app=t1g1-production --api-key=$HEROKU_API_KEY
     
 
 
