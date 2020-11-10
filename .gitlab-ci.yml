@@ -54,5 +54,5 @@ test_react:
     - echo "Testing Frontend..."
     - cd fe/
     - npm install
-    - npm run test-jest
+    - npm run test
     - echo "All Tests successful!"
