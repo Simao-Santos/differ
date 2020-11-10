@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import '../CSS/ChangesPage.css'
 import '../CSS/URLEdition.css'
 import URLList from '../Components/URLList.js'
+import Notification from '../Components/Notification'
 
 const LOCAL_STORAGE_KEY = 'differ.links'
 
@@ -53,12 +54,6 @@ function UrlEdition() {
   }, [file])
 
   useEffect(() => {
-    //console.log('be reply update post opt')
-    //const response = JSON.parse(be_reply.text())
-    /*if(be_reply[0] !== '[' && be_reply[0] !== 'D') return
-    console.log('passed conditional')
-    getListOfUrls()*/
-    //const response = JSON.parse(be_reply)
     switch(be_reply.type){
       case 'get_urls': setUrls(be_reply.urls)
       break
@@ -230,6 +225,8 @@ function UrlEdition() {
   }
 
   function getListOfUrls() {
+
+    
 
     console.log('getting urls from db')
 

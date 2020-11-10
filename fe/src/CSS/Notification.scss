@@ -1,0 +1,14 @@
+.notification-box {
+    background-color: #ffba8c;
+    height: 4em;
+    text-align: left;
+
+    &.p {
+        font-size: 200px;
+        text-align: left !important;
+    }
+}
+
+p {
+    margin-top: 0 !important;
+}
