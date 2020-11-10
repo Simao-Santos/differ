@@ -18,7 +18,7 @@ stages:
 # run eslint and attempt to fix the linting erros (in front end)
 # eslint-frontend:
 #   stage: lint
-#   image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend
+#   image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:latest
 #   script:
 #     - cd fe/
 #     - npm install eslint --save-dev
@@ -27,7 +27,7 @@ stages:
 # # run eslint and attempt to fix the linting erros (in backend)
 # eslint-backend:
 #   stage: lint
-#   image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend
+#   image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:latest
 #   script:
 #     - cd be/
 #     - npm install eslint --save-dev
@@ -48,7 +48,7 @@ stages:
 # # builds the react frontend (I think)
 # build_react:
 #   stage: build
-#   image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend
+#   image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:latest
 #   script:
 #     - echo "Start building Frontend"
 #     - cd fe/
