@@ -37,23 +37,23 @@ stages:
  
  
  
-build_backend:
+build_backend_develop:
     stage: build
     script:
       - cd be/
       - docker version
       - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-      - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1-develop:backend .
-      - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1-develop
+      - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend_develop .
+      - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
  
-build_frontend:
+build_frontend_develop:
     stage: build
     script:
       - cd fe/
       - docker version
       - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-      - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1-develop:frontend .
-      - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1-develop
+      - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend_develop .
+      - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
 
 
 build_backend_production:
@@ -64,8 +64,8 @@ build_backend_production:
       - cd be/
       - docker version
       - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-      - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1-production:backend .
-      - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1-production
+      - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend_production .
+      - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
       
  
 build_frontend_production:
@@ -76,8 +76,8 @@ build_frontend_production:
       - cd fe/
       - docker version
       - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-      - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1-production:frontend .
-      - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1-production
+      - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend_production .
+      - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
 
 
 # build_mlg:
