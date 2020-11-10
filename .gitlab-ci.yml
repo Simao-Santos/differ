@@ -1,10 +1,10 @@
 image: gitlab/dind
  
-include:
-  - template: Security/Dependency-Scanning.gitlab-ci.yml
-  - template: Security/License-Scanning.gitlab-ci.yml
-  - template: Security/SAST.gitlab-ci.yml
-  - template: Security/Secret-Detection.gitlab-ci.yml
+# include:
+#   - template: Security/Dependency-Scanning.gitlab-ci.yml
+#   - template: Security/License-Scanning.gitlab-ci.yml
+#   - template: Security/SAST.gitlab-ci.yml
+#   - template: Security/Secret-Detection.gitlab-ci.yml
  
 services:
   - docker:dind
@@ -14,8 +14,12 @@ stages:
   - build
   - test
   - deploy
- 
-#run eslint and attempt to fix the linting erros (in front end)
+
+
+########################################################################
+
+
+# run eslint and attempt to fix the linting erros (in front end)
 eslint-frontend:
   stage: lint
   image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend_develop
@@ -23,7 +27,7 @@ eslint-frontend:
     - cd fe/
     - npm install eslint --save-dev
     - npm run lint-fix
- 
+
 # run eslint and attempt to fix the linting erros (in backend)
 eslint-backend:
   stage: lint
@@ -32,9 +36,10 @@ eslint-backend:
     - cd be/
     - npm install eslint --save-dev
     - npm run lint-fix
- 
- 
- 
+
+
+########################################################################
+
 build_backend_develop:
   stage: build
   only:
@@ -45,7 +50,7 @@ build_backend_develop:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend_develop .
     - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
-
+    
 build_frontend_develop:
   stage: build
   only:
@@ -58,6 +63,9 @@ build_frontend_develop:
     - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
 
 
+########################################################################
+
+
 build_backend_production:
   stage: build
   only: 
@@ -68,7 +76,10 @@ build_backend_production:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend_production .
     - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
-      
+
+
+########################################################################
+
  
 build_frontend_production:
   stage: build
@@ -82,10 +93,27 @@ build_frontend_production:
     - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
 
 
-# build_mlg:
-#     stage: build
-#     script:
-#     - docker version
-#     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-#     - docker build -f Dockerfile.web -t registry.gitlab.com/feup-tbs/ldso2021/t1g1 .
-#     - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
+########################################################################
+
+
+# tests the express backend
+test_express:
+  stage: test
+  image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend_develop
+  script:
+    - echo "Testing Backend..."
+    - cd be/
+    - npm install
+    - npm run test
+    - echo "All Tests successful!"
+
+# tests the react frontend
+test_react:
+  stage: test
+  image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend_develop
+  script:
+    - echo "Testing Frontend..."
+    - cd fe/
+    - npm install
+    - npm run test
+    - echo "All Tests successful!"
