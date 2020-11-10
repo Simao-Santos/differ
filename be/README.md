@@ -148,7 +148,7 @@ or
 
 ### **DELETE** /urls/{id} - Delete URLs
 
-#### Parameters (use Path or use Body)
+#### Parameters
 
 * **id**: Integer
 
@@ -159,6 +159,7 @@ Examples:
 #### Response
 
 * **type**: String (`'delete_url'` when successful, `'error'` when not successful)
+* **id**: Integer (ID of the URL requested to be deleted)
 * **msg**: String
 
 ###### * not always present
@@ -167,6 +168,7 @@ Example:
 ```
 {
     "type": "delete_url",
+    "id": 5,
     "msg": "Operation successful"
 }
 ```
@@ -176,7 +178,8 @@ or
 ```
 {
     "type": "error",
-    "msg": "No specified URL id"
+    "id": 5,
+    "msg": "Couldn't delete URL"
 }
 ```
 

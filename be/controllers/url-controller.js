@@ -139,6 +139,7 @@ exports.delete_url = function(req, res, next) {
 
         const json = {
           type: 'error',
+          id: req.params.id,
           msg: 'Couldn\'t delete URL'
         };
 
@@ -149,6 +150,7 @@ exports.delete_url = function(req, res, next) {
         
         const json = {
           type: 'delete_url',
+          id: req.params.id,
           msg: 'Operation successful'
         };
 
@@ -157,8 +159,9 @@ exports.delete_url = function(req, res, next) {
     });
   }
   else {
-    let json = {
+    const json = {
       type: 'error',
+      id: -1,
       msg: 'No specified URL id'
     };
 
