@@ -82,15 +82,14 @@ stages:
 #     - docker build -f Dockerfile.web -t registry.gitlab.com/feup-tbs/ldso2021/t1g1 .
 #     - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
 
-#deploy_mlg:
-#    stage: deploy
-    
-deploy_production:
+deploy_mlg:
     stage: deploy
     only:
       - master
     script:
-      - dpl --provider=heroku --app=t1g1-production --api-key=$HEROKU_API_KEY
+    - dpl --provider=heroku --app=t1g1-production --api-key=$HEROKU_API_KEY
+    
+
 
 # # tests the express backend (I think)
 # test_express:
