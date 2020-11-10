@@ -116,7 +116,7 @@ exports.delete_captures = function(req, res, next) {
                 res.send(json);
             }
             else {
-                console.log('Page with capture ' + req.params.id + ' marked as deleted');
+                console.log('Capture with ID ' + req.params.id + ' marked as deleted');
                 
                 const json = {
                     type: 'delete_capture',
