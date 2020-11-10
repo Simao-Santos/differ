@@ -24,7 +24,7 @@ eslint-frontend:
     - ls
     - cd fe/
     - ls
-    # - npm install eslint --save-dev
+    - npm install eslint --save-dev
     - npm run lint-fix
  
 # # run eslint and attempt to fix the linting erros (in backend)
