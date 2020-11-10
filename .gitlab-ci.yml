@@ -9,10 +9,14 @@ stages:
   - build
   - test
 
+
+########################################################################
+
+
 # run eslint and attempt to fix the linting erros (in front end)
 eslint-frontend:
   stage: lint
-  image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:latest
+  image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend_develop
   script:
     - cd fe/
     - npm install eslint --save-dev
@@ -21,7 +25,7 @@ eslint-frontend:
 # run eslint and attempt to fix the linting erros (in backend)
 eslint-backend:
   stage: lint
-  image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:latest
+  image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend_develop
   script:
     - cd be/
     - npm install eslint --save-dev
@@ -31,25 +35,10 @@ eslint-backend:
 ########################################################################
 
 
-# builds the react frontend to check for errors
-build_react:
-  stage: build
-  image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:latest
-  script:
-    - echo "Start building Frontend"
-    - cd fe/
-    - npm install
-    - npm run build
-    - echo "Build successful!"
-
-
-########################################################################
-
-
 # tests the express backend
 test_express:
   stage: test
-  image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:latest
+  image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend_develop
   script:
     - echo "Testing Backend..."
     - cd be/
@@ -60,7 +49,7 @@ test_express:
 # tests the react frontend
 test_react:
   stage: test
-  image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:latest
+  image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend_develop
   script:
     - echo "Testing Frontend..."
     - cd fe/
