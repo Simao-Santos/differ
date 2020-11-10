@@ -14,8 +14,14 @@ exports.get_urls = function(req, res, next) {
     username = req.body.username;
 
   let query;
+  let doCall = true;
 
   if(req.params.id) {
+    if(!Number.isInteger(req.params.id)) {
+      res.sendStatus(404);
+      doCall = false;
+    }
+
     query = {
       text: 'SELECT id, url FROM page WHERE username=$1 AND deleted=$2 AND id=$3',
       values: [username, false, req.params.id]
@@ -28,25 +34,29 @@ exports.get_urls = function(req, res, next) {
     };
   }
 
+  if(doCall) {
+    database.query(query, (err, result) => { 
   database.query(query, (err, result) => { 
-    if(err) {
-      const json = {
-        type: 'error',
-        msg: 'Couldn\'t access database'
+    database.query(query, (err, result) => { 
+      if(err) {
+        const json = {
+          type: 'error',
+          msg: 'Couldn\'t access database'
+        }
+    
+        res.send(json);
       }
-  
-      res.send(json);
-    }
-    else {
-      const json = {
-        type: 'get_urls',
-        urls: result.rows,
-        msg: 'Operation successful'
+      else {
+        const json = {
+          type: 'get_urls',
+          urls: result.rows,
+          msg: 'Operation successful'
+        }
+    
+        res.send(json);
       }
-  
-      res.send(json);
-    }
-  });
+    });
+  }
 }
 
 // Add a new URL to the database
@@ -128,35 +138,40 @@ exports.delete_url = function(req, res, next) {
   console.log('Deleting url...');
 
   if(req.params.id) {
-    const query = {
-      text: 'UPDATE page SET deleted=$1 WHERE id=$2 AND deleted=$3 RETURNING id',
-      values: [true, req.params.id, false]
-    };
-
-    database.query(query, (err, result) => {
-      if(err || result.rowCount == 0) {
-        console.log('Couldn\'t mark page with ID ' + req.params.id + ' as deleted');
-
-        const json = {
-          type: 'error',
-          id: req.params.id,
-          msg: 'Couldn\'t delete URL'
-        };
-
-        res.send(json);
-      }
-      else {
-        console.log('Page with ID ' + req.params.id + ' marked as deleted');
-        
-        const json = {
-          type: 'delete_url',
-          id: req.params.id,
-          msg: 'Operation successful'
-        };
-
-        res.send(json);
-      }
-    });
+    if(Number.isInteger(req.params.id)) {
+      const query = {
+        text: 'UPDATE page SET deleted=$1 WHERE id=$2 AND deleted=$3 RETURNING id',
+        values: [true, req.params.id, false]
+      };
+  
+      database.query(query, (err, result) => {
+        if(err || result.rowCount == 0) {
+          console.log('Couldn\'t mark page with ID ' + req.params.id + ' as deleted');
+  
+          const json = {
+            type: 'error',
+            id: req.params.id,
+            msg: 'Couldn\'t delete URL'
+          };
+  
+          res.send(json);
+        }
+        else {
+          console.log('Page with ID ' + req.params.id + ' marked as deleted');
+          
+          const json = {
+            type: 'delete_url',
+            id: req.params.id,
+            msg: 'Operation successful'
+          };
+  
+          res.send(json);
+        }
+      });
+    }
+    else {
+      res.sendStatus(404);
+    }    
   }
   else {
     const json = {
