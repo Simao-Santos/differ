@@ -216,16 +216,15 @@ function UrlEdition() {
       }
 
       const requestOptions = {
-        method: 'POST',
-        headers: {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        body: JSON.stringify({ url_ids: my_url_ids })
+        method: 'GET'
         
       }
-      fetch("http://localhost:8000/urls/capture", requestOptions)
+
+      my_url_ids.forEach(id =>
+      fetch(`http://localhost:8000/actions/capture/${id}`, requestOptions)
       .then(res => res.text())
       .then(res => console.log(res))
+      )
       
       setAnimationState(false)
 
@@ -259,18 +258,18 @@ function UrlEdition() {
     }
 
     const requestOptions = {
-      method: 'POST',
-      headers: {
-        "Content-Type": "application/json; charset=utf-8"
-      },
-      body: JSON.stringify({ url_ids: my_url_ids })
-      
+      method: 'GET'      
     }
-    fetch("http://localhost:8000/urls/compare", requestOptions)
-    .then(res => res.text())
-    .then(res => console.log(res))
+
+
+    my_url_ids.forEach(id =>
+      fetch(`http://localhost:8000/actions/compare/${id}`, requestOptions)
+      .then(res => res.text())
+      .then(res => console.log(res))
+    )
 
     setAnimationState(false)
+    
 
   }
 
@@ -317,7 +316,6 @@ function UrlEdition() {
       <header>
         <Notification message={ be_reply.msg } toggleAnimation={ setAnimationState } animate={ do_animation }/>
         <h1> Insert your URL's here!</h1>
-        <p>Backend replies: <span class="text-danger">{ be_reply.msg }</span></p>
         <p> Each page will be saved in our database. In the future, all you need to do is run the tests and we will use this version to run the comparisons.</p>
       </header>
       <div class="container">
