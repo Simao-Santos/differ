@@ -1,7 +1,7 @@
 #! /bin/sh
 
 # Creates shots folder and gives permission to EVERYONE
-mkdir -p be/shots
-chmod 777 be/shots
+mkdir -p be/public/shots
+chmod 777 be/public/shots
 
 docker-compose up

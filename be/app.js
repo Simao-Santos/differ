@@ -10,6 +10,7 @@ var usersRouter = require('./routes/users');
 var urlsRoute = require('./routes/urls');
 var capturesRoute = require('./routes/captures');
 var comparisonsRoute = require('./routes/comparisons');
+var actionsRoute = require('./routes/actions');
 
 var app = express();
 
@@ -30,6 +31,7 @@ app.use('/users', usersRouter);
 app.use('/urls', urlsRoute);
 app.use('/captures', capturesRoute);
 app.use('/comparisons', comparisonsRoute);
+app.use('/actions', actionsRoute);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

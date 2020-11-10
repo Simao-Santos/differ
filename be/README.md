@@ -148,7 +148,7 @@ or
 
 ### **DELETE** /urls/{id} - Delete URLs
 
-#### Parameters (use Path or use Body)
+#### Parameters
 
 * **id**: Integer
 
@@ -159,6 +159,7 @@ Examples:
 #### Response
 
 * **type**: String (`'delete_url'` when successful, `'error'` when not successful)
+* **id**: Integer (ID of the URL requested to be deleted)
 * **msg**: String
 
 ###### * not always present
@@ -167,6 +168,7 @@ Example:
 ```
 {
     "type": "delete_url",
+    "id": 5,
     "msg": "Operation successful"
 }
 ```
@@ -176,18 +178,381 @@ or
 ```
 {
     "type": "error",
-    "msg": "No specified URL id"
+    "id": 5,
+    "msg": "Couldn't delete URL"
 }
 ```
 
-### **POST** /urls/capture/ - Capture URLs
-TODO
+---
 
-### **POST** /urls/compare/ - Compare URLs
-TODO
+### **GET** /captures/ - Get Captures
 
-### **GET** /capture/ - Get Captures
-TODO
+#### Parameters
+
+* **id**\*: Integer
+
+###### * optional
+
+Examples:
+
+`GET .../captures/`
+
+or
+
+`GET .../captures/2`
+
+#### Response
+
+* **type**: String (`'get_captures'` when successful, `'error'` when not successful)
+* **urls**\*: Array (list of Captures)
+    * **id**: Integer
+    * **text_location**: String (text file path)
+    * **image_location**: String (image path file)
+    * **date**: String (date the capture was created)
+* **msg**: String
+
+###### * not always present
+
+Examples:
+```
+{
+    "type": "get_captures",
+    "captures": [
+        {
+            "id": 29,
+            "text_location": "./shots/url_14_2020_11_10_18_19_52_766.html",
+            "image_location": "./shots/url_14_2020_11_10_18_19_52_766.png",
+            "date": "2020-11-10T18:19:52.766Z"
+        },
+        {
+            "id": 30,
+            "text_location": "./shots/url_13_2020_11_10_18_21_22_597.html",
+            "image_location": "./shots/url_13_2020_11_10_18_21_22_597.png",
+            "date": "2020-11-10T18:21:22.597Z"
+        },
+        {
+            "id": 31,
+            "text_location": "./shots/url_14_2020_11_10_18_30_21_299.html",
+            "image_location": "./shots/url_14_2020_11_10_18_30_21_299.png",
+            "date": "2020-11-10T18:30:21.299Z"
+        }
+    ],
+    "msg": "Operation successful"
+}
+```
+
+or
+
+```
+{
+    "type": "error",
+    "msg": "Couldn't access database"
+}
+```
+
+### **GET** /captures/byPageId/ - Get Captures by Page ID
+
+#### Parameters
+
+* **id**: Integer
+
+Examples:
+
+`GET .../captures/byPageId/2`
+
+#### Response
+
+* **type**: String (`'get_captures_by_page_id'` when successful, `'error'` when not successful)
+* **urls**\*: Array (list of Captures)
+    * **id**: Integer
+    * **text_location**: String (text file path)
+    * **image_location**: String (image path file)
+    * **date**: String (date the capture was created)
+* **msg**: String
+
+###### * not always present
+
+Examples:
+```
+{
+    "type": "get_captures_by_page_id",
+    "captures": [
+        {
+            "id": 30,
+            "text_location": "./shots/url_13_2020_11_10_18_21_22_597.html",
+            "image_location": "./shots/url_13_2020_11_10_18_21_22_597.png",
+            "date": "2020-11-10T18:21:22.597Z"
+        }
+    ],
+    "msg": "Operation successful"
+}
+```
+
+or
+
+```
+{
+    "type": "error",
+    "msg": "Couldn't access database"
+}
+```
+
+### **DELETE** /captures/ - Delete Capture
+
+#### Parameters
+
+* **id**: Integer
+
+Examples:
+
+`DELETE .../captures/2`
+
+#### Response
+
+* **type**: String (`'delete_capture'` when successful, `'error'` when not successful)
+* **id**: Integer (ID of the capture requested to be deleted)
+* **msg**: String
+
+Examples:
+```
+{
+    "type": "delete_capture",
+    "id": "29",
+    "msg": "Operation successful"
+}
+```
+
+or
+
+```
+{
+    "type": "error",
+    "id": "6",
+    "msg": "Couldn't delete capture"
+}
+```
+
+---
 
 ### **GET** /comparisons/ - Get Comparisons
-TODO
+
+#### Parameters
+
+* **id**\*: Integer
+
+###### * optional
+
+Examples:
+
+`GET .../comparisons/`
+
+or
+
+`GET .../comparisons/2`
+
+#### Response
+
+* **type**: String (`'get_comparisons'` when successful, `'error'` when not successful)
+* **urls**\*: Array (list of Comparisons)
+    * **id**: Integer
+    * **capture_1_id**: Integer (ID of the first capture in the comparison)
+    * **capture_2_id**: Integer (ID of the second capture in the comparison)
+    * **text_location**: String (text file path)
+    * **image_location**: String (image path file)
+    * **diff_pixels**: Integer (number of different pixels between the images)
+    * **total_pixels**: Integer (total number of pixels in an image)
+    * **date**: String (date the comparison was created)
+* **msg**: String
+
+###### * not always present
+
+Examples:
+```
+{
+    "type": "get_comparisons",
+    "comparisons": [
+        {
+            "id": 12,
+            "capture_1_id": 32,
+            "capture_2_id": 30,
+            "text_location": null,
+            "image_location": "./shots/comparison_32_30_2020_11_10_19_26_42_415.png",
+            "diff_pixels": 0,
+            "total_pixels": 2073600,
+            "date": "2020-11-10T19:26:42.415Z"
+        }
+    ],
+    "msg": "Operation successful"
+}
+```
+
+or
+
+```
+{
+    "type": "error",
+    "msg": "Couldn't access database"
+}
+```
+
+### **GET** /comparisons/byPageId/ - Get Comparisons by Page ID
+
+#### Parameters
+
+* **id**: Integer
+
+Examples:
+
+`GET .../comparisons/byPageId/2`
+
+#### Response
+
+* **type**: String (`'get_comparisons_by_page_id'` when successful, `'error'` when not successful)
+* **urls**\*: Array (list of Comparisons)
+    * **id**: Integer
+    * **capture_1_id**: Integer (ID of the first capture in the comparison)
+    * **capture_2_id**: Integer (ID of the second capture in the comparison)
+    * **text_location**: String (text file path)
+    * **image_location**: String (image path file)
+    * **diff_pixels**: Integer (number of different pixels between the images)
+    * **total_pixels**: Integer (total number of pixels in an image)
+    * **date**: String (date the comparison was created)
+* **msg**: String
+
+###### * not always present
+
+Examples:
+```
+{
+    "type": "get_comparisons_by_page_id",
+    "comparisons": [
+        {
+            "id": 12,
+            "capture_1_id": 32,
+            "capture_2_id": 30,
+            "text_location": null,
+            "image_location": "./shots/comparison_32_30_2020_11_10_19_26_42_415.png",
+            "diff_pixels": 0,
+            "total_pixels": 2073600,
+            "date": "2020-11-10T19:26:42.415Z"
+        }
+    ],
+    "msg": "Operation successful"
+}
+```
+
+or
+
+```
+{
+    "type": "error",
+    "msg": "Couldn't access database"
+}
+```
+
+### **DELETE** /comparisons/ - Delete Comparison
+
+#### Parameters
+
+* **id**: Integer
+
+Examples:
+
+`DELETE .../comparisons/2`
+
+#### Response
+
+* **type**: String (`'delete_comparison'` when successful, `'error'` when not successful)
+* **id**: Integer (ID of the comparison requested to be deleted)
+* **msg**: String
+
+Examples:
+```
+{
+    "type": "delete_comparison",
+    "id": "12",
+    "msg": "Operation successful"
+}
+```
+
+or
+
+```
+{
+    "type": "error",
+    "id": "7",
+    "msg": "Couldn't delete comparison"
+}
+```
+
+---
+
+### **GET** /actions/capture/{id} - Capture URL
+
+#### Parameters
+
+* **id**: Integer
+
+Examples:
+
+`GET .../actions/capture/{id}`
+
+#### Response
+
+* **type**: String (`'capture_url'` when successful, `'error'` when not successful)
+* **id**: Integer (ID of the URL requested to be captured)
+* **msg**: String
+
+Example:
+```
+{
+    "type": "capture_url",
+    "id": 5,
+    "msg": "Capture started"
+}
+```
+
+or
+
+```
+{
+    "type": "error",
+    "id": 5,
+    "msg": "Couldn\'t get URL to capture"
+}
+```
+
+### **GET** /actions/compare/{id} - Compare URL with latest capture (takes a capture of current state)
+
+#### Parameters
+
+* **id**: Integer
+
+Examples:
+
+`GET .../actions/compare/{id}`
+
+#### Response
+
+* **type**: String (`'compare_url'` when successful, `'error'` when not successful)
+* **id**: Integer (ID of the URL requested to be compared)
+* **msg**: String
+
+Example:
+```
+{
+    "type": "compare_url",
+    "id": 5,
+    "msg": "Comparison started"
+}
+```
+
+or
+
+```
+{
+    "type": "error",
+    "id": 5,
+    "msg": "Couldn't get URL to compare"
+}
+```
