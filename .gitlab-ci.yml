@@ -23,7 +23,7 @@ eslint-frontend:
     # - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     - tree
     - cd fe/
-    - npm install eslint --save-dev
+    # - npm install eslint --save-dev
     - npm run lint-fix
  
 # # run eslint and attempt to fix the linting erros (in backend)
