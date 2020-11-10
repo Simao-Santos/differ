@@ -1,10 +1,10 @@
 image: gitlab/dind
  
-# include:
-#   - template: Security/Dependency-Scanning.gitlab-ci.yml
-#   - template: Security/License-Scanning.gitlab-ci.yml
-#   - template: Security/SAST.gitlab-ci.yml
-#   - template: Security/Secret-Detection.gitlab-ci.yml
+ include:
+   - template: Security/Dependency-Scanning.gitlab-ci.yml
+   - template: Security/License-Scanning.gitlab-ci.yml
+   - template: Security/SAST.gitlab-ci.yml
+   - template: Security/Secret-Detection.gitlab-ci.yml
  
 services:
   - docker:dind
@@ -15,46 +15,70 @@ stages:
   - test
   - deploy
  
-# run eslint and attempt to fix the linting erros (in front end)
-# eslint-frontend:
-#   stage: lint
-#   image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:latest
-#   script:
-#     # - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-#     - ls
-#     - cd fe/
-#     - ls
-#     - npm install eslint --save-dev
-#     - npm run lint-fix
+#run eslint and attempt to fix the linting erros (in front end)
+eslint-frontend:
+  stage: lint
+  image: registry.gitlab.com/feup-tbs/ldso2021/t1g1-develop:frontend
+  script:
+    - ls
+    - cd fe/
+    - ls
+    - npm install eslint --save-dev
+    - npm run lint-fix
  
-# # run eslint and attempt to fix the linting erros (in backend)
-# eslint-backend:
-#   stage: lint
-#   image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:latest
-#   script:
-#     - cd be/
-#     - npm install eslint --save-dev
-#     - npm run lint-fix
- 
+# run eslint and attempt to fix the linting erros (in backend)
+eslint-backend:
+  stage: lint
+  image: registry.gitlab.com/feup-tbs/ldso2021/t1g1-develop:backend
+  script:
+    - cd be/
+    - npm install eslint --save-dev
+    - npm run lint-fix
  
  
-# build_back_end:
-#     stage: build
-#     script:
-#       - cd be/
-#       - docker version
-#       - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-#       - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend .
-#       - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
  
-# build_front_end:
-#     stage: build
-#     script:
-#       - cd fe/
-#       - docker version
-#       - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-#       - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend .
-#       - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
+build_backend:
+    stage: build
+    script:
+      - cd be/
+      - docker version
+      - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+      - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1-develop:backend .
+      - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1-develop
+ 
+build_frontend:
+    stage: build
+    script:
+      - cd fe/
+      - docker version
+      - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+      - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1-develop:frontend .
+      - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1-develop
+
+
+build_backend_production:
+    stage: build
+    only: 
+      - master
+    script:
+      - cd be/
+      - docker version
+      - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+      - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1-production:backend .
+      - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1-production
+      
+ 
+build_frontend_production:
+    stage: build
+    only: 
+      - master
+    script:
+      - cd fe/
+      - docker version
+      - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+      - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1-production:frontend .
+      - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1-production
+
 
 # build_mlg:
 #     stage: build
@@ -64,12 +88,6 @@ stages:
 #     - docker build -f Dockerfile.web -t registry.gitlab.com/feup-tbs/ldso2021/t1g1 .
 #     - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
 
-deploy_mlg:
-    stage: build
-    script:
-      - echo "test"
-      - dpl --provider=heroku --app=t1g1-production --api-key=$HEROKU_API_KEY
-    
 
 
 # # tests the express backend (I think)
