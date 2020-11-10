@@ -183,6 +183,156 @@ or
 }
 ```
 
+### **GET** /captures/ - Get Captures
+
+#### Parameters
+
+* **id**\*: Integer
+
+###### * optional
+
+Examples:
+
+`GET .../captures/`
+
+or
+
+`GET .../captures/2`
+
+#### Response
+
+* **type**: String (`'get_captures'` when successful, `'error'` when not successful)
+* **urls**\*: Array (list of Captures)
+    * **id**: Integer
+    * **text_location**: String (text file path)
+    * **image_location**: String (image path file)
+    * **date**: String (date the capture was created)
+* **msg**: String
+
+###### * not always present
+
+Examples:
+```
+{
+    "type": "get_captures",
+    "captures": [
+        {
+            "id": 29,
+            "text_location": "./shots/url_14_2020_11_10_18_19_52_766.html",
+            "image_location": "./shots/url_14_2020_11_10_18_19_52_766.png",
+            "date": "2020-11-10T18:19:52.766Z"
+        },
+        {
+            "id": 30,
+            "text_location": "./shots/url_13_2020_11_10_18_21_22_597.html",
+            "image_location": "./shots/url_13_2020_11_10_18_21_22_597.png",
+            "date": "2020-11-10T18:21:22.597Z"
+        },
+        {
+            "id": 31,
+            "text_location": "./shots/url_14_2020_11_10_18_30_21_299.html",
+            "image_location": "./shots/url_14_2020_11_10_18_30_21_299.png",
+            "date": "2020-11-10T18:30:21.299Z"
+        }
+    ],
+    "msg": "Operation successful"
+}
+```
+
+or
+
+```
+{
+    "type": "error",
+    "msg": "Couldn't access database"
+}
+```
+
+### **GET** /captures/byPageId/ - Get Captures by Page ID
+
+#### Parameters
+
+* **id**: Integer
+
+Examples:
+
+`GET .../captures/byPageId/2`
+
+#### Response
+
+* **type**: String (`'get_captures_by_page_id'` when successful, `'error'` when not successful)
+* **urls**\*: Array (list of Captures)
+    * **id**: Integer
+    * **text_location**: String (text file path)
+    * **image_location**: String (image path file)
+    * **date**: String (date the capture was created)
+* **msg**: String
+
+###### * not always present
+
+Examples:
+```
+{
+    "type": "get_captures_by_page_id",
+    "captures": [
+        {
+            "id": 30,
+            "text_location": "./shots/url_13_2020_11_10_18_21_22_597.html",
+            "image_location": "./shots/url_13_2020_11_10_18_21_22_597.png",
+            "date": "2020-11-10T18:21:22.597Z"
+        }
+    ],
+    "msg": "Operation successful"
+}
+```
+
+or
+
+```
+{
+    "type": "error",
+    "msg": "Couldn't access database"
+}
+```
+
+### **DELETE** /captures/ - Delete Capture
+
+#### Parameters
+
+* **id**: Integer
+
+Examples:
+
+`DELETE .../captures/2`
+
+#### Response
+
+* **type**: String (`'delete_capture'` when successful, `'error'` when not successful)
+* **id**: Integer (ID of the capture requested to be deleted)
+* **msg**: String
+
+Examples:
+```
+{
+    "type": "delete_capture",
+    "id": "29",
+    "msg": "Operation successful"
+}
+```
+
+or
+
+```
+{
+    "type": "error",
+    "id": "6",
+    "msg": "Couldn't delete capture"
+}
+```
+
+### **GET** /comparisons/ - Get Comparisons
+TODO
+
 ### **GET** /actions/capture/{id} - Capture URL
 
 #### Parameters
@@ -252,9 +402,3 @@ or
     "msg": "Couldn't get URL to compare"
 }
 ```
-
-### **GET** /capture/ - Get Captures
-TODO
-
-### **GET** /comparisons/ - Get Comparisons
-TODO
