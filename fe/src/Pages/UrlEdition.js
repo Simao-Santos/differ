@@ -11,7 +11,7 @@ function UrlEdition() {
   const [file] = useState([])
   const [delete_button_style, setStyle] = useState(["grey", "none", "0.25"]) // delete_button_style[0] => background | delete_button_style[1] => pointerEvents | delete_button_style[2] => opacity
   const [select_all_button, setSelectAll] = useState([false, true]) // select_all_button[0] => message | select_all_button[1] => hidden
-  const [be_reply, setBeReply] = useState('nothing to say')
+  const [be_reply, setBeReply] = useState('{}')
   const [new_urls_json, setJsonUrls] = useState([])
   const urlAddressRef = useRef()
 
@@ -53,17 +53,30 @@ function UrlEdition() {
   }, [file])
 
   useEffect(() => {
-    console.log('be reply update post opt')
-    if(be_reply[0] !== '[' && be_reply[0] !== 'D') return
+    //console.log('be reply update post opt')
+    //const response = JSON.parse(be_reply.text())
+    /*if(be_reply[0] !== '[' && be_reply[0] !== 'D') return
     console.log('passed conditional')
-    getListOfUrls()
+    getListOfUrls()*/
+    //const response = JSON.parse(be_reply)
+    switch(be_reply.type){
+      case 'get_urls': setUrls(be_reply.urls)
+      break
+      case 'post_urls': setUrls(be_reply.urls)
+      break
+      case 'delete_urls': getListOfUrls()
+      break
+      case 'error': console.log('ERROR => ' + be_reply.msg)
+      break
+      default: console.log('Something unexpected has happened');
+    }
   }, [be_reply])
 
   useEffect(() => {
     console.log('json urls update post opt')
     if(new_urls_json.length === 0) return
     console.log('passed conditional')
-    const new_urls = JSON.parse(new_urls_json)
+    const new_urls = JSON.parse(new_urls_json).urls
     setUrls(new_urls)
   }, [new_urls_json])
 
@@ -131,7 +144,7 @@ function UrlEdition() {
       }
       fetch("http://localhost:8000/urls", requestDelOptions)
       .then(res => res.text())
-      .then(res => setBeReply(res))
+      .then(res => setBeReply(JSON.parse(res)))
       
   } 
 
@@ -163,7 +176,7 @@ function UrlEdition() {
       }
       fetch("http://localhost:8000/urls", requestOptions)
       .then(res => res.text())
-      .then(res => setBeReply(res))
+      .then(res => setBeReply(JSON.parse(res)))
 
       console.log('delete the mf after this')
     }
@@ -226,7 +239,7 @@ function UrlEdition() {
 
     fetch("http://localhost:8000/urls/", requestOptions)
     .then(res => res.text())
-    .then(res => setJsonUrls(res))
+    .then(res => setBeReply(JSON.parse(res)))
   
 
   }
@@ -237,7 +250,7 @@ function UrlEdition() {
      <>
       <header>
         <h1> Insert your URL's here!</h1>
-        <p>Backend replies: <span class="text-danger">{ be_reply }</span></p>
+        <p>Backend replies: <span class="text-danger">{ be_reply.msg }</span></p>
         <p> Each page will be saved in our database. In the future, all you need to do is run the tests and we will use this version to run the comparisons.</p>
       </header>
       <div class="container">
