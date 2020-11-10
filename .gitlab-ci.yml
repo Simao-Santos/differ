@@ -21,7 +21,9 @@ eslint-frontend:
   image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:latest
   script:
     # - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+    - ls
     - cd fe/
+    - ls
     # - npm install eslint --save-dev
     - npm run lint-fix
  
