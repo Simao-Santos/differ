@@ -18,7 +18,7 @@ stages:
 #run eslint and attempt to fix the linting erros (in front end)
 eslint-frontend:
   stage: lint
-  image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend_develop
+  # image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend_develop
   script:
     - cd fe/
     - npm install eslint --save-dev
@@ -27,7 +27,7 @@ eslint-frontend:
 # run eslint and attempt to fix the linting erros (in backend)
 eslint-backend:
   stage: lint
-  image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend_develop
+  # image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend_develop
   script:
     - cd be/
     - npm install eslint --save-dev
