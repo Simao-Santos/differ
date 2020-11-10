@@ -1,4 +1,4 @@
-image: gitlab/dind
+# image: gitlab/dind
  
 # include:
 #   - template: Security/Dependency-Scanning.gitlab-ci.yml
@@ -18,7 +18,7 @@ stages:
 # run eslint and attempt to fix the linting erros (in front end)
 eslint-frontend:
   stage: lint
-  image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:latest
+  # image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:latest
   script:
     # - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     - ls
