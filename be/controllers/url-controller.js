@@ -104,7 +104,7 @@ exports.add_url = function(req, res, next) {
         });
 
         console.log('URL saved with ID ' + resultInsert.rows[0].id);
-        captureUrl(resultInsert.rows[0].id);
+        captureUrl(resultInsert.rows[0].id, null);
       }
     });
   }

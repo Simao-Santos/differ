@@ -214,7 +214,7 @@ or
 {
     "type": "error",
     "id": 5,
-    "msg": "Couldn't capture URL"
+    "msg": "Couldn\'t get URL to capture"
 }
 ```
 
