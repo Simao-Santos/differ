@@ -44,13 +44,12 @@ function VisualChangesPage() {
 
   useEffect(() => {
     getListOfUrls() 
-    getListOfImages()
 
 }, []) 
 useEffect(() => {
   console.log("be reply")
   console.log(be_urls_reply)
-  console.log(JSON.parse(be_urls_reply))
+  getListOfImages()
 }, [be_urls_reply])
 
 function getListOfUrls() {
@@ -66,7 +65,7 @@ function getListOfUrls() {
   fetch("http://localhost:8000/urls/", requestOptions)
   .then(res => res.text())
   .then(res => setBeUrlsReply(JSON.parse(res).urls))
-
+  .then(console.log("im done"))
 
 }
 
@@ -77,24 +76,17 @@ function getListOfImages() {
   for(let i = 0; i < be_urls_reply.length; i++){
 
   const requestOptions = {
-    method: 'GET',
-    /*headers: {
-      "Content-Type": "application/json; charset=utf-8"
-    },
-    body: JSON.stringify({ page_id: be_urls_reply[i].id })*/
+    method: 'GET'
   }
-
-  console.log(i)
-  console.log(be_urls_reply[i].id)
-
-
   
-  fetch("http://localhost:8000/capture/" , requestOptions)
+  fetch("http://localhost:8000/captures?page_id="+be_urls_reply[i].id , requestOptions)
   .then(res => res.text())
   .then(res => setBeReply(res))
 
+  console.log(be_reply)
+
+}
   
-  }
 
 }
 
