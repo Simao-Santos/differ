@@ -183,7 +183,7 @@ or
 }
 ```
 
-### **GET** /urls/capture/{id} - Capture URL
+### **GET** /actions/capture/{id} - Capture URL
 
 #### Parameters
 
@@ -191,7 +191,7 @@ or
 
 Examples:
 
-`GET .../urls/capture/{id}`
+`GET .../actions/capture/{id}`
 
 #### Response
 
@@ -218,8 +218,40 @@ or
 }
 ```
 
-### **POST** /urls/compare/ - Compare URLs
-TODO
+### **GET** /actions/compare/{id} - Compare URL with latest capture (takes a capture of current state)
+
+#### Parameters
+
+* **id**: Integer
+
+Examples:
+
+`GET .../actions/compare/{id}`
+
+#### Response
+
+* **type**: String (`'compare_url'` when successful, `'error'` when not successful)
+* **id**: Integer (ID of the URL requested to be compared)
+* **msg**: String
+
+Example:
+```
+{
+    "type": "compare_url",
+    "id": 5,
+    "msg": "Comparison started"
+}
+```
+
+or
+
+```
+{
+    "type": "error",
+    "id": 5,
+    "msg": "Couldn't get URL to compare"
+}
+```
 
 ### **GET** /capture/ - Get Captures
 TODO
