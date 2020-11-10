@@ -14,8 +14,8 @@ function UrlEdition() {
   const [select_all_button, setSelectAll] = useState([false, true]) // select_all_button[0] => message | select_all_button[1] => hidden
   const [be_reply, setBeReply] = useState('{}')
   const [new_urls_json, setJsonUrls] = useState([])
+  const [do_animation, setAnimationState] = useState(true)
   const urlAddressRef = useRef()
-
 
   // useEffects 1. load urls from local storage
   // 2. save new url on local storage 
@@ -54,16 +54,19 @@ function UrlEdition() {
   }, [file])
 
   useEffect(() => {
+  }, [do_animation])
+
+  useEffect(() => {
     switch(be_reply.type){
       case 'get_urls': setUrls(be_reply.urls)
       break
-      case 'post_urls': setUrls(be_reply.urls)
+      case 'post_url': setUrls(be_reply.urls)
       break
-      case 'delete_urls': getListOfUrls()
+      case 'delete_url': getListOfUrls()
       break
       case 'error': console.log('ERROR => ' + be_reply.msg)
       break
-      default: console.log('Something unexpected has happened');
+      default: console.log('Something unexpected has happened => ' + be_reply.type);
     }
   }, [be_reply])
 
@@ -140,6 +143,8 @@ function UrlEdition() {
       fetch("http://localhost:8000/urls", requestDelOptions)
       .then(res => res.text())
       .then(res => setBeReply(JSON.parse(res)))
+
+      setAnimationState(false)
       
   } 
 
@@ -162,25 +167,42 @@ function UrlEdition() {
       } else setSelectAll([false, true])
 
       const requestOptions = {
-        method: 'DELETE',
-        headers: {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        body: JSON.stringify({ url_ids: my_url_ids })
-        
+        method: 'DELETE',        
       }
-      fetch("http://localhost:8000/urls", requestOptions)
+      fetch(`http://localhost:8000/urls/${my_url_ids[0]}`, requestOptions)
       .then(res => res.text())
       .then(res => setBeReply(JSON.parse(res)))
 
       console.log('delete the mf after this')
+
+      setAnimationState(false)
     }
   }
 
   // updating url information
   function handleUpdateUrls() {
     if(window.confirm('You are about to update all information on ' + urls.filter(url => url.selected).length + ' pages.\nAre you sure you want to proceed?')){
-      return
+      const selectedUrls = urls.filter(url => url.selected)
+
+      let my_url_ids = []
+      for(let i = 0; i < selectedUrls.length; i++){
+        my_url_ids[i] = selectedUrls[i].id
+      }
+
+      const requestOptions = {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        body: JSON.stringify({ url_ids: my_url_ids })
+        
+      }
+      fetch("http://localhost:8000/urls/capture", requestOptions)
+      .then(res => res.text())
+      .then(res => console.log(res))
+      
+      setAnimationState(false)
+
     }
   }
 
@@ -218,9 +240,11 @@ function UrlEdition() {
       body: JSON.stringify({ url_ids: my_url_ids })
       
     }
-    fetch("http://localhost:8000/urls/capture", requestOptions)
+    fetch("http://localhost:8000/urls/compare", requestOptions)
     .then(res => res.text())
     .then(res => console.log(res))
+
+    setAnimationState(false)
 
   }
 
@@ -246,6 +270,7 @@ function UrlEdition() {
   return (
      <>
       <header>
+        <Notification message={ be_reply.msg } toggleAnimation={ setAnimationState } animate={ do_animation }/>
         <h1> Insert your URL's here!</h1>
         <p>Backend replies: <span class="text-danger">{ be_reply.msg }</span></p>
         <p> Each page will be saved in our database. In the future, all you need to do is run the tests and we will use this version to run the comparisons.</p>

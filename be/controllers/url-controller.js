@@ -13,10 +13,20 @@ exports.get_urls = function(req, res, next) {
   if(req.body.username)
     username = req.body.username;
 
-  const query = {
-    text: 'SELECT id, url FROM page WHERE username=$1 AND deleted=$2',
-    values: [username, false]
-  };
+  let query;
+
+  if(req.params.id) {
+    query = {
+      text: 'SELECT id, url FROM page WHERE username=$1 AND deleted=$2 AND id=$3',
+      values: [username, false, req.params.id]
+    };
+  }
+  else {
+    query = {
+      text: 'SELECT id, url FROM page WHERE username=$1 AND deleted=$2',
+      values: [username, false]
+    };
+  }
 
   database.query(query, (err, result) => { 
     if(err) {
@@ -76,7 +86,7 @@ exports.add_url = function(req, res, next) {
             console.log('URL added, but couldn\'t retrieve URL list');
 
             const json = {
-              type: "post_urls",
+              type: "post_url",
               msg: 'Operation successful, but couldn\'t retrieve URL list'
             }
         
@@ -84,7 +94,7 @@ exports.add_url = function(req, res, next) {
           }
           else {
             const json = {
-              type: "post_urls",
+              type: "post_url",
               urls: resultSelect.rows,
               msg: 'Operation successful'
             }
@@ -115,59 +125,41 @@ exports.delete_url = function(req, res, next) {
   if(req.body.username)
     username = req.body.username;
 
-  console.log('Deleting urls...');
+  console.log('Deleting url...');
 
-  if(req.body.url_ids && req.body.url_ids.length > 0) {
-    const url_ids = req.body.url_ids;
+  if(req.params.id) {
+    const query = {
+      text: 'UPDATE page SET deleted=$1 WHERE id=$2 AND deleted=$3 RETURNING id',
+      values: [true, req.params.id, false]
+    };
 
-    let i = 0;
-    let deleted = 0;
-    let failed = 0;
+    database.query(query, (err, result) => {
+      if(err || result.rowCount == 0) {
+        console.log('Couldn\'t mark page with ID ' + req.params.id + ' as deleted');
 
-    while(i < url_ids.length) {
-      const query = {
-        text: 'UPDATE page SET deleted=$1 WHERE id=$2 AND deleted=$3 RETURNING id',
-        values: [true, url_ids[i], false]
-      };
-  
-      const fixed_i = i;
+        const json = {
+          type: 'error',
+          msg: 'Couldn\'t delete URL'
+        };
 
-      database.query(query, (err, result) => {
-        if(err || result.rowCount == 0) {
-          console.log('Couldn\'t mark page with ID ' + url_ids[fixed_i] + ' as deleted');
-          failed++;
-        }
-        else {
-          console.log('Page with ID ' + url_ids[fixed_i] + ' marked as deleted');
-          deleted++;
-        }
+        res.send(json);
+      }
+      else {
+        console.log('Page with ID ' + req.params.id + ' marked as deleted');
+        
+        const json = {
+          type: 'delete_url',
+          msg: 'Operation successful'
+        };
 
-        if(failed + deleted == url_ids.length) {
-          let message = 'Operation successful';
-
-          if(deleted == 0)
-            message = 'Operation unsuccessful';
-          else if(failed > 0)
-            message += ', not all URLs were deleted';
-
-          let json = {
-            type: 'delete_urls',
-            num_deleted: deleted,
-            num_query: url_ids.length,
-            msg: message
-          };
-
-          res.send(json);
-        }
-      });
-
-      i++;
-    }
+        res.send(json);
+      }
+    });
   }
   else {
     let json = {
       type: 'error',
-      msg: 'No specified URL ids'
+      msg: 'No specified URL id'
     };
 
     res.send(json);
