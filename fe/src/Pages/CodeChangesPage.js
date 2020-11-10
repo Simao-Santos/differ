@@ -2,7 +2,7 @@ import React from 'react';
 import '../CSS/ChangesPage.css';
 import CodeComparison from '../Components/CodeComparison';
 
-var codeData = [
+const codeData = [
   {
     id: 1,
     name: 'Page 1',
@@ -11,12 +11,12 @@ var codeData = [
     codes: [
       {
         timeStamp: '20/11/2020 - 17:45:00',
-        name: '../code.png'
+        name: '../code.png',
       }, {
         timeStamp: '10/02/2020 - 17:45:00',
-        name: '../code.png'
-      }
-    ]
+        name: '../code.png',
+      },
+    ],
   },
   {
     id: 2,
@@ -25,28 +25,24 @@ var codeData = [
     codes: [
       {
         timeStamp: '20/11/2020 - 17:45:00',
-        name: '../code.png'
+        name: '../code.png',
 
       }, {
         timeStamp: '10/02/2020 - 17:45:00',
-        name: "../code.png"
-      }
-    ]
-  }
+        name: '../code.png',
+      },
+    ],
+  },
 ];
-
 
 function CodeChangesPage() {
   return (
     <>
       <div className="Comparison-Cards">
         {
-          codeData.map(function (ub) {
-
-            return (
-              <CodeComparison pageName={ub.name} link={ub.link} code1={ub.codes[0]} code2={ub.codes[1]} />
-            )
-          })
+          codeData.map((ub) => (
+            <CodeComparison pageName={ub.name} link={ub.link} code1={ub.codes[0]} code2={ub.codes[1]} />
+          ))
         }
       </div>
     </>

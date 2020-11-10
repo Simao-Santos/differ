@@ -13,6 +13,10 @@ class URLList extends Component {
         );
     }
 
+function URLList({ urls, toggleSelected }) {
+  return (
+    urls.map((url) => <URLLink key={url.id} URLLink={url} toggleSelected={toggleSelected} />)
+  );
 }
 
 export default URLList;

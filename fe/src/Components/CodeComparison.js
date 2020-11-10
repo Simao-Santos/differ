@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Accordion, Card, Button } from 'react-bootstrap';
-import '../CSS/ComparisonComponents.css'
-
+import '../CSS/ComparisonComponents.css';
 
 class CodeComparison extends Component {
     render(){
