@@ -60,13 +60,13 @@ function UrlEdition() {
     switch(be_reply.type){
       case 'get_urls': setUrls(be_reply.urls)
       break
-      case 'post_urls': setUrls(be_reply.urls)
+      case 'post_url': setUrls(be_reply.urls)
       break
-      case 'delete_urls': getListOfUrls()
+      case 'delete_url': getListOfUrls()
       break
       case 'error': console.log('ERROR => ' + be_reply.msg)
       break
-      default: console.log('Something unexpected has happened');
+      default: console.log('Something unexpected has happened => ' + be_reply.type);
     }
   }, [be_reply])
 
@@ -167,14 +167,9 @@ function UrlEdition() {
       } else setSelectAll([false, true])
 
       const requestOptions = {
-        method: 'DELETE',
-        headers: {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        body: JSON.stringify({ url_ids: my_url_ids })
-        
+        method: 'DELETE',        
       }
-      fetch("http://localhost:8000/urls", requestOptions)
+      fetch(`http://localhost:8000/urls/${my_url_ids[0]}`, requestOptions)
       .then(res => res.text())
       .then(res => setBeReply(JSON.parse(res)))
 
