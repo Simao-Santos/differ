@@ -84,13 +84,13 @@ stages:
 
 deploy_mlg:
     stage: deploy
+    
+deploy_production:
+    stage: deploy
+    only:
+      - master
     script:
-    - echo $HEROKU
-    - docker build -f Dockerfile.web --iidfile imageid.txt -t registry.heroku.com/t1g1/web .
-    - echo "Docker Image ID is $(cat imageid.txt)"
-    - docker login -u _ -p $HEROKU registry.heroku.com
-    - docker tag registry.heroku.com/t1g1/web
-    - docker push registry.heroku.com/t1g1/web    
+      - dpl --provider=heroku --app=t1g1-production --api-key=$HEROKU_API_KEY
 
 # # tests the express backend (I think)
 # test_express:
