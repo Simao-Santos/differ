@@ -4,16 +4,13 @@ import '../CSS/URLEdition.css'
 import URLList from '../Components/URLList.js'
 import Notification from '../Components/Notification'
 
-const LOCAL_STORAGE_KEY = 'differ.links'
-
 function UrlEdition() {
 
   const [urls, setUrls] = useState([])
-  const [file] = useState([])
+  const [file, setFile] = useState(null)
   const [delete_button_style, setStyle] = useState(["grey", "none", "0.25"]) // delete_button_style[0] => background | delete_button_style[1] => pointerEvents | delete_button_style[2] => opacity
   const [select_all_button, setSelectAll] = useState([false, true]) // select_all_button[0] => message | select_all_button[1] => hidden
   const [be_reply, setBeReply] = useState('{}')
-  const [new_urls_json, setJsonUrls] = useState([])
   const [do_animation, setAnimationState] = useState(true)
   const urlAddressRef = useRef()
 
@@ -51,6 +48,7 @@ function UrlEdition() {
   }, [urls]) 
 
   useEffect(() => {
+    
   }, [file])
 
   useEffect(() => {
@@ -69,14 +67,6 @@ function UrlEdition() {
       default: console.log('Something unexpected has happened => ' + be_reply.type);
     }
   }, [be_reply])
-
-  useEffect(() => {
-    console.log('json urls update post opt')
-    if(new_urls_json.length === 0) return
-    console.log('passed conditional')
-    const new_urls = JSON.parse(new_urls_json).urls
-    setUrls(new_urls)
-  }, [new_urls_json])
 
   // checking/unchecking checkbox
   function toggleSelected(url_id){
@@ -113,7 +103,7 @@ function UrlEdition() {
     }
   }
 
-  // adding a new url
+  // adding a new url via text input
   function handleAddURL(e) {
       const address = urlAddressRef.current.value
       if( address === '') return
@@ -148,6 +138,39 @@ function UrlEdition() {
       
   } 
 
+  // adding multiple urls via file
+  function handleAddURLs(address){
+    if( address === '') return
+      var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+                  '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+                  '((\\d{1,3}\\.){3}\\d{1,3})|localhost)'+ // OR ip (v4) address
+                  '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+                  '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+                  '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+      if (! pattern.test(address)) {
+        alert('Please insert a valid URL.')
+        return
+      }
+      
+      urlAddressRef.current.value = null
+      setStyle([" ", " ", " "])
+
+      setSelectAll([true, false])
+
+      const requestDelOptions = {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        body: JSON.stringify({ url: address })
+      }
+      fetch("http://localhost:8000/urls", requestDelOptions)
+      .then(res => res.text())
+      .then(res => setBeReply(JSON.parse(res)))
+
+      setAnimationState(false)
+  }
+
   // deleting urls
   function handleDeleteUrls() {
     if(window.confirm('You are about to delete all information on ' + urls.filter(url => url.selected).length + ' pages.\nAre you sure you want to proceed?')){
@@ -169,10 +192,13 @@ function UrlEdition() {
       const requestOptions = {
         method: 'DELETE',        
       }
-      fetch(`http://localhost:8000/urls/${my_url_ids[0]}`, requestOptions)
-      .then(res => res.text())
-      .then(res => setBeReply(JSON.parse(res)))
 
+      my_url_ids.forEach(id => 
+        fetch(`http://localhost:8000/urls/${id}`, requestOptions)
+        .then(res => res.text())
+        .then(res => setBeReply(JSON.parse(res)))
+      
+      )
       console.log('delete the mf after this')
 
       setAnimationState(false)
@@ -190,16 +216,15 @@ function UrlEdition() {
       }
 
       const requestOptions = {
-        method: 'POST',
-        headers: {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        body: JSON.stringify({ url_ids: my_url_ids })
+        method: 'GET'
         
       }
-      fetch("http://localhost:8000/urls/capture", requestOptions)
+
+      my_url_ids.forEach(id =>
+      fetch(`http://localhost:8000/actions/capture/${id}`, requestOptions)
       .then(res => res.text())
       .then(res => console.log(res))
+      )
       
       setAnimationState(false)
 
@@ -233,24 +258,22 @@ function UrlEdition() {
     }
 
     const requestOptions = {
-      method: 'POST',
-      headers: {
-        "Content-Type": "application/json; charset=utf-8"
-      },
-      body: JSON.stringify({ url_ids: my_url_ids })
-      
+      method: 'GET'      
     }
-    fetch("http://localhost:8000/urls/compare", requestOptions)
-    .then(res => res.text())
-    .then(res => console.log(res))
+
+
+    my_url_ids.forEach(id =>
+      fetch(`http://localhost:8000/actions/compare/${id}`, requestOptions)
+      .then(res => res.text())
+      .then(res => console.log(res))
+    )
 
     setAnimationState(false)
+    
 
   }
 
-  function getListOfUrls() {
-
-    
+  function getListOfUrls() {   
 
     console.log('getting urls from db')
 
@@ -261,10 +284,31 @@ function UrlEdition() {
     fetch("http://localhost:8000/urls/", requestOptions)
     .then(res => res.text())
     .then(res => setBeReply(JSON.parse(res)))
-  
-
   }
 
+  function handleResetFile() {
+    console.log('im losing it')
+    setFile(null)
+  }
+
+  function handleAddMultipleUrls(){
+    if(file !== null){
+      let reader = new FileReader()
+      reader.onload = function(){
+        let lines = this.result.split('\n')
+        for(let line = 0; line < lines.length; line++){
+          if(lines[line].length > 0){
+            handleAddURLs(lines[line])
+          }
+        }
+      }
+      reader.readAsText(file.file)
+
+      setFile(null)
+    }
+
+
+  }
   
 
   return (
@@ -272,7 +316,6 @@ function UrlEdition() {
       <header>
         <Notification message={ be_reply.msg } toggleAnimation={ setAnimationState } animate={ do_animation }/>
         <h1> Insert your URL's here!</h1>
-        <p>Backend replies: <span class="text-danger">{ be_reply.msg }</span></p>
         <p> Each page will be saved in our database. In the future, all you need to do is run the tests and we will use this version to run the comparisons.</p>
       </header>
       <div class="container">
@@ -280,8 +323,18 @@ function UrlEdition() {
           <div class="left-side col-9">
                 <input type="text" ref={ urlAddressRef } placeholder="Insert your URL here"></input>
                 <button type = "button" onClick = {handleAddURL} class="next-to-input-button">+</button>
-                <input type="file" name="file" id="file" accept=".txt" hidden></input><br/>                             
-                <label class="under-input-text" for="file">or <span class="orange-text">submit</span> a file.</label><br/><br/>
+                <input type="file" name="file" id="file" accept=".txt" onChange={(e) => setFile({file: e.target.files[0]})} hidden></input><br/>                             
+                
+                <div class="row">
+                  <label class="under-input-text" for="file">or <span class="orange-text">submit</span> a file.</label><br/><br/>
+                  <div hidden={file === null}>
+                    <span class="submit-file-question" >Submit urls?</span>
+                    <span class="submit-file-options" id="yes-submit" onClick={ handleAddMultipleUrls }>Yes</span>
+                    <span class="submit-file-options" id="no-submit" onClick={ handleResetFile }>No</span>
+                  </div>
+                </div>
+                
+                
                 <button onClick={ handleToggleSelectAll } hidden={ select_all_button[1] }>{ select_all_button[0] ? 'Select all' : 'Unselect all' }</button>
                 <URLList urls={ urls } toggleSelected={ toggleSelected }/>
             </div>
