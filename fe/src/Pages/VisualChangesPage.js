@@ -35,14 +35,6 @@ var visualData1 =[
   }
 ];
 
-      }, {
-        timeStamp: '10/02/2020 - 17:45:00',
-        name: '../logo.png',
-      },
-    ],
-  },
-];
-
 function VisualChangesPage() {
 
   const [be_reply, setBeReply] = useState('{}')
