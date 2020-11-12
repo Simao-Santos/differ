@@ -1,0 +1,32 @@
+.notification {
+    border: solid #ff9853 4px;
+    border-radius: 10px;
+    margin-right: 2em;
+    min-width: 20em;
+    position: absolute;
+    left: 80%;
+    filter: drop-shadow(10px 10px 5px grey);
+    background-color: #ffba8c;
+
+
+    transition: opacity 0.5s ease-in-out;
+    opacity: 1;
+}
+
+.notification.hide-opacity {
+    opacity: 0;
+}
+
+.notification_message {
+    padding: 0.5em;
+    margin: 0;
+}
+
+.notification_x {
+    padding: 10px;
+}
+
+.notification_x:hover {
+    color: red !important;
+    cursor: pointer;
+}

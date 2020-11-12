@@ -1,5 +1,7 @@
 
 be/node_modules/
 be/bin/
-be/shots/
+be/public/shots/
 pgdata
+
+*.log

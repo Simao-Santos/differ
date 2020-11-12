@@ -38,6 +38,21 @@ input[type="text"] {
     margin: 0em 0.5em;
 }
 
+.submit-file-options, .submit-file-question {
+    margin: 0em 0.75em;
+}
+
+.submit-file-options:hover {
+    cursor: pointer;
+}
+
+.submit-file-options#yes-submit:hover {
+    color: #00FF00;
+}
+
+.submit-file-options#no-submit:hover {
+    color: red;
+}
 
 /* main section */ 
 
