@@ -12,13 +12,21 @@ Work developed for the course of LDSO at FEUP by:
 
 The product owner is **Marco Sousa (marco.sousa@zerozero.pt)** of zerozero.pt /ZOS Lda.
 
+# For the Developers
 
+### Adding tests to frontend and backend
+To add test files to the **frontend** and **backend** you should add them in this folder (t1g1/fe/tests) and this (t1g1/be/tests), respectively. They should have the same file name format as the example there: *filename*.test.js.
 
+To know how to make tests for the backend you can see [here](https://dev.to/nedsoft/testing-nodejs-express-api-with-jest-and-supertest-1km6) for example. For the frontend I also found [this](https://jestjs.io/docs/en/tutorial-react). But obviously you can see anywhere how to make them.
 
-# Docker
+To run them locally, either inside _fe/_ or _be/_ run 'npm run test'.
+
+# Installing instructions
+
+### Docker
 To use Docker on your computer start by:
 
-## Installing Docker:
+#### Installing Docker:
 
 It is recommended that you install Docker on your linux distribution. Alternatively, if you want to use windows and do not own neither windows 10 pro nor windowns 10 entreprise, you may want to use windows subsistems for linux 2 (wsl 2).
 
@@ -28,11 +36,11 @@ To learn how to enable wsl 2 on your machine go to https://docs.microsoft.com/en
 
 Note that even though your are using wsl 2 you want to install Docker in windows 10 and only the docker-compose in linux.
 
-## Installing docker-compose:
+#### Installing docker-compose:
 
 After completing the instalation of Docker you need to install docker-compose. In the link https://docs.docker.com/compose/install/ you will find all the instructions you need to do that, just make sure you are following the instrutions to your OS.
 
-## Using Docker:
+#### Using Docker:
 
 To use Docker you must be on the project directory and use the comand to build the images that will alow you to see the code working:
 
@@ -62,7 +70,7 @@ Be warned the clean builds take their time. Don't be surprised if the first time
 
 **Run the application with** `sh start.sh`, which grants the needed permissions and runs docker-compose (see !5).
 
-## Errors:
+#### Errors:
 
 Node 10.18.1 minimum version is needed.
 
