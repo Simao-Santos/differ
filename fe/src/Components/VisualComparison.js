@@ -20,27 +20,38 @@ class VisualComparison extends Component {
                         <Accordion defaultActiveKey="0">
                             <Card>
                                 <Card.Header>
-                                    <Accordion.Toggle as={Button} variant="link" eventKey="1">
+                                    <Accordion.Toggle as={Button} variant="link" eventKey="0">
                                         Link ⌄
-                            </Accordion.Toggle>
+                                    </Accordion.Toggle>
                                 </Card.Header>
-                                <Accordion.Collapse eventKey="1">
-                                    <Card.Body>{this.props.link}</Card.Body>
-                                </Accordion.Collapse>
+                                    <Accordion.Collapse eventKey="0">
+                                        <Card.Body>{this.props.link}</Card.Body>
+                                    </Accordion.Collapse>
                             </Card>
+                            <Card>       
+                                <Card.Header>
+                                    <Accordion.Toggle as={Button} variant="link" eventKey="1">
+                                        See Differences ⌄
+                                    </Accordion.Toggle>
+                                </Card.Header>
+                                    <Accordion.Collapse eventKey="1">
+                                        <Card.Body>Place for image</Card.Body>
+                                    </Accordion.Collapse>
+                            </Card>         
+                            
                         </Accordion>
 
                         <div className="Comparison-Content">
-                            <img src={this.props.image1.name} className="App-logo" alt="logo" />
+                            <img src={this.props.image1} className="View-images" alt="logo" />
                             <img src="../arrow.png" className="Arrow" alt="logo" />
-                            <img src={this.props.image2.name} className="App-logo" alt="logo" />
+                            <img src={this.props.image2} className="View-images" alt="logo" />
                         </div>
 
                     </div>
 
                     <div className="TimeStamp">
-                        <h3>{this.props.image1.timeStamp}</h3>
-                        <h3>{this.props.image2.timeStamp}</h3>
+                        <h3>{this.props.timeStamp1}</h3>
+                        <h3>{this.props.timeStamp2}</h3>
                     </div>
                 </div>
             </>

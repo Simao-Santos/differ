@@ -33,11 +33,17 @@ button.btn.btn-link {
     display:flex;
     flex-direction: row;
     justify-content: space-around;
-    padding: 2em;
+    padding-top: 0.5em;
+    align-items: center;
 }
 
 .Arrow{
-    height: 9vmin;
+    height: 5vmin;
+}
+
+.View-images {
+    height: 50vmin;
+    width: 50vmin;
 }
 
 .TimeStamp {
