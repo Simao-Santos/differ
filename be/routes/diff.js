@@ -4,9 +4,6 @@ const diff = require('../lib/diff.js');
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const { sameMsg, emptyMsg, baseText, newText, editorConfig } = require('../lib/constants.js');
 
-const leftContent = "abcd";
-const rightContent = "abcde";
-var rawFileaux;
 
 function diffChecker(old, actual) {
   const lc = diff.lib.stringAsLines(old);

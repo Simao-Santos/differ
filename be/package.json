@@ -19,9 +19,9 @@
     "jade": "~1.11.0",
     "morgan": "~1.9.1",
     "pageres": "^5.2.1",
-    "pixelmatch": "^5.2.1",
     "pg": "^8.4.2",
-    "sharp": "^0.26.2",
+    "pixelmatch": "^5.2.1",
+    "sharp": "^0.26.3",
     "xmlhttprequest": "^1.8.0"
   },
   "devDependencies": {
