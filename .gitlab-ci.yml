@@ -1,119 +1,172 @@
-image: gitlab/dind
+image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:ci_image_$CI_COMMIT_REF_SLUG
  
 include:
-   - template: Security/Dependency-Scanning.gitlab-ci.yml
-   - template: Security/License-Scanning.gitlab-ci.yml
-   - template: Security/SAST.gitlab-ci.yml
-#   - template: Security/Secret-Detection.gitlab-ci.yml
- 
-services:
-  - docker:dind
- 
+  - template: Security/License-Scanning.gitlab-ci.yml
+
+# Every job should always run (does not include on_failure)
+# Specific rules override this
+workflow:
+  rules:
+    - when: always
+
 stages:
-  - lint
   - build
+  - lint
   - test
   - deploy
 
+########################################################################
+# Override template jobs to also run on merge requests
+
+license_scanning:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - when: on_success
 
 ########################################################################
 
+### BUILD
 
-# run eslint and attempt to fix the linting erros (in front end)
-eslint-frontend:
-  stage: lint
-  image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend_develop
+build_backend:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - cd be/
+    - docker version
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+    - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend_$CI_COMMIT_REF_SLUG .
+    - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend_$CI_COMMIT_REF_SLUG
+  rules:
+    - changes:
+      - be/package.json
+      - be/package-lock.json
+      - be/Dockerfile
+      when: on_success
+    - if: $CI_COMMIT_MESSAGE =~ /\[build-backend\]/
+      when: on_success
+
+build_frontend:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
   script:
     - cd fe/
-    - npm install eslint --save-dev
-    - npm run lint-fix
+    - docker version
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+    - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend_$CI_COMMIT_REF_SLUG .
+    - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend_$CI_COMMIT_REF_SLUG
+  rules:
+    - changes:
+      - fe/package.json
+      - fe/package-lock.json
+      - fe/Dockerfile
+      when: on_success
+    - if: $CI_COMMIT_MESSAGE =~ /\[build-frontend\]/
+      when: on_success
 
-# run eslint and attempt to fix the linting erros (in backend)
+build_ci_image:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - cd ci-image
+    - docker version
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+    - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:ci_image_$CI_COMMIT_REF_SLUG .
+    - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1:ci_image_$CI_COMMIT_REF_SLUG
+  rules:
+    - changes:
+      - ci-image/Dockerfile
+      when: on_success
+    - if: $CI_COMMIT_MESSAGE =~ /\[build-ci\]/
+      when: on_success
+
+########################################################################
+
+### LINT
+
+# run eslint (in backend)
 eslint-backend:
   stage: lint
-  image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend_develop
+  image: node:latest
   script:
     - cd be/
-    - npm install eslint --save-dev
-    - npm run lint-fix
+    - npm install eslint
+    - echo "Linting Backend..."
+    - npm run lint
+    - echo "Linting found no problems"
+  # lint can fail, but only when not in the develop or master branch and when not in a merge request
+  allow_failure: true
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      allow_failure: false
+    - if: $CI_COMMIT_BRANCH == "develop"
+      allow_failure: false
+    - if: $CI_COMMIT_BRANCH == "master"
+      allow_failure: false
+    - when: on_success
 
-
-########################################################################
-
-build_backend_develop:
-  stage: build
-  only:
-    - develop
-  script:
-    - cd be/
-    - docker version
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-    - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend_develop .
-    - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
-    
-build_frontend_develop:
-  stage: build
-  only:
-    - develop
+# run eslint (in frontend)
+eslint-frontend:
+  stage: lint
+  image: node:latest
   script:
     - cd fe/
-    - docker version
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-    - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend_develop .
-    - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
-
-
-########################################################################
-
-
-build_backend_production:
-  stage: build
-  only: 
-    - master
-  script:
-    - cd be/
-    - docker version
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-    - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend_production .
-    - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
-
+    - npm install eslint
+    - echo "Linting Frontend..."
+    - npm run lint
+    - echo "Linting found no problems"
+  # lint can fail, but only when not in the develop or master branch and when not in a merge request
+  allow_failure: true
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      allow_failure: false
+    - if: $CI_COMMIT_BRANCH == "develop"
+      allow_failure: false
+    - if: $CI_COMMIT_BRANCH == "master"
+      allow_failure: false
+    - when: on_success
 
 ########################################################################
 
- 
-build_frontend_production:
-  stage: build
-  only: 
-    - master
-  script:
-    - cd fe/
-    - docker version
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-    - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend_production .
-    - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1
+### TEST
 
-
-########################################################################
-
-
-# tests the express backend
-test_express:
+# tests the backend
+test_backend:
   stage: test
-  image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend_develop
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+    - docker pull registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend_$CI_COMMIT_REF_SLUG
+    - docker tag registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend_$CI_COMMIT_REF_SLUG ldso/frontend:latest
+    - docker pull registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend_$CI_COMMIT_REF_SLUG
+    - docker tag registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend_$CI_COMMIT_REF_SLUG ldso/backend:latest
   script:
     - echo "Testing Backend..."
-    - cd be/
-    - npm install
-    - npm run test
+    - docker-compose -f docker-compose.test_backend.yml up --exit-code-from backend
     - echo "All Tests successful!"
 
-# tests the react frontend
-test_react:
+# tests the frontend
+test_frontend:
   stage: test
-  image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend_develop
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+    - docker pull registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend_$CI_COMMIT_REF_SLUG
+    - docker tag registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend_$CI_COMMIT_REF_SLUG ldso/frontend:latest
+    - docker pull registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend_$CI_COMMIT_REF_SLUG
+    - docker tag registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend_$CI_COMMIT_REF_SLUG ldso/backend:latest
   script:
     - echo "Testing Frontend..."
-    - cd fe/
-    - npm install
-    - npm run test
+    - docker-compose -f docker-compose.test_frontend.yml up --exit-code-from frontend
     - echo "All Tests successful!"
+
+########################################################################
+
+### DEPLOY

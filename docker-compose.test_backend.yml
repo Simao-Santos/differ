@@ -24,6 +24,7 @@ services:
     build:
       context: ./be
       dockerfile: Dockerfile
+    command: npm run test
     # Check Dockerfile for cap_add explanation
     cap_add:
       - SYS_ADMIN

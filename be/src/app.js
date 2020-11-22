@@ -1,17 +1,17 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var cors = require('cors')
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const cors = require('cors');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var urlsRoute = require('./routes/urls');
-var capturesRoute = require('./routes/captures');
-var comparisonsRoute = require('./routes/comparisons');
-var actionsRoute = require('./routes/actions');
-var diffRouter = require('./routes/diff')
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const urlsRoute = require('./routes/urls');
+const capturesRoute = require('./routes/captures');
+const comparisonsRoute = require('./routes/comparisons');
+const actionsRoute = require('./routes/actions');
+const diffRouter = require('./routes/diff');
 
 const app = express();
 
@@ -19,7 +19,7 @@ const app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-app.use(cors())
+app.use(cors());
 app.options('*', cors());
 app.use(logger('dev'));
 app.use(express.json());

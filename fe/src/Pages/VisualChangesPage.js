@@ -1,8 +1,8 @@
-import React, {useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../CSS/ChangesPage.css';
 import VisualComparison from '../Components/VisualComparison';
 
-var visualData1 =[
+const visualData1 = [
   {
     id: 1,
     name: 'Page 1',
@@ -19,105 +19,102 @@ var visualData1 =[
     ],
   },
   {
-      id: 2,
-      name: 'Page 2',
-      link: 'https://site.com/login',
-      images: [
-          {
-            timeStamp: '20/11/2020 - 17:45:00',
-            name: '../logo.png',
-            id: 2,
-          }, {
-            timeStamp: '10/02/2020 - 17:45:00',
-            name: "../logo.png"
-          }
-      ]
-  }
+    id: 2,
+    name: 'Page 2',
+    link: 'https://site.com/login',
+    images: [
+      {
+        timeStamp: '20/11/2020 - 17:45:00',
+        name: '../logo.png',
+        id: 2,
+      }, {
+        timeStamp: '10/02/2020 - 17:45:00',
+        name: '../logo.png',
+      },
+    ],
+  },
 ];
 
+function getListOfUrls(setBeURLReply) {
+  console.log('getting urls from db');
+
+  const requestOptions = {
+    method: 'GET',
+  };
+
+  fetch('http://localhost:8000/urls/', requestOptions)
+    .then((res) => res.text())
+    .then((res) => setBeURLReply(JSON.parse(res).urls));
+}
+
+function getListOfImages(beReplyUrls, setBeReply) {
+  console.log('getting images from db');
+
+  const requestOptions = {
+    method: 'GET',
+  };
+
+  console.log(beReplyUrls);
+  console.log(`urls length${beReplyUrls.length}`);
+  if (beReplyUrls.length > 0) {
+    if (beReplyUrls[0].id === undefined) return;
+  }
+
+  for (let i = 0; i < beReplyUrls.length; i += 1) {
+    console.log(beReplyUrls[i].id);
+    console.log(`http://localhost:8000/captures/byPageId/${beReplyUrls[i].id}`);
+    fetch(`http://localhost:8000/captures/byPageId/${beReplyUrls[i].id}`, requestOptions)
+      .then((res) => res.text())
+      .then((res) => setBeReply(JSON.parse(res)));
+  }
+}
+
 function VisualChangesPage() {
-
-  const [be_reply, setBeReply] = useState('{}')
-  const [be_reply_urls, setBeURLReply] = useState('{}')
-
-  useEffect(() => {
-    getListOfUrls() 
-
-  }, []) 
+  const [beReply, setBeReply] = useState('{}');
+  const [beReplyUrls, setBeURLReply] = useState('{}');
 
   useEffect(() => {
-  
-    switch(be_reply.type){
-      case 'get_captures': setBeReply(be_reply.captures)
-      break
-      case 'get_captures_by_page_id':setBeReply(be_reply.captures)
-      console.log(be_reply)
-      break
-      case 'delete_capture': console.log("Delete captures")
-      break
-      case 'error': console.log('ERROR => ' + be_reply.msg)
-      break
-    }
-  
-  }, [be_reply]) 
+    getListOfUrls(setBeURLReply);
+  }, []);
 
   useEffect(() => {
-    console.log(be_reply_urls)
-   
-    getListOfImages()
-  }, [be_reply_urls])
-        
-  function getListOfUrls() {   
-
-    console.log('getting urls from db')
-
-    const requestOptions = {
-      method: 'GET'
+    switch (beReply.type) {
+      case 'get_captures': setBeReply(beReply.captures);
+        break;
+      case 'get_captures_by_page_id': setBeReply(beReply.captures);
+        console.log(beReply);
+        break;
+      case 'delete_capture': console.log('Delete captures');
+        break;
+      case 'error': console.log(`ERROR => ${beReply.msg}`);
+        break;
+      default:
+        break;
     }
+  }, [beReply]);
 
-    fetch("http://localhost:8000/urls/", requestOptions)
-    .then(res => res.text())
-    .then(res => setBeURLReply(JSON.parse(res).urls))
-  }
+  useEffect(() => {
+    console.log(beReplyUrls);
 
-  function getListOfImages() {
+    getListOfImages(beReplyUrls, setBeReply);
+  }, [beReplyUrls]);
 
-    console.log('getting images from db')
-
-    const requestOptions = {
-      method: 'GET'
-    }
-
-    console.log(be_reply_urls)
-    console.log("urls length" + be_reply_urls.length)
-    if(be_reply_urls.length > 0){
-      if( be_reply_urls[0].id == undefined)
-      return;
-    }
-    
-    for( var i=0 ; i<be_reply_urls.length ; i++){
-      console.log(be_reply_urls[i].id)
-      console.log('http://localhost:8000/captures/byPageId/' + be_reply_urls[i].id)
-    fetch('http://localhost:8000/captures/byPageId/' + be_reply_urls[i].id, requestOptions)
-    .then(res => res.text())
-    .then(res => setBeReply(JSON.parse(res)))
-    }
-  }
-
-    return (
-      <>
-        <div className="Comparison-Cards">
-          {
+  return (
+    <>
+      <div className="Comparison-Cards">
+        {
           visualData1.map((ub) => (
-            <VisualComparison pageName={ub.name} link={ub.link} image1={ub.images[0]} image2={ub.images[1]} />
+            <VisualComparison
+              pageName={ub.name}
+              link={ub.link}
+              image1={ub.images[0]}
+              image2={ub.images[1]}
+            />
           ))
         }
-        </div>
-      </>
-    );
-  
-  
-  
+      </div>
+    </>
+  );
 }
 
 export default VisualChangesPage;
