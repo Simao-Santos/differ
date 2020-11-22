@@ -32,6 +32,7 @@ services:
       - 8000:8000
     volumes:
       - ./be/src:/app/be/src
+      - ./be/tests:/app/be/tests
     depends_on:
       - pgadmin
     networks:
