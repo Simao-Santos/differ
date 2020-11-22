@@ -44,7 +44,7 @@ build_backend:
       - be/package-lock.json
       - be/Dockerfile
       when: on_success
-  when: manual
+    - when: manual
 
 build_frontend:
   stage: build
@@ -63,7 +63,7 @@ build_frontend:
       - fe/package-lock.json
       - fe/Dockerfile
       when: on_success
-  when: manual
+    - when: manual
 
 build_ci_image:
   stage: build
@@ -80,7 +80,7 @@ build_ci_image:
     - changes:
       - ci-image/Dockerfile
       when: on_success
-  when: manual
+    - when: manual
 
 ########################################################################
 
