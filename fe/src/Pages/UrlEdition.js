@@ -272,7 +272,7 @@ function UrlEdition() {
   function handleAddMultipleUrls() {
     if (file !== null) {
       const reader = new FileReader();
-      reader.onload = function (e) {
+      reader.onload = (e) => {
         const lines = e.target.result.split('\n');
         for (let line = 0; line < lines.length; line += 1) {
           if (lines[line].length > 0) {

@@ -8,7 +8,7 @@ class URLList extends Component {
     const { urls } = this.props;
     const { toggleSelected } = this.props;
     return (
-      urls.map((url) => <URLLink key={url.id} URLLink={url} toggleSelected={toggleSelected} />)
+      urls.map((url) => <URLLink key={url.id} link={url} toggleSelected={toggleSelected} />)
     );
   }
 }
