@@ -4,21 +4,7 @@ import '../CSS/URLEdition.css';
 import URLList from '../Components/URLList';
 import Notification from '../Components/Notification';
 
-const [urls, setUrls] = useState([]);
-const [file, setFile] = useState(null);
-const [deleteButtonStyle, setStyle] = useState(['grey', 'none', '0.25']);
-// deleteButtonStyle[0] => background
-// deleteButtonStyle[1] => pointerEvents
-// deleteButtonStyle[2] => opacity
-
-const [selectAllButton, setSelectAll] = useState([false, true]);
-// selectAllButton[0] => message | selectAllButton[1] => hidden
-
-const [beReply, setBeReply] = useState('{}');
-const [doAnimation, setAnimationState] = useState(true);
-const urlAddressRef = useRef();
-
-function getListOfUrls() {
+function getListOfUrls(setBeReply) {
   console.log('getting urls from db');
 
   const requestOptions = {
@@ -31,10 +17,24 @@ function getListOfUrls() {
 }
 
 function UrlEdition() {
+  const [urls, setUrls] = useState([]);
+  const [file, setFile] = useState(null);
+  const [deleteButtonStyle, setStyle] = useState(['grey', 'none', '0.25']);
+  // deleteButtonStyle[0] => background
+  // deleteButtonStyle[1] => pointerEvents
+  // deleteButtonStyle[2] => opacity
+
+  const [selectAllButton, setSelectAll] = useState([false, true]);
+  // selectAllButton[0] => message | selectAllButton[1] => hidden
+
+  const [beReply, setBeReply] = useState('{}');
+  const [doAnimation, setAnimationState] = useState(true);
+  const urlAddressRef = useRef();
+
   // useEffects 1. load urls from local storage
   // 2. save new url on local storage
   useEffect(() => {
-    getListOfUrls();
+    getListOfUrls(setBeReply);
 
     const selectedUrls = urls.filter((url) => url.selected);
 
@@ -72,7 +72,7 @@ function UrlEdition() {
         break;
       case 'post_url': setUrls(beReply.urls);
         break;
-      case 'delete_url': getListOfUrls();
+      case 'delete_url': getListOfUrls(setBeReply);
         break;
       case 'error': console.log(`ERROR => ${beReply.msg}`);
         break;
@@ -183,7 +183,7 @@ function UrlEdition() {
       const selectedUrls = urls.filter((url) => url.selected);
 
       const myUrlIds = [];
-      for (let i = 0; i < selectedUrls.length; i = +1) {
+      for (let i = 0; i < selectedUrls.length; i += 1) {
         myUrlIds[i] = selectedUrls[i].id;
       }
 
@@ -214,7 +214,7 @@ function UrlEdition() {
       const selectedUrls = urls.filter((url) => url.selected);
 
       const myUrlIds = [];
-      for (let i = 0; i < selectedUrls.length; i = +1) {
+      for (let i = 0; i < selectedUrls.length; i += 1) {
         myUrlIds[i] = selectedUrls[i].id;
       }
 
@@ -249,7 +249,7 @@ function UrlEdition() {
     const selectedUrls = urls.filter((url) => url.selected);
 
     const myUrlIds = [];
-    for (let i = 0; i < selectedUrls.length; i = +1) {
+    for (let i = 0; i < selectedUrls.length; i += 1) {
       myUrlIds[i] = selectedUrls[i].id;
     }
 
@@ -272,9 +272,9 @@ function UrlEdition() {
   function handleAddMultipleUrls() {
     if (file !== null) {
       const reader = new FileReader();
-      reader.onload = function () {
-        const lines = this.result.split('\n');
-        for (let line = 0; line < lines.length; line = +1) {
+      reader.onload = function (e) {
+        const lines = e.target.result.split('\n');
+        for (let line = 0; line < lines.length; line += 1) {
           if (lines[line].length > 0) {
             handleAddURLs(lines[line]);
           }
@@ -289,9 +289,17 @@ function UrlEdition() {
   return (
     <>
       <header>
-        <Notification message={beReply.msg} toggleAnimation={setAnimationState} animate={doAnimation} />
-        <h1> Insert your URL's here!</h1>
-        <p> Each page will be saved in our database. In the future, all you need to do is run the tests and we will use this version to run the comparisons.</p>
+        <Notification
+          message={beReply.msg}
+          toggleAnimation={setAnimationState}
+          animate={doAnimation}
+        />
+        <h1> Insert your URL&apos;s here!</h1>
+        <p>
+          {' '}
+          Each page will be saved in our database. In the future, all you need to do is
+          run the tests and we will use this version to run the comparisons.
+        </p>
       </header>
       <div className="container">
         <div className="row main-section">
@@ -312,28 +320,56 @@ function UrlEdition() {
               <br />
               <div hidden={file === null}>
                 <span className="submit-file-question">Submit urls?</span>
-                <span className="submit-file-options" id="yes-submit" onClick={handleAddMultipleUrls}>Yes</span>
-                <span className="submit-file-options" id="no-submit" onClick={handleResetFile}>No</span>
+                <span
+                  className="submit-file-options"
+                  id="yes-submit"
+                  tabIndex="0"
+                  role="button"
+                  onClick={handleAddMultipleUrls}
+                  onKeyPress={handleAddMultipleUrls}
+                >
+                  Yes
+                </span>
+                <span
+                  className="submit-file-options"
+                  id="no-submit"
+                  tabIndex="0"
+                  role="button"
+                  onClick={handleResetFile}
+                  onKeyPress={handleResetFile}
+                >
+                  No
+                </span>
               </div>
             </div>
 
-            <button onClick={handleToggleSelectAll} hidden={selectAllButton[1]}>{selectAllButton[0] ? 'Select all' : 'Unselect all'}</button>
+            <button onClick={handleToggleSelectAll} type="button" hidden={selectAllButton[1]}>{selectAllButton[0] ? 'Select all' : 'Unselect all'}</button>
             <URLList urls={urls} toggleSelected={toggleSelected} />
           </div>
           <div className="right-side col-3">
             <p>
               {urls.filter((url) => url.selected).length}
               {' '}
-              URL's selected
+              URL&apos;s selected
             </p>
             <div className="row justify-content-center selection-buttons">
               <button type="button" onClick={handleDeleteUrls} style={{ background: deleteButtonStyle[0], pointerEvents: deleteButtonStyle[1], opacity: deleteButtonStyle[2] }}>Delete</button>
-              <button onClick={handleUpdateUrls} style={{ background: deleteButtonStyle[0], pointerEvents: deleteButtonStyle[1], opacity: deleteButtonStyle[2] }}>Update</button>
+              <button
+                onClick={handleUpdateUrls}
+                type="button"
+                style={{
+                  background: deleteButtonStyle[0],
+                  pointerEvents: deleteButtonStyle[1],
+                  opacity: deleteButtonStyle[2],
+                }}
+              >
+                Update
+              </button>
               <br />
             </div>
             <br />
             <div className="row justify-content-center selection-buttons">
-              <button onClick={handleRunComparison} id="compare-button" style={{ background: deleteButtonStyle[0], pointerEvents: deleteButtonStyle[1], opacity: deleteButtonStyle[2] }}>Run Comparison</button>
+              <button onClick={handleRunComparison} type="button" id="compare-button" style={{ background: deleteButtonStyle[0], pointerEvents: deleteButtonStyle[1], opacity: deleteButtonStyle[2] }}>Run Comparison</button>
             </div>
           </div>
         </div>

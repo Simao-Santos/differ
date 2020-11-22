@@ -2,9 +2,6 @@ import React, { useState, useEffect } from 'react';
 import '../CSS/ChangesPage.css';
 import VisualComparison from '../Components/VisualComparison';
 
-const [beReply, setBeReply] = useState('{}');
-const [beReplyUrls, setBeURLReply] = useState('{}');
-
 const visualData1 = [
   {
     id: 1,
@@ -38,7 +35,7 @@ const visualData1 = [
   },
 ];
 
-function getListOfUrls() {
+function getListOfUrls(setBeURLReply) {
   console.log('getting urls from db');
 
   const requestOptions = {
@@ -50,7 +47,7 @@ function getListOfUrls() {
     .then((res) => setBeURLReply(JSON.parse(res).urls));
 }
 
-function getListOfImages() {
+function getListOfImages(beReplyUrls, setBeReply) {
   console.log('getting images from db');
 
   const requestOptions = {
@@ -63,7 +60,7 @@ function getListOfImages() {
     if (beReplyUrls[0].id === undefined) return;
   }
 
-  for (let i = 0; i < beReplyUrls.length; i = +1) {
+  for (let i = 0; i < beReplyUrls.length; i += 1) {
     console.log(beReplyUrls[i].id);
     console.log(`http://localhost:8000/captures/byPageId/${beReplyUrls[i].id}`);
     fetch(`http://localhost:8000/captures/byPageId/${beReplyUrls[i].id}`, requestOptions)
@@ -73,8 +70,11 @@ function getListOfImages() {
 }
 
 function VisualChangesPage() {
+  const [beReply, setBeReply] = useState('{}');
+  const [beReplyUrls, setBeURLReply] = useState('{}');
+
   useEffect(() => {
-    getListOfUrls();
+    getListOfUrls(setBeURLReply);
   }, []);
 
   useEffect(() => {
@@ -96,7 +96,7 @@ function VisualChangesPage() {
   useEffect(() => {
     console.log(beReplyUrls);
 
-    getListOfImages();
+    getListOfImages(beReplyUrls, setBeReply);
   }, [beReplyUrls]);
 
   return (
