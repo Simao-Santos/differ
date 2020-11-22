@@ -1,11 +1,12 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
 
-var url_controller = require('../controllers/url-controller');
+const router = express.Router();
 
-router.get('/', url_controller.get_urls);
-router.get('/:id', url_controller.get_urls);
-router.post('/', url_controller.add_url);
-router.delete('/:id', url_controller.delete_url);
+const urlController = require('../controllers/url-controller');
+
+router.get('/', urlController.get_urls);
+router.get('/:id', urlController.get_urls);
+router.post('/', urlController.add_url);
+router.delete('/:id', urlController.delete_url);
 
 module.exports = router;

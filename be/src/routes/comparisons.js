@@ -1,11 +1,12 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
 
-var comparison_controller = require('../controllers/comparison-controller');
+const router = express.Router();
 
-router.get('/byPageId/:id', comparison_controller.get_comparisons_by_page_id);
-router.get('/', comparison_controller.get_comparisons);
-router.get('/:id', comparison_controller.get_comparisons);
-router.delete('/:id', comparison_controller.delete_comparisons);
+const comparisonController = require('../controllers/comparison-controller');
+
+router.get('/byPageId/:id', comparisonController.get_comparisons_by_page_id);
+router.get('/', comparisonController.get_comparisons);
+router.get('/:id', comparisonController.get_comparisons);
+router.delete('/:id', comparisonController.delete_comparisons);
 
 module.exports = router;

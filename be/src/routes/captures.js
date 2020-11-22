@@ -1,11 +1,12 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
 
-var capture_controller = require('../controllers/capture-controller');
+const router = express.Router();
 
-router.get('/byPageId/:id', capture_controller.get_captures_by_page_id);
-router.get('/', capture_controller.get_captures);
-router.get('/:id', capture_controller.get_captures);
-router.delete('/:id', capture_controller.delete_captures);
+const captureController = require('../controllers/capture-controller');
+
+router.get('/byPageId/:id', captureController.get_captures_by_page_id);
+router.get('/', captureController.get_captures);
+router.get('/:id', captureController.get_captures);
+router.delete('/:id', captureController.delete_captures);
 
 module.exports = router;

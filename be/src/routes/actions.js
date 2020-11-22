@@ -1,9 +1,10 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
 
-var actions_controller = require('../controllers/actions-controller');
+const router = express.Router();
 
-router.get('/capture/:id', actions_controller.capture_url);
-router.get('/compare/:id', actions_controller.compare_url);
+const actionsController = require('../controllers/actions-controller');
+
+router.get('/capture/:id', actionsController.capture_url);
+router.get('/compare/:id', actionsController.compare_url);
 
 module.exports = router;
