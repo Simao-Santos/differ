@@ -1,7 +1,11 @@
-
+# Ignore downloaded dependencies
 be/node_modules/
-be/src/bin/
+
+# Ignore shots folder
 be/src/public/shots/
+
+# Ignore database data
 pgdata
 
+# Ignore log files
 *.log
