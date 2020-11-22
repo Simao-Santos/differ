@@ -20,24 +20,32 @@ function diffChecker(old, actual) {
   return [lc, rc, opcodes, baseTextName, newTextName];
 }
 
+function getOne(id){
+  var oldpath = './public/shots/url_35_2020_11_22_01_45_53_972.html';
+  var newpath = './public/shots/url_35_2020_11_22_01_52_05_736.html';
+
+  var oldpage = fs.readFileSync(oldpath).toString();
+  var actualpage = fs.readFileSync(newpath).toString();
+
+  var values = diffChecker(oldpage,actualpage);
+  return values;
+}
+
+function getValues(){
+  var values;
+  var id =35;
+
+  var values = getOne(id);
+  final.push((values));
+}
+
 router.get('/', function (req, res, next) {
   //função vai buscar o conteudo de todos os urls
   //diffcheker para cada "url" e dar append ao json
   //send json inteiro
 
-  var values;
 
-  var oldpath = './public/shots/url_35_2020_11_22_01_45_53_972.html';
-  var newpath = './public/shots/url_35_2020_11_22_01_52_05_736.html';
-
-
-  var oldpage = fs.readFileSync(oldpath).toString();
-  
-  var actualpage = fs.readFileSync(newpath).toString();
-
-  values = diffChecker(oldpage,actualpage);
-  final.push((values));
-
+  getValues();
 
   res.send(final);
 
