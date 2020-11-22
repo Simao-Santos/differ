@@ -44,7 +44,8 @@ build_backend:
       - be/package-lock.json
       - be/Dockerfile
       when: on_success
-    - when: manual
+    - if: $CI_COMMIT_MESSAGE =~ /\[build-backend\]/
+      when: on_success
 
 build_frontend:
   stage: build
@@ -63,7 +64,8 @@ build_frontend:
       - fe/package-lock.json
       - fe/Dockerfile
       when: on_success
-    - when: manual
+    - if: $CI_COMMIT_MESSAGE =~ /\[build-frontend\]/
+      when: on_success
 
 build_ci_image:
   stage: build
@@ -80,7 +82,8 @@ build_ci_image:
     - changes:
       - ci-image/Dockerfile
       when: on_success
-    - when: manual
+    - if: $CI_COMMIT_MESSAGE =~ /\[build-ci\]/
+      when: on_success
 
 ########################################################################
 
@@ -101,13 +104,10 @@ eslint-backend:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       allow_failure: false
-      when: on_success
     - if: $CI_COMMIT_BRANCH == "develop"
       allow_failure: false
-      when: on_success
     - if: $CI_COMMIT_BRANCH == "master"
       allow_failure: false
-      when: on_success
     - when: on_success
 
 # run eslint (in frontend)
@@ -125,13 +125,10 @@ eslint-frontend:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       allow_failure: false
-      when: on_success
     - if: $CI_COMMIT_BRANCH == "develop"
       allow_failure: false
-      when: on_success
     - if: $CI_COMMIT_BRANCH == "master"
       allow_failure: false
-      when: on_success
     - when: on_success
 
 ########################################################################
