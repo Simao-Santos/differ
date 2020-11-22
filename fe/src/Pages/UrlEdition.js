@@ -202,7 +202,6 @@ function UrlEdition() {
       myUrlIds.forEach((id) => fetch(`http://localhost:8000/urls/${id}`, requestOptions)
         .then((res) => res.text())
         .then((res) => setBeReply(JSON.parse(res))));
-      console.log('delete the mf after this');
 
       setAnimationState(false);
     }
@@ -265,7 +264,7 @@ function UrlEdition() {
   }
 
   function handleResetFile() {
-    console.log('im losing it');
+    console.log('File has been reset.');
     setFile(null);
   }
 
