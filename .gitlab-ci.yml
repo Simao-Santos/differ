@@ -90,6 +90,7 @@ build_ci_image:
 eslint-backend:
   stage: lint
   image: node:latest
+  when: on_success
   script:
     - cd be/
     - npm install eslint
@@ -111,6 +112,7 @@ eslint-backend:
 eslint-frontend:
   stage: lint
   image: node:latest
+  when: on_success
   script:
     - cd fe/
     - npm install eslint
