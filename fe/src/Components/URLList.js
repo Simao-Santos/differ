@@ -5,27 +5,19 @@ import '../CSS/ComparisonComponents.css';
 
 class URLList extends Component {
   render() {
+    const { urls } = this.props;
+    const { toggleSelected } = this.props;
     return (
-      this.props.urls.map((url) => {
-        const { id } = url;
-        const { toggleSelected } = this.props;
-          <URLLink
-            key={id}
-            URLLink={url}
-            toggleSelected={toggleSelected}
-          />;
-      })
+      urls.map((url) => <URLLink key={url.id} URLLink={url} toggleSelected={toggleSelected} />)
     );
   }
 }
 
 URLList.propTypes = {
-  url: PropTypes.exact({
-    id: PropTypes.number,
-    address: PropTypes.string,
-    selected: PropTypes.bool,
-  }),
-  urls: PropTypes.arrayOf(url),
+  toggleSelected: PropTypes.func.isRequired,
+  urls: PropTypes.exact({
+    map: PropTypes.func,
+  }).isRequired,
 };
 
 export default URLList;
