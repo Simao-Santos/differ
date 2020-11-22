@@ -41,7 +41,12 @@ function CodeChangesPage() {
       <div className="Comparison-Cards">
         {
           codeData.map((ub) => (
-            <CodeComparison pageName={ub.name} link={ub.link} code1={ub.codes[0]} code2={ub.codes[1]} />
+            <CodeComparison
+              pageName={ub.name}
+              link={ub.link}
+              code1={ub.codes[0]}
+              code2={ub.codes[1]}
+            />
           ))
         }
       </div>
