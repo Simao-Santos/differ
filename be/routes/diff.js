@@ -1,7 +1,7 @@
 var express = require('express');
+const fs = require('fs')
 var router = express.Router();
 const diff = require('../lib/diff.js');
-var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const { sameMsg, emptyMsg, baseText, newText, editorConfig } = require('../lib/constants.js');
 
 var final=[];
@@ -31,7 +31,6 @@ router.get('/', function (req, res, next) {
   var newpath = './public/shots/url_35_2020_11_22_01_52_05_736.html';
 
 
-  const fs = require('fs')
   var oldpage = fs.readFileSync(oldpath).toString();
   
   var actualpage = fs.readFileSync(newpath).toString();
