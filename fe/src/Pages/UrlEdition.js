@@ -1,96 +1,107 @@
-import React, { useState, useRef, useEffect } from 'react'
-import '../CSS/ChangesPage.css'
-import '../CSS/URLEdition.css'
-import URLList from '../Components/URLList.js'
-import Notification from '../Components/Notification'
+import React, { useState, useRef, useEffect } from 'react';
+import '../CSS/ChangesPage.css';
+import '../CSS/URLEdition.css';
+import URLList from '../Components/URLList';
+import Notification from '../Components/Notification';
+
+function getListOfUrls(setBeReply) {
+  console.log('getting urls from db');
+
+  const requestOptions = {
+    method: 'GET',
+  };
+
+  fetch('http://localhost:8000/urls/', requestOptions)
+    .then((res) => res.text())
+    .then((res) => setBeReply(JSON.parse(res)));
+}
 
 function UrlEdition() {
+  const [urls, setUrls] = useState([]);
+  const [file, setFile] = useState(null);
+  const [deleteButtonStyle, setStyle] = useState(['grey', 'none', '0.25']);
+  // deleteButtonStyle[0] => background
+  // deleteButtonStyle[1] => pointerEvents
+  // deleteButtonStyle[2] => opacity
 
-  const [urls, setUrls] = useState([])
-  const [file, setFile] = useState(null)
-  const [delete_button_style, setStyle] = useState(["grey", "none", "0.25"]) // delete_button_style[0] => background | delete_button_style[1] => pointerEvents | delete_button_style[2] => opacity
-  const [select_all_button, setSelectAll] = useState([false, true]) // select_all_button[0] => message | select_all_button[1] => hidden
-  const [be_reply, setBeReply] = useState('{}')
-  const [do_animation, setAnimationState] = useState(true)
-  const urlAddressRef = useRef()
+  const [selectAllButton, setSelectAll] = useState([false, true]);
+  // selectAllButton[0] => message | selectAllButton[1] => hidden
+
+  const [beReply, setBeReply] = useState('{}');
+  const [doAnimation, setAnimationState] = useState(true);
+  const urlAddressRef = useRef();
 
   // useEffects 1. load urls from local storage
   // 2. save new url on local storage
   useEffect(() => {
-    getListOfUrls()
+    getListOfUrls(setBeReply);
 
-    const selectedUrls = urls.filter(url => url.selected)
+    const selectedUrls = urls.filter((url) => url.selected);
 
     if (urls.length > 0) {
       if (urls.length === selectedUrls.length) {
-        setSelectAll([false, false])
-      }
-      else {
-        setSelectAll([true, false])
+        setSelectAll([false, false]);
+      } else {
+        setSelectAll([true, false]);
       }
     } else {
       setSelectAll([false, true]);
     }
 
     if (selectedUrls.length > 0) {
-
-      setStyle([" ", " ", " "])
+      setStyle([' ', ' ', ' ']);
+    } else {
+      setStyle(['grey', 'none', '0.25']);
     }
-    else {
-      setStyle(["grey", "none", "0.25"])
+  }, []);
+
+  useEffect(() => {
+    console.log('saved urls');
+  }, [urls]);
+
+  useEffect(() => {
+
+  }, [file]);
+
+  useEffect(() => {
+  }, [doAnimation]);
+
+  useEffect(() => {
+    switch (beReply.type) {
+      case 'get_urls': setUrls(beReply.urls);
+        break;
+      case 'post_url': setUrls(beReply.urls);
+        break;
+      case 'delete_url': getListOfUrls(setBeReply);
+        break;
+      case 'error': console.log(`ERROR => ${beReply.msg}`);
+        break;
+      default: console.log(`Something unexpected has happened => ${beReply.type}`);
     }
-
-
-  }, [])
-
-  useEffect(() => {
-    console.log('saved urls')
-  }, [urls])
-
-  useEffect(() => {
-
-  }, [file])
-
-  useEffect(() => {
-  }, [do_animation])
-
-  useEffect(() => {
-    switch (be_reply.type) {
-      case 'get_urls': setUrls(be_reply.urls)
-        break
-      case 'post_url': setUrls(be_reply.urls)
-        break
-      case 'delete_url': getListOfUrls()
-        break
-      case 'error': console.log('ERROR => ' + be_reply.msg)
-        break
-      default: console.log('Something unexpected has happened => ' + be_reply.type);
-    }
-  }, [be_reply])
+  }, [beReply]);
 
   // checking/unchecking checkbox
-  function toggleSelected(url_id) {
-    const newUrls = [...urls]
-    const url = newUrls.find(url => url.id === url_id)
-    url.selected = !url.selected
-    setUrls(newUrls)
+  function toggleSelected(urlId) {
+    const newUrls = [...urls];
+    const url = newUrls.find((urlAux) => urlAux.id === urlId);
+    url.selected = !url.selected;
+    setUrls(newUrls);
 
     // once a URL is checked/unchecked update delete button style
-    const selectedUrls = newUrls.filter(url => url.selected)
-    console.log('there are these many selected => ' + selectedUrls.length)
+    const selectedUrls = newUrls.filter((urlAux) => urlAux.selected);
+    console.log(`there are these many selected => ${selectedUrls.length}`);
 
     if (newUrls.length > 0) {
       if (newUrls.length === selectedUrls.length) {
-        setSelectAll([false, false])
-      }
-      else {
-        setSelectAll([true, false])
+        setSelectAll([false, false]);
+      } else {
+        setSelectAll([true, false]);
       }
     } else {
       setSelectAll([false, true]);
     }
 
-    if (delete_button_style[0].localeCompare(' ') !== 0) {
+    if (deleteButtonStyle[0].localeCompare(' ') !== 0) {
       if (selectedUrls.length > 0) {
         setStyle([' ', ' ', ' ']);
       }
@@ -100,247 +111,264 @@ function UrlEdition() {
   }
 
   // adding a new url via text input
-  function handleAddURL(e) {
-    const address = urlAddressRef.current.value
-    if (address === '') return
-    var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
-      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
-      '((\\d{1,3}\\.){3}\\d{1,3})|localhost)' + // OR ip (v4) address
-      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
-      '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-      '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+  function handleAddURL() {
+    const address = urlAddressRef.current.value;
+    if (address === '') return;
+    const pattern = new RegExp('^(https?:\\/\\/)?' // protocol
+      + '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' // domain name
+      + '((\\d{1,3}\\.){3}\\d{1,3})|localhost)' // OR ip (v4) address
+      + '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' // port and path
+      + '(\\?[;&a-z\\d%_.~+=-]*)?' // query string
+      + '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
     if (!pattern.test(address)) {
-      alert('Please insert a valid URL.')
-      return
+      alert('Please insert a valid URL.');
+      return;
     }
 
-    urlAddressRef.current.value = null
-    setStyle([" ", " ", " "])
+    urlAddressRef.current.value = null;
+    setStyle([' ', ' ', ' ']);
 
-    setSelectAll([true, false])
+    setSelectAll([true, false]);
 
     const requestDelOptions = {
       method: 'POST',
       headers: {
-        "Content-Type": "application/json; charset=utf-8"
+        'Content-Type': 'application/json; charset=utf-8',
       },
-      body: JSON.stringify({ url: address })
-    }
-    fetch("http://localhost:8000/urls", requestDelOptions)
-      .then(res => res.text())
-      .then(res => setBeReply(JSON.parse(res)))
+      body: JSON.stringify({ url: address }),
+    };
+    fetch('http://localhost:8000/urls', requestDelOptions)
+      .then((res) => res.text())
+      .then((res) => setBeReply(JSON.parse(res)));
 
-    setAnimationState(false)
-
+    setAnimationState(false);
   }
 
   // adding multiple urls via file
   function handleAddURLs(address) {
-    if (address === '') return
-    var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
-      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
-      '((\\d{1,3}\\.){3}\\d{1,3})|localhost)' + // OR ip (v4) address
-      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
-      '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-      '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+    if (address === '') return;
+    const pattern = new RegExp('^(https?:\\/\\/)?' // protocol
+      + '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' // domain name
+      + '((\\d{1,3}\\.){3}\\d{1,3})|localhost)' // OR ip (v4) address
+      + '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' // port and path
+      + '(\\?[;&a-z\\d%_.~+=-]*)?' // query string
+      + '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
     if (!pattern.test(address)) {
-      alert('Please insert a valid URL.')
-      return
+      alert('Please insert a valid URL.');
+      return;
     }
 
-    urlAddressRef.current.value = null
-    setStyle([" ", " ", " "])
+    urlAddressRef.current.value = null;
+    setStyle([' ', ' ', ' ']);
 
-    setSelectAll([true, false])
+    setSelectAll([true, false]);
 
     const requestDelOptions = {
       method: 'POST',
       headers: {
-        "Content-Type": "application/json; charset=utf-8"
+        'Content-Type': 'application/json; charset=utf-8',
       },
-      body: JSON.stringify({ url: address })
-    }
-    fetch("http://localhost:8000/urls", requestDelOptions)
-      .then(res => res.text())
-      .then(res => setBeReply(JSON.parse(res)))
+      body: JSON.stringify({ url: address }),
+    };
+    fetch('http://localhost:8000/urls', requestDelOptions)
+      .then((res) => res.text())
+      .then((res) => setBeReply(JSON.parse(res)));
 
-    setAnimationState(false)
+    setAnimationState(false);
   }
 
   // deleting urls
   function handleDeleteUrls() {
-    if (window.confirm('You are about to delete all information on ' + urls.filter(url => url.selected).length + ' pages.\nAre you sure you want to proceed?')) {
-      const selectedUrls = urls.filter(url => url.selected)
+    if (window.confirm(`You are about to delete all information on ${urls.filter((url) => url.selected).length} pages.\nAre you sure you want to proceed?`)) {
+      const selectedUrls = urls.filter((url) => url.selected);
 
-      let my_url_ids = []
-      for (let i = 0; i < selectedUrls.length; i++) {
-        my_url_ids[i] = selectedUrls[i].id
+      const myUrlIds = [];
+      for (let i = 0; i < selectedUrls.length; i += 1) {
+        myUrlIds[i] = selectedUrls[i].id;
       }
 
-      console.log('so in delete there are these many => ' + selectedUrls)
+      console.log(`so in delete there are these many => ${selectedUrls}`);
 
       setStyle(['grey', 'none', '0.25']);
 
       if (selectedUrls.length !== urls.length) {
-        setSelectAll([true, false])
-      } else setSelectAll([false, true])
+        setSelectAll([true, false]);
+      } else setSelectAll([false, true]);
 
       const requestOptions = {
         method: 'DELETE',
-      }
+      };
 
-      my_url_ids.forEach(id =>
-        fetch(`http://localhost:8000/urls/${id}`, requestOptions)
-          .then(res => res.text())
-          .then(res => setBeReply(JSON.parse(res)))
+      myUrlIds.forEach((id) => fetch(`http://localhost:8000/urls/${id}`, requestOptions)
+        .then((res) => res.text())
+        .then((res) => setBeReply(JSON.parse(res))));
 
-      )
-      console.log('delete the mf after this')
-
-      setAnimationState(false)
+      setAnimationState(false);
     }
   }
 
   // updating url information
   function handleUpdateUrls() {
-    if (window.confirm('You are about to update all information on ' + urls.filter(url => url.selected).length + ' pages.\nAre you sure you want to proceed?')) {
-      const selectedUrls = urls.filter(url => url.selected)
+    if (window.confirm(`You are about to update all information on ${urls.filter((url) => url.selected).length} pages.\nAre you sure you want to proceed?`)) {
+      const selectedUrls = urls.filter((url) => url.selected);
 
-      let my_url_ids = []
-      for (let i = 0; i < selectedUrls.length; i++) {
-        my_url_ids[i] = selectedUrls[i].id
+      const myUrlIds = [];
+      for (let i = 0; i < selectedUrls.length; i += 1) {
+        myUrlIds[i] = selectedUrls[i].id;
       }
 
       const requestOptions = {
-        method: 'GET'
+        method: 'GET',
 
-      }
+      };
 
-      my_url_ids.forEach(id =>
-        fetch(`http://localhost:8000/actions/capture/${id}`, requestOptions)
-          .then(res => res.text())
-          .then(res => console.log(res))
-      )
+      myUrlIds.forEach((id) => fetch(`http://localhost:8000/actions/capture/${id}`, requestOptions)
+        .then((res) => res.text())
+        .then((res) => console.log(res)));
 
-      setAnimationState(false)
-
+      setAnimationState(false);
     }
   }
 
   function handleToggleSelectAll() {
-
-    if (select_all_button[0]) {
-      urls.forEach(function (url) {
+    if (selectAllButton[0]) {
+      urls.forEach((url) => {
         if (!url.selected) {
-          toggleSelected(url.id)
+          toggleSelected(url.id);
         }
-      })
-    }
-    else {
-      urls.forEach(function (url) {
-        toggleSelected(url.id)
-      })
+      });
+    } else {
+      urls.forEach((url) => {
+        toggleSelected(url.id);
+      });
     }
   }
 
   function handleRunComparison() {
+    const selectedUrls = urls.filter((url) => url.selected);
 
-    const selectedUrls = urls.filter(url => url.selected)
-
-    let my_url_ids = []
-    for (let i = 0; i < selectedUrls.length; i++) {
-      my_url_ids[i] = selectedUrls[i].id
+    const myUrlIds = [];
+    for (let i = 0; i < selectedUrls.length; i += 1) {
+      myUrlIds[i] = selectedUrls[i].id;
     }
 
     const requestOptions = {
-      method: 'GET'
-    }
+      method: 'GET',
+    };
 
+    myUrlIds.forEach((id) => fetch(`http://localhost:8000/actions/compare/${id}`, requestOptions)
+      .then((res) => res.text())
+      .then((res) => console.log(res)));
 
-    my_url_ids.forEach(id =>
-      fetch(`http://localhost:8000/actions/compare/${id}`, requestOptions)
-        .then(res => res.text())
-        .then(res => console.log(res))
-    )
-
-    setAnimationState(false)
-
-
-  }
-
-  function getListOfUrls() {
-
-    console.log('getting urls from db')
-
-    const requestOptions = {
-      method: 'GET'
-    }
-
-    fetch("http://localhost:8000/urls/", requestOptions)
-      .then(res => res.text())
-      .then(res => setBeReply(JSON.parse(res)))
+    setAnimationState(false);
   }
 
   function handleResetFile() {
-    console.log('im losing it')
-    setFile(null)
+    console.log('File has been reset.');
+    setFile(null);
   }
 
   function handleAddMultipleUrls() {
     if (file !== null) {
-      let reader = new FileReader()
-      reader.onload = function () {
-        let lines = this.result.split('\n')
-        for (let line = 0; line < lines.length; line++) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const lines = e.target.result.split('\n');
+        for (let line = 0; line < lines.length; line += 1) {
           if (lines[line].length > 0) {
-            handleAddURLs(lines[line])
+            handleAddURLs(lines[line]);
           }
         }
-      }
-      reader.readAsText(file.file)
+      };
+      reader.readAsText(file.file);
 
-      setFile(null)
+      setFile(null);
     }
-
-
   }
-
 
   return (
     <>
       <header>
-        <Notification message={be_reply.msg} toggleAnimation={setAnimationState} animate={do_animation} />
-        <h1> Insert your URL's here!</h1>
-        <p> Each page will be saved in our database. In the future, all you need to do is run the tests and we will use this version to run the comparisons.</p>
+        <Notification
+          message={beReply.msg}
+          toggleAnimation={setAnimationState}
+          animate={doAnimation}
+        />
+        <h1> Insert your URL&apos;s here!</h1>
+        <p>
+          {' '}
+          Each page will be saved in our database. In the future, all you need to do is
+          run the tests and we will use this version to run the comparisons.
+        </p>
       </header>
-      <div class="container">
-        <div class="row main-section">
-          <div class="left-side col-9">
-            <input type="text" ref={urlAddressRef} placeholder="Insert your URL here"></input>
-            <button type="button" onClick={handleAddURL} class="next-to-input-button">+</button>
-            <input type="file" name="file" id="file" accept=".txt" onChange={(e) => setFile({ file: e.target.files[0] })} hidden></input><br />
+      <div className="container">
+        <div className="row main-section">
+          <div className="left-side col-9">
+            <input type="text" ref={urlAddressRef} placeholder="Insert your URL here" />
+            <button type="button" onClick={handleAddURL} className="next-to-input-button">+</button>
+            <input type="file" name="file" id="file" accept=".txt" onChange={(e) => setFile({ file: e.target.files[0] })} hidden />
+            <br />
 
-            <div class="row">
-              <label class="under-input-text" for="file">or <span class="orange-text">submit</span> a file.</label><br /><br />
+            <div className="row">
+              <label className="under-input-text" htmlFor="file">
+                or
+                <span className="orange-text">submit</span>
+                {' '}
+                a file.
+              </label>
+              <br />
+              <br />
               <div hidden={file === null}>
-                <span class="submit-file-question" >Submit urls?</span>
-                <span class="submit-file-options" id="yes-submit" onClick={handleAddMultipleUrls}>Yes</span>
-                <span class="submit-file-options" id="no-submit" onClick={handleResetFile}>No</span>
+                <span className="submit-file-question">Submit urls?</span>
+                <span
+                  className="submit-file-options"
+                  id="yes-submit"
+                  tabIndex="0"
+                  role="button"
+                  onClick={handleAddMultipleUrls}
+                  onKeyPress={handleAddMultipleUrls}
+                >
+                  Yes
+                </span>
+                <span
+                  className="submit-file-options"
+                  id="no-submit"
+                  tabIndex="0"
+                  role="button"
+                  onClick={handleResetFile}
+                  onKeyPress={handleResetFile}
+                >
+                  No
+                </span>
               </div>
             </div>
 
-
-            <button onClick={handleToggleSelectAll} hidden={select_all_button[1]}>{select_all_button[0] ? 'Select all' : 'Unselect all'}</button>
+            <button onClick={handleToggleSelectAll} type="button" hidden={selectAllButton[1]}>{selectAllButton[0] ? 'Select all' : 'Unselect all'}</button>
             <URLList urls={urls} toggleSelected={toggleSelected} />
           </div>
-          <div class="right-side col-3">
-            <p>{urls.filter(url => url.selected).length} URL's selected</p>
-            <div class="row justify-content-center selection-buttons">
-              <button type="button" onClick={handleDeleteUrls} style={{ background: delete_button_style[0], pointerEvents: delete_button_style[1], opacity: delete_button_style[2] }}>Delete</button>
-              <button onClick={handleUpdateUrls} style={{ background: delete_button_style[0], pointerEvents: delete_button_style[1], opacity: delete_button_style[2] }}>Update</button><br />
-            </div><br />
-            <div class="row justify-content-center selection-buttons">
-              <button onClick={handleRunComparison} id="compare-button" style={{ background: delete_button_style[0], pointerEvents: delete_button_style[1], opacity: delete_button_style[2] }}>Run Comparison</button>
+          <div className="right-side col-3">
+            <p>
+              {urls.filter((url) => url.selected).length}
+              {' '}
+              URL&apos;s selected
+            </p>
+            <div className="row justify-content-center selection-buttons">
+              <button type="button" onClick={handleDeleteUrls} style={{ background: deleteButtonStyle[0], pointerEvents: deleteButtonStyle[1], opacity: deleteButtonStyle[2] }}>Delete</button>
+              <button
+                onClick={handleUpdateUrls}
+                type="button"
+                style={{
+                  background: deleteButtonStyle[0],
+                  pointerEvents: deleteButtonStyle[1],
+                  opacity: deleteButtonStyle[2],
+                }}
+              >
+                Update
+              </button>
+              <br />
+            </div>
+            <br />
+            <div className="row justify-content-center selection-buttons">
+              <button onClick={handleRunComparison} type="button" id="compare-button" style={{ background: deleteButtonStyle[0], pointerEvents: deleteButtonStyle[1], opacity: deleteButtonStyle[2] }}>Run Comparison</button>
             </div>
           </div>
         </div>

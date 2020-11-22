@@ -1,17 +1,23 @@
 import React, { Component } from 'react';
-import URLLink from '../Components/URLLink.js'
-import '../CSS/ComparisonComponents.css'
-
+import PropTypes from 'prop-types';
+import URLLink from './URLLink';
+import '../CSS/ComparisonComponents.css';
 
 class URLList extends Component {
-    render()
-    {
-        return(
-        this.props.urls.map(url => {
-            return <URLLink key = {url.id } URLLink = { url } toggleSelected = { this.props.toggleSelected }/>
-        })
-        );
-    }
+  render() {
+    const { urls } = this.props;
+    const { toggleSelected } = this.props;
+    return (
+      urls.map((url) => <URLLink key={url.id} link={url} toggleSelected={toggleSelected} />)
+    );
+  }
 }
+
+URLList.propTypes = {
+  toggleSelected: PropTypes.func.isRequired,
+  urls: PropTypes.exact({
+    map: PropTypes.func,
+  }).isRequired,
+};
 
 export default URLList;

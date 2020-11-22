@@ -7,6 +7,7 @@ services:
     build:
       context: ./fe
       dockerfile: Dockerfile
+    command: npm run test
     tty: true
     volumes:
       - ./fe/src/:/app/fe/src/
