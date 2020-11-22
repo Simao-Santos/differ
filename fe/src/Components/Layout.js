@@ -1,20 +1,24 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import '../CSS/Layout.css';
 import Header from './Header';
 import Footer from './Footer';
 
-class Layout extends Component {
-  render() {
-    return (
-      <>
-        <Header />
-        <div className="App-pageContent">
-          {this.props.children}
-        </div>
-        <Footer />
-      </>
-    );
-  }
-}
+const Layout = (props) => {
+  const { children } = props;
+  return (
+    <>
+      <Header />
+      <div className="App-pageContent">
+        {children}
+      </div>
+      <Footer />
+    </>
+  );
+};
+
+Layout.propTypes = {
+  children: PropTypes.element.isRequired,
+};
 
 export default Layout;
