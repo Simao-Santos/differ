@@ -4,6 +4,7 @@ const diff = require('../lib/diff.js');
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const { sameMsg, emptyMsg, baseText, newText, editorConfig } = require('../lib/constants.js');
 
+var final=[];
 
 function diffChecker(old, actual) {
   const lc = diff.lib.stringAsLines(old);
@@ -24,16 +25,21 @@ router.get('/', function (req, res, next) {
   //diffcheker para cada "url" e dar append ao json
   //send json inteiro
 
-  var final=[];
   var values;
-  var old;
-  var actual="abcde";
+
+  var oldpath = './public/shots/url_35_2020_11_22_01_45_53_972.html';
+  var newpath = './public/shots/url_35_2020_11_22_01_52_05_736.html';
+
 
   const fs = require('fs')
-  old = fs.readFileSync('./routes/zerozero.pt_old.txt').toString();
+  var oldpage = fs.readFileSync(oldpath).toString();
   
-  values = diffChecker(old,actual);
+  var actualpage = fs.readFileSync(newpath).toString();
+
+  values = diffChecker(oldpage,actualpage);
   final.push((values));
+
+
   res.send(final);
 
 });
