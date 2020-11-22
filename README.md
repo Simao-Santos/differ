@@ -15,6 +15,8 @@ The product owner is **Marco Sousa (marco.sousa@zerozero.pt)** of zerozero.pt /Z
 # For the Developers
 
 ### Adding tests to frontend and backend
+Every time a new feature is implemented, unit tests for it should be added. Before accepting a merge request, the developers have to make sure that this rule is being followed.
+
 To add test files to the **frontend** and **backend** you should add them in this folder (t1g1/fe/tests) and this (t1g1/be/tests), respectively. They should have the same file name format as the example there: *filename*.test.js.
 
 To know how to make tests for the backend you can see [here](https://dev.to/nedsoft/testing-nodejs-express-api-with-jest-and-supertest-1km6) for example. For the frontend I also found [this](https://jestjs.io/docs/en/tutorial-react). But obviously you can see anywhere how to make them.
