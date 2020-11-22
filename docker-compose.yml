@@ -31,7 +31,7 @@ services:
     ports:
       - 8000:8000
     volumes:
-      - ./be:/app/be
+      - ./be/src:/app/be/src
     depends_on:
       - pgadmin
     networks:

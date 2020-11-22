@@ -1,7 +1,7 @@
 
 be/node_modules/
-be/bin/
-be/public/shots/
+be/src/bin/
+be/src/public/shots/
 pgdata
 
 *.log
