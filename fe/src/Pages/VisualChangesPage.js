@@ -30,7 +30,7 @@ function getListOfImages(beReplyUrls, setBeReply) {
     if (beReplyUrls[0].id === undefined) return;
   }
 
-  for (let i = 0; i < beReplyUrls.length; i = +1) {
+  for (let i = 0; i < beReplyUrls.length; i += 1) {
     console.log(beReplyUrls[i].id);
     console.log(`http://localhost:8000/captures/byPageId/${beReplyUrls[i].id}`);
     fetch(`http://localhost:8000/captures/byPageId/${beReplyUrls[i].id}`, requestOptions).then((res) => res.text()).then((res) => setBeReply(JSON.parse(res)));
@@ -79,17 +79,23 @@ function VisualChangesPage() {
     getListOfImages(beReplyUrls, setBeReply);
   }, [beReplyUrls]);
 
-  return (
-    <>
-      <div className="Comparison-Cards">
-        {
-          info.map((ub, i) => (
-            <VisualComparison pageName={`Page ${beReplyUrls[i].id}`} link={beReplyUrls[i].url} timeStamp1={ub.captures[0].date} timeStamp2={ub.captures[ub.captures.length - 1].date} image1={`http://localhost:8000${ub.captures[0].image_location}`} image2={`http://localhost:8000${ub.captures[ub.captures.length - 1].image_location}`} />
-          ))
-          }
-      </div>
-    </>
-  );
+  if(beReplyUrls.length === 0)
+    return( <>
+              <h1>There are no available captures</h1>
+              <h2>Try adding some urls...</h2>
+            </>);
+  else
+    return (
+      <>
+        <div className="Comparison-Cards">
+          {
+            info.map((ub, i) => (
+              <VisualComparison pageName={`Page ${beReplyUrls[i].id}`} link={beReplyUrls[i].url} timeStamp1={ub.captures[0].date} timeStamp2={ub.captures[ub.captures.length - 1].date} image1={`http://localhost:8000${ub.captures[0].image_location.substring(1)}`} image2={`http://localhost:8000${ub.captures[ub.captures.length - 1].image_location.substring(1)}`} />
+            ))
+            }
+        </div>
+      </>
+    );
 }
 // comparison={"http://localhost:8000" + comparison[i].comparisons[comparison[i].comparisons.length-1].image_location}
 
