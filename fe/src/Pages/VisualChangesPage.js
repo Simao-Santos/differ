@@ -90,7 +90,7 @@ function VisualChangesPage() {
         <div className="Comparison-Cards">
           {
             info.map((ub, i) => (
-              <VisualComparison pageName={`Page ${beReplyUrls[i].id}`} link={beReplyUrls[i].url} timeStamp1={ub.captures[0].date} timeStamp2={ub.captures[ub.captures.length - 1].date} image1={`http://localhost:8000${ub.captures[0].image_location.substring(1)}`} image2={`http://localhost:8000${ub.captures[ub.captures.length - 1].image_location.substring(1)}`} />
+              <VisualComparison pageName={`Page ${beReplyUrls[i].id}`} link={beReplyUrls[i].url} timeStamp1={ub.captures[ub.captures.length - 2].date} timeStamp2={ub.captures[ub.captures.length - 1].date} image1={`http://localhost:8000${ub.captures[ub.captures.length - 2].image_location}`} image2={`http://localhost:8000${ub.captures[ub.captures.length - 1].image_location}`} />
             ))
             }
         </div>
