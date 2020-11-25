@@ -50,10 +50,11 @@ const options = {
       },
     ],
   },
-  apis: ['./src/routes/urls.js'],
-  apis: ['./src/routes/captures.js'],
-  apis: ['./src/routes/comparisons.js'],
-  apis: ['./src/routes/actions.js'],
+  apis: [
+    './src/routes/urls.js',
+    './src/routes/captures.js',
+    './src/routes/comparisons.js',
+    './src/routes/actions.js'],
 };
 
 const specs = swaggerJsDoc(options);
