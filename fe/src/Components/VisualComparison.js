@@ -2,6 +2,8 @@ import React from 'react';
 import { Accordion, Card, Button } from 'react-bootstrap';
 import '../CSS/ComparisonComponents.css';
 import PropTypes from 'prop-types';
+import Zoom from 'react-medium-image-zoom';
+import 'react-medium-image-zoom/dist/styles.css';
 
 const VisualComparison = (props) => {
   const {
@@ -44,9 +46,13 @@ const VisualComparison = (props) => {
           </Accordion>
 
           <div className="Comparison-Content">
-            <img src={image1} className="View-images" alt="logo" />
+            <Zoom>
+              <img src={image1} className="View-images" alt="logo" />
+            </Zoom>
             <img src="../arrow.png" className="Arrow" alt="logo" />
-            <img src={image2} className="View-images" alt="logo" />
+            <Zoom>
+              <img src={image2} className="View-images" alt="logo" />
+            </Zoom>
           </div>
 
         </div>
