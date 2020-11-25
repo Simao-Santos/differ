@@ -22,7 +22,9 @@
     "pg": "^8.4.2",
     "pixelmatch": "^5.2.1",
     "pngjs": "^6.0.0",
-    "sharp": "^0.26.2"
+    "sharp": "^0.26.2",
+    "swagger-jsdoc": "^5.0.1",
+    "swagger-ui-express": "^4.1.5"
   },
   "devDependencies": {
     "eslint": "^7.13.0",

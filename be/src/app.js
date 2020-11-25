@@ -4,6 +4,8 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -32,6 +34,30 @@ app.use('/urls', urlsRoute);
 app.use('/captures', capturesRoute);
 app.use('/comparisons', comparisonsRoute);
 app.use('/actions', actionsRoute);
+
+const options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Differ Backend API',
+      version: '0.1.0',
+      description:
+        'This is an API to communicate with the Differ app backend to perform operations with URLs and comparisons',
+    },
+    servers: [
+      {
+        url: 'http://localhost:8000/',
+      },
+    ],
+  },
+  apis: ['./src/routes/urls.js'],
+  apis: ['./src/routes/captures.js'],
+  apis: ['./src/routes/comparisons.js'],
+  apis: ['./src/routes/actions.js'],
+};
+
+const specs = swaggerJsDoc(options);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
