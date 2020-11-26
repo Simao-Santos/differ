@@ -43,8 +43,15 @@ function getListOfUrls(setBeURLReply) {
   };
 
   fetch('http://localhost:8000/urls/', requestOptions)
-    .then((res) => res.text())
-    .then((res) => setBeURLReply(JSON.parse(res).urls));
+    .then((res) => {
+      if (res.status === 200) {
+        res.text()
+          .then((content) => setBeURLReply(JSON.parse(content)));
+      }
+      else if(res.status === 500) {
+        // TODO: show error message
+      }
+    });
 }
 
 function getListOfImages(beReplyUrls, setBeReply) {
@@ -55,7 +62,7 @@ function getListOfImages(beReplyUrls, setBeReply) {
   };
 
   console.log(beReplyUrls);
-  console.log(`urls length${beReplyUrls.length}`);
+  console.log(`urls length: ${beReplyUrls.length}`);
   if (beReplyUrls.length > 0) {
     if (beReplyUrls[0].id === undefined) return;
   }
