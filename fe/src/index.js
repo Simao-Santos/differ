@@ -15,8 +15,6 @@ import UrlEdition from './Pages/UrlEdition';
 
 function getTab() {
   switch (window.location.pathname.substring(1)) {
-    case 'urls':
-      return 'first';
     case 'visualChanges':
       return 'second';
     case 'codeChanges':
@@ -37,7 +35,7 @@ ReactDOM.render(
             <Col sm={3}>
               <Nav variant="pills" className="flex-column">
                 <Nav.Item>
-                  <Nav.Link eventKey="first" href="/urls">URLs</Nav.Link>
+                  <Nav.Link eventKey="first" href="/">URLs</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
                   <Nav.Link eventKey="second" href="/visualChanges">View</Nav.Link>
@@ -50,7 +48,7 @@ ReactDOM.render(
             <Col sm={9}>
               <Tab.Content>
                 <Tab.Pane eventKey="first">
-                  <Route path="/urls" exact component={UrlEdition} />
+                  <Route path="/" exact component={UrlEdition} />
                 </Tab.Pane>
                 <Tab.Pane eventKey="second">
                   <Route path="/visualChanges" exact component={VisualChangesPage} />
