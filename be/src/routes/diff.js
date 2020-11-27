@@ -8,7 +8,7 @@ const { json } = require('express');
 
 var router = require("express-promise-router")();
 
-var final = [];
+
 
 function diffChecker(old, actual) {
   const lc = diff.lib.stringAsLines(old);
@@ -47,10 +47,25 @@ function getIds(jsoncontent) {
   return myUrlIds;
 }
 
-function getOne(id) {
+async function getOne(id) {
   //TODO get page by id
-  var oldpath = './public/shots/url_35_2020_11_22_01_45_53_972.html';
-  var newpath = './public/shots/url_35_2020_11_22_01_52_05_736.html';
+  var jsoncontent ;
+  const requestOptions = {
+    method: 'GET'
+  }
+  await fetch(`http://localhost:8000/captures/byPageId/${id}`, requestOptions)
+        .then((res) => res.text())
+        .then(json => jsoncontent = json);
+        //.then(json => final.push(json));
+
+  var aux = JSON.parse(jsoncontent).captures.length;
+  //final.push(JSON.parse(jsoncontent).captures[0].text_location);
+//console.log(aux);
+
+  //var oldpath = './src/public/shots/url_36_2020_11_26_02_15_15_441.html';
+  //var newpath = './src/public/shots/url_36_2020_11_26_02_15_23_964.html';
+  var oldpath = './src/public'+ JSON.stringify(JSON.parse(jsoncontent).captures[aux-1].text_location).substring(1).slice(0,-1);
+  var newpath = './src/public'+ JSON.stringify(JSON.parse(jsoncontent).captures[aux-1].text_location).substring(1).slice(0,-1);
 
   var oldpage = fs.readFileSync(oldpath).toString();
   var actualpage = fs.readFileSync(newpath).toString();
@@ -60,14 +75,17 @@ function getOne(id) {
 }
 
 router.get('/', async function (req, res, next) {
+  var final = [];
+
   var jsoncontent = await getListOfUrls();
   var ids = getIds(jsoncontent);
-  final.push(ids);
+  //final.push(ids);
 
 
-  for (id in ids) {
-    var values = getOne(id)
-    //final.push(values);
+  for (let i = 0; i < ids.length; i += 1) {
+    console.log('ID----' + ids[i]);
+    var values = await getOne(ids[i])
+    final.push(values);
   }
   res.send(final);
 });
