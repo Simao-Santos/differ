@@ -20,9 +20,8 @@ function diffChecker(old, actual) {
 
   return [lc, rc, opcodes, baseTextName, newTextName];
 }
-
-async function getListOfUrls() {   
-  const myUrlIds = [];
+async function getListOfUrls() {
+  var jsoncontent = new Object();
 
   console.log('getting urls from db')
 
@@ -30,13 +29,22 @@ async function getListOfUrls() {
     method: 'GET'
   }
 
-  
-  var jsoncontent=[];
-  await fetch('http://localhost:8000/urls/', requestOptions)
-  .then(res => res.json())
-  .then(json => jsoncontent.push(json.urls));
-    //final.push(jsoncontent);
-    return jsoncontent;    
+  var response = await fetch('http://localhost:8000/urls/', requestOptions)
+    //.then(res => res.json())
+    .then(json => jsoncontent = json);
+
+  var data = await response.json();
+  //final.push(jsoncontent.urls);
+  console.log('DATA::::'+ data);
+  return JSON.stringify(data);
+}
+
+function getIds(jsoncontent) {
+  const myUrlIds = [];
+  for (let i = 0; i < jsoncontent.length; i += 1) {
+    myUrlIds[i] = jsoncontent[i].id;
+  }
+  return myUrlIds;
 }
 
 function getOne(id){
@@ -47,26 +55,18 @@ function getOne(id){
   var oldpage = fs.readFileSync(oldpath).toString();
   var actualpage = fs.readFileSync(newpath).toString();
 
-  //var values = diffChecker(oldpage,actualpage);
+  var values = diffChecker(oldpage,actualpage);
   return values;
 }
 
-function getValues(){
-  //TODO percorrer os diferentes ids presentes na base de dados
-  var jsoncontent = getListOfUrls();
-
-
-  //var values = getOne(id);
-  //final.push((values));
-}
-
 router.get('/', function (req, res, next) {
-  //função vai buscar o conteudo de todos os urls
-  //diffcheker para cada "url" e dar append ao json
-  //send json inteiro
+  var jsoncontent =getListOfUrls();
+  var ids = getIds(jsoncontent);
 
-  getValues();
-
+  for(id in ids){
+    var values = getOne(id)
+    final.push(values);
+  }
   res.send(final);
 });
 
