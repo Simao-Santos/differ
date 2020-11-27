@@ -1,11 +1,14 @@
 var express = require('express');
 const fs = require('fs')
-var router = express.Router();
+//var router = express.Router();
 const diff = require('../lib/diff.js');
 const { sameMsg, emptyMsg, baseText, newText, editorConfig } = require('../lib/constants.js');
 const fetch = require("node-fetch");
+const { json } = require('express');
 
-var final=[];
+var router = require("express-promise-router")();
+
+var final = [];
 
 function diffChecker(old, actual) {
   const lc = diff.lib.stringAsLines(old);
@@ -30,24 +33,21 @@ async function getListOfUrls() {
   }
 
   var response = await fetch('http://localhost:8000/urls/', requestOptions)
-    //.then(res => res.json())
+    .then(res => res.json())
     .then(json => jsoncontent = json);
-
-  var data = await response.json();
-  //final.push(jsoncontent.urls);
-  console.log('DATA::::'+ data);
-  return JSON.stringify(data);
+  return JSON.stringify(jsoncontent.urls);
 }
 
 function getIds(jsoncontent) {
   const myUrlIds = [];
-  for (let i = 0; i < jsoncontent.length; i += 1) {
-    myUrlIds[i] = jsoncontent[i].id;
+  var json_ids = JSON.parse(jsoncontent);
+  for (let i = 0; i < json_ids.length; i += 1) {
+    myUrlIds[i] = json_ids[i].id;
   }
   return myUrlIds;
 }
 
-function getOne(id){
+function getOne(id) {
   //TODO get page by id
   var oldpath = './public/shots/url_35_2020_11_22_01_45_53_972.html';
   var newpath = './public/shots/url_35_2020_11_22_01_52_05_736.html';
@@ -55,17 +55,19 @@ function getOne(id){
   var oldpage = fs.readFileSync(oldpath).toString();
   var actualpage = fs.readFileSync(newpath).toString();
 
-  var values = diffChecker(oldpage,actualpage);
+  var values = diffChecker(oldpage, actualpage);
   return values;
 }
 
-router.get('/', function (req, res, next) {
-  var jsoncontent =getListOfUrls();
+router.get('/', async function (req, res, next) {
+  var jsoncontent = await getListOfUrls();
   var ids = getIds(jsoncontent);
+  final.push(ids);
 
-  for(id in ids){
+
+  for (id in ids) {
     var values = getOne(id)
-    final.push(values);
+    //final.push(values);
   }
   res.send(final);
 });
