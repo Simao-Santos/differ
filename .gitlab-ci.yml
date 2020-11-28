@@ -43,6 +43,7 @@ build_backend:
       - be/package.json
       - be/package-lock.json
       - be/Dockerfile
+      - be/wait-for-pg.sh
       when: on_success
     - if: $CI_COMMIT_MESSAGE =~ /\[build-backend\]/
       when: on_success
