@@ -61,7 +61,6 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: auto-testing
     volumes:
-      - ./pgdata:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - 5432:5432
