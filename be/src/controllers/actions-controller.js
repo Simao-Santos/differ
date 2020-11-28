@@ -21,8 +21,7 @@ async function compareCaptures(id1, id2, textLocation1, textLocation2,
   const sec = String(today.getSeconds()).padStart(2, '0');
   const millisec = String(today.getMilliseconds()).padStart(3, '0');
 
-  const date = `${year}_${mon}_${day}_${
-    hour}_${min}_${sec}_${millisec}`;
+  const date = `${year}_${mon}_${day}_${hour}_${min}_${sec}_${millisec}`;
 
   const filename = `comparison_${id1}_${id2}_${date}`;
   const textFile = null;
@@ -146,51 +145,54 @@ async function captureUrlAsync(id, url, compareNext) {
   const sec = String(today.getSeconds()).padStart(2, '0');
   const millisec = String(today.getMilliseconds()).padStart(3, '0');
 
-  const date = `${year}_${mon}_${day}_${
-    hour}_${min}_${sec}_${millisec}`;
+  const date = `${year}_${mon}_${day}_${hour}_${min}_${sec}_${millisec}`;
 
   const filename = `url_${id}_${date}`;
 
   // Get content from url
   let body = await request.getRequest(url);
 
-  // The following code will identify every link that starts with a single "/",
-  // which refers to the root of the website,
-  // And add the url before it (so it can actually get the content, which won't be saved locally)
-  const regex = /"\/(?!\/)/gi;
-  body = body.replace(regex, `"${url}${(url.endsWith('/')) ? '' : '/'}`);
+  if (body !== null) {
+    // The following code will identify every link that starts with a single "/",
+    // which refers to the root of the website,
+    // And add the url before it (so it can actually get the content, which won't be saved locally)
+    const regex = /"\/(?!\/)/gi;
+    body = body.replace(regex, `"${url}${(url.endsWith('/')) ? '' : '/'}`);
 
-  const contentPath = `${folder + ((folder.endsWith('/')) ? '' : '/') + filename}.html`;
+    const contentPath = `${folder + ((folder.endsWith('/')) ? '' : '/') + filename}.html`;
 
-  // Saves the url content to file
-  if (fs.existsSync(contentPath)) {
-    console.log('Error: can\'t save url content (file with this name already exists)');
-  } else {
-    console.log(`Saving page content for ${url}...`);
+    // Saves the url content to file
+    if (fs.existsSync(contentPath)) {
+      console.log('Error: can\'t save url content (file with this name already exists)');
+    } else {
+      console.log(`Saving page content for ${url}...`);
 
-    try {
-      fs.writeFileSync(`./src/public${contentPath}`, body);
-      console.log('Page content saved!');
+      try {
+        fs.writeFileSync(`./src/public${contentPath}`, body);
+        console.log('Page content saved!');
 
-      const screenshotPath = await saveUrlScreenshot(contentPath, filename, folder);
+        const screenshotPath = await saveUrlScreenshot(contentPath, filename, folder);
 
-      const query = {
-        text: 'INSERT INTO capture (page_id, image_location, text_location, date) VALUES ($1, $2, $3, $4) RETURNING id',
-        values: [id, screenshotPath, contentPath, today],
-      };
+        const query = {
+          text: 'INSERT INTO capture (page_id, image_location, text_location, date) VALUES ($1, $2, $3, $4) RETURNING id',
+          values: [id, screenshotPath, contentPath, today],
+        };
 
-      database.query(query, (err, resultInsert) => {
-        if (err || resultInsert.rowCount === 0) console.log('Couldn\'t save capture');
-        else {
-          console.log(`Capture saved with ID ${resultInsert.rows[0].id}`);
+        database.query(query, (err, resultInsert) => {
+          if (err || resultInsert.rowCount === 0) console.log('Couldn\'t save capture');
+          else {
+            console.log(`Capture saved with ID ${resultInsert.rows[0].id}`);
 
-          // If the captures are supposed to be compared immediatelly, call the function
-          if (compareNext) compareUrlAsync(id);
-        }
-      });
-    } catch (err) {
-      console.log(`Error saving page content: ${err}`);
+            // If the captures are supposed to be compared immediatelly, call the function
+            if (compareNext) compareUrlAsync(id);
+          }
+        });
+      } catch (err) {
+        console.log(`Error saving page content: ${err}`);
+      }
     }
+  } else {
+    console.log(`Could not capture page`);
   }
 }
 
