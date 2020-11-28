@@ -27,7 +27,7 @@ class VisualChangesPage extends Component {
 
   componentDidMount() {
     const u = 0;
-    const v = 5;
+    const v = 10;
     const requestOptions = {
       method: 'GET',
     };
@@ -41,7 +41,14 @@ class VisualChangesPage extends Component {
   render() {
     const { isLoading, data } = this.state;
     if (isLoading) {
-      return (<Spinner animation="border" />);
+      return (
+        <>
+          <div className="centered">
+            <Spinner animation="border" />
+            <h2>Information is loading... Hang in there!</h2>
+          </div>
+        </>  
+      );
     }
     return (
       <>
