@@ -4,6 +4,9 @@ WORKDIR /app/be
 
 COPY package.json package-lock.json ./
 
+# Install postgresql to use wait-for-pg.sh
+RUN apt-get update && apt-get install -y postgresql
+
 # Dependencies needed for running Chromium headless
 # https://github.com/puppeteer/puppeteer/issues/1345#issuecomment-343538927
 RUN apt-get update && apt-get install -y \
@@ -54,6 +57,9 @@ RUN npm install
 
 COPY . ./
 
+# Change the 'wait for postgres' script permissions 
+RUN chmod 777 wait-for-pg.sh
+
 # To overcome the "No usable sandbox!" error that prevents Chrome from launching
 # https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#recommended-enable-user-namespace-cloning
 RUN echo 'kernel.unprivileged_userns_clone=1' > /etc/sysctl.d/userns.conf
@@ -71,5 +77,8 @@ USER differuser
 
 # PROBLEM: by running with differuser, there are permission errors when running this container in a volume
 # This is solved with start.sh
+
+# Makes sure the backend is only started when the database is ready
+ENTRYPOINT ["./wait-for-pg.sh"]
 
 CMD npm start
