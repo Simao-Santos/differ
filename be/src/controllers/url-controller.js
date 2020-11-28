@@ -21,7 +21,7 @@ exports.get_urls = function getUrls(req, res, next) {
         } else if (result.rowCount === 0) {
           res.sendStatus(404);
         } else {
-          res.status(200).send(result.rows);
+          res.status(200).send(result.rows[0]);
         }
       });
     } else {
