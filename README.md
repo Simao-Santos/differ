@@ -72,6 +72,8 @@ Be warned the clean builds take their time. Don't be surprised if the first time
 
 **Run the application with** `sh scripts/start.sh`, which grants the needed permissions and runs docker-compose (see !5).
 
+If you want to run the backend tests, do `sh scripts/start-test_backend.sh`, which grants the needed permissions and runs docker-compose.test_backend.yml.
+
 #### Errors:
 
 Node 10.18.1 minimum version is needed.
