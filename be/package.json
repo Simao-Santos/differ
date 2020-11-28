@@ -10,7 +10,8 @@
       "default",
       ["./node_modules/jest-html-reporter", {
         "pageTitle": "Test Report",
-        "outputPath": "./tests/reports/test-report.html"
+        "outputPath": "./tests/reports/test-report.html",
+        "includeFailureMsg": true
       }]
     ]
   },
