@@ -3,7 +3,6 @@
   "version": "0.0.0",
   "private": true,
   "jest": {
-    "verbose": true,
     "collectCoverage": true,
     "coverageDirectory": "./tests/reports/coverage/",
     "reporters": [
@@ -11,7 +10,8 @@
       ["./node_modules/jest-html-reporter", {
         "pageTitle": "Test Report",
         "outputPath": "./tests/reports/test-report.html",
-        "includeFailureMsg": true
+        "includeFailureMsg": true,
+        "includeConsoleLog": true
       }]
     ]
   },
