@@ -17,7 +17,7 @@
   },
   "scripts": {
     "start": "node ./src/bin/www",
-    "test": "jest",
+    "test": "jest --forceExit",
     "lint": "eslint ./",
     "lint-fix": "eslint ./ --fix"
   },

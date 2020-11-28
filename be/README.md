@@ -36,6 +36,12 @@ RUN apt-get update && apt-get install -y \
 
 To run the server just do `npm start`.
 
+## Tests
+
+To run the tests just do `npm test`.
+
+For this backend, we need to run `jest --forceExit` to test it, because of a known bug of *jest* itself that hasn't been resolved yet (https://github.com/facebook/jest/issues/6423).
+
 ## API Specification
 
 This backend uses an API to communicate with the frontend.
