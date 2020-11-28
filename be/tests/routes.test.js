@@ -22,7 +22,8 @@ describe('/urls/ Route', () => {
     const res = await request(app)
       .post('/urls')
       .send({
-        url: 'https://www.google.com/'
+        url: 'https://www.google.com/',
+        doNotCapture: true
       });
     expect(res.statusCode).toEqual(200);
     expect(res.body).toHaveProperty('id', 1);

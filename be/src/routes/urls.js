@@ -94,11 +94,17 @@ router.get('/:id', urlController.get_urls);
  *     application/json:
  *      schema:
  *       type: object
+ *       required:
+ *        - doNotCapture
  *       properties:
  *        url:
  *         type: string
  *         description: URL to be added
  *         example: https://gitlab.com/
+ *        doNotCapture:
+ *         type: boolean
+ *         description: Add this parameter to specificy if a capture should be taken as soon as the URL is added
+ *         default: false
  *   responses:
  *    "200":
  *     description: Operation successful, returns id of added URL.
