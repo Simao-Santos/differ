@@ -38,8 +38,6 @@ build_backend:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend_$CI_COMMIT_REF_SLUG .
     - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend_$CI_COMMIT_REF_SLUG
-    - npm install npm-audit-html
-    - npm audit --json | npm-audit-html
   rules:
     - changes:
       - be/package.json
@@ -49,11 +47,6 @@ build_backend:
       when: on_success
     - if: $CI_COMMIT_MESSAGE =~ /\[build-backend\]/
       when: on_success
-  artifacts:
-    when: always
-    paths:
-      - be/npm-audit.html
-    expire_in: 1 week
 
 build_frontend:
   stage: build
@@ -66,8 +59,6 @@ build_frontend:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     - docker build -t registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend_$CI_COMMIT_REF_SLUG .
     - docker push registry.gitlab.com/feup-tbs/ldso2021/t1g1:frontend_$CI_COMMIT_REF_SLUG
-    - npm install npm-audit-html
-    - npm audit --json | npm-audit-html
   rules:
     - changes:
       - fe/package.json
@@ -76,11 +67,6 @@ build_frontend:
       when: on_success
     - if: $CI_COMMIT_MESSAGE =~ /\[build-frontend\]/
       when: on_success
-  artifacts:
-    when: always
-    paths:
-      - fe/npm-audit.html
-    expire_in: 1 week
 
 build_ci_image:
   stage: build
@@ -149,6 +135,40 @@ eslint-frontend:
 ########################################################################
 
 ### TEST
+
+# audit backend's npm dependencies
+npm_audit_backend:
+  stage: test
+  services:
+    - docker:dind
+  script:
+    - cd be
+    - npm install npm-audit-html
+    - echo "Running NPM Audit on Backend..."
+    - npm audit --json | npm-audit-html
+    - echo "Report generated"
+  artifacts:
+    when: always
+    paths:
+      - be/npm-audit.html
+    expire_in: 1 week
+
+# audit frontend's npm dependencies
+npm_audit_frontend:
+  stage: test
+  services:
+    - docker:dind
+  script:
+    - cd fe
+    - npm install npm-audit-html
+    - echo "Running NPM Audit on Backend..."
+    - npm audit --json | npm-audit-html
+    - echo "Report generated"
+  artifacts:
+    when: always
+    paths:
+      - fe/npm-audit.html
+    expire_in: 1 week    
 
 # tests the backend
 test_backend:
