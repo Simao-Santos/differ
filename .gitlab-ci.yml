@@ -152,6 +152,7 @@ test_backend:
     - docker-compose -f docker-compose.test_backend.yml up --exit-code-from backend
     - echo "All Tests successful!"
   artifacts:
+    when: always
     paths:
       - be/tests/reports/
     expire_in: 1 week
