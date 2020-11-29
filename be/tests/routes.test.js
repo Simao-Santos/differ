@@ -238,3 +238,50 @@ describe('/comparisons/ Route', () => {
     expect(res.statusCode).toEqual(200);
   });
 });
+
+describe('/actions/ Route', () => {
+  // Status 200 responses are not tested because it would have to wait for the captures to be taken
+  // That's not optimal, so until there's a way to do that, it will not be done
+
+  it('should fail to capture url (invalid id)', async () => {
+    const res = await request(app)
+      .get('/actions/capture/1foo').send();
+    expect(res.statusCode).toEqual(400);
+  });
+
+  it('should fail to capture url (non-existent id)', async () => {
+    const res = await request(app)
+      .get('/actions/capture/10').send();
+    expect(res.statusCode).toEqual(404);
+  });
+
+  it('should capture url', async () => {
+    const url = 'http://wttr.in/';
+    const { rows } = await database.query('INSERT INTO page (username, url) VALUES (default, $1) RETURNING id', [url]);
+
+    const res = await request(app)
+      .get(`/actions/capture/${rows[0].id}`).send();
+    expect(res.statusCode).toEqual(200);
+  });
+
+  it('should fail to compare url (invalid id)', async () => {
+    const res = await request(app)
+      .get('/actions/compare/1foo').send();
+    expect(res.statusCode).toEqual(400);
+  });
+
+  it('should fail to compare url (non-existent id)', async () => {
+    const res = await request(app)
+      .get('/actions/compare/10').send();
+    expect(res.statusCode).toEqual(404);
+  });
+
+  it('should fail to compare url (no older capture)', async () => {
+    const url = 'http://wttr.in/';
+    const { rows } = await database.query('INSERT INTO page (username, url) VALUES (default, $1) RETURNING id', [url]);
+
+    const res = await request(app)
+      .get(`/actions/compare/${rows[0].id}`).send();
+    expect(res.statusCode).toEqual(412);
+  });
+});
