@@ -150,3 +150,91 @@ describe('/captures/ Route', () => {
     expect(res.statusCode).toEqual(200);
   });
 });
+
+describe('/comparisons/ Route', () => {
+  it('should get all comparisons (empty)', async () => {
+    const res = await request(app)
+      .get('/comparisons').send();
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toEqual([]);
+  });
+
+  it('should get all comparisons (1 comparison))', async () => {
+    const url = 'http://wttr.in/';
+    const today1 = new Date();
+    const today2 = new Date();
+
+    const { rows: rowsPage } = await database.query('INSERT INTO page (username, url) VALUES (default, $1) RETURNING id', [url]);
+    const { rows: rowsCapture1 } = await database.query('INSERT INTO capture (page_id, image_location, text_location, date) VALUES ($1, $2, $3, $4) RETURNING id',
+      [rowsPage[0].id, '/shots/test.png', '/shots/test.html', today1]);
+    const { rows: rowsCapture2 } = await database.query('INSERT INTO capture (page_id, image_location, text_location, date) VALUES ($1, $2, $3, $4) RETURNING id',
+      [rowsPage[0].id, '/shots/test.png', '/shots/test.html', today2]);
+
+    await database.query('INSERT INTO comparison (capture_1_id, capture_2_id, image_location, text_location, diff_pixels, total_pixels, date) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',
+      [rowsCapture1[0].id, rowsCapture2[0].id, '/shots/test.png', '/shots/test.html', 100, 200, today2]);
+
+    const res = await request(app)
+      .get('/comparisons').send();
+    expect(res.statusCode).toEqual(200);
+    expect(res.body.length).toEqual(1);
+    expect(res.body[0]).toHaveProperty('id', 1);
+  });
+
+  it('should get comparison', async () => {
+    const res = await request(app)
+      .get('/comparisons/1').send();
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toHaveProperty('id', 1);
+  });
+
+  it('should fail to get comparison (invalid id)', async () => {
+    const res = await request(app)
+      .get('/comparisons/1foo').send();
+    expect(res.statusCode).toEqual(400);
+  });
+
+  it('should fail to get comparison (non-existent id)', async () => {
+    const res = await request(app)
+      .get('/comparisons/2').send();
+    expect(res.statusCode).toEqual(404);
+  });
+
+  it('should get comparisons by page id', async () => {
+    const res = await request(app)
+      .get('/comparisons/byPageId/3').send();
+    expect(res.statusCode).toEqual(200);
+    expect(res.body.length).toEqual(1);
+    expect(res.body[0]).toHaveProperty('id', 1);
+  });
+
+  it('should get comparisons by page id (empty)', async () => {
+    const res = await request(app)
+      .get('/comparisons/byPageId/1').send();
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toEqual([]);
+  });
+
+  it('should fail to get comparisons by page id (invalid id)', async () => {
+    const res = await request(app)
+      .get('/comparisons/byPageId/2foo').send();
+    expect(res.statusCode).toEqual(400);
+  });
+
+  it('should fail to delete comparison (invalid id)', async () => {
+    const res = await request(app)
+      .delete('/comparisons/2foo').send();
+    expect(res.statusCode).toEqual(400);
+  });
+
+  it('should fail to delete comparison (non-existent id)', async () => {
+    const res = await request(app)
+      .delete('/comparisons/2').send();
+    expect(res.statusCode).toEqual(404);
+  });
+
+  it('should delete comparison', async () => {
+    const res = await request(app)
+      .delete('/comparisons/1').send();
+    expect(res.statusCode).toEqual(200);
+  });
+});
