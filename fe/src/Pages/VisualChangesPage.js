@@ -71,8 +71,15 @@ function getListOfImages(beReplyUrls, setBeReply) {
     console.log(beReplyUrls[i].id);
     console.log(`http://localhost:8000/captures/byPageId/${beReplyUrls[i].id}`);
     fetch(`http://localhost:8000/captures/byPageId/${beReplyUrls[i].id}`, requestOptions)
-      .then((res) => res.text())
-      .then((res) => setBeReply(JSON.parse(res)));
+      .then((res) => {
+        if (res.status === 200) {
+          res.text()
+            .then((content) => setBeReply({ type: 'get_captures_by_page_id', content: JSON.parse(content) }));
+        }
+        else if (res.status === 400 || res.status === 500) {
+          // TODO: show error message
+        }
+      });
   }
 }
 
@@ -88,7 +95,7 @@ function VisualChangesPage() {
     switch (beReply.type) {
       case 'get_captures': setBeReply(beReply.captures);
         break;
-      case 'get_captures_by_page_id': setBeReply(beReply.captures);
+      case 'get_captures_by_page_id': setBeReply(beReply.content);
         console.log(beReply);
         break;
       case 'delete_capture': console.log('Delete captures');
