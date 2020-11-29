@@ -242,8 +242,13 @@ function UrlEdition() {
       };
 
       myUrlIds.forEach((id) => fetch(`http://localhost:8000/actions/capture/${id}`, requestOptions)
-        .then((res) => res.text())
-        .then((res) => console.log(res)));
+        .then((res) => {
+          if (res.status === 200) {
+            console.log(`Capture for id ${id} has started`);
+          } else if (res.status === 400 || res.status === 404 || res.status === 500) {
+            // TODO: show error message? None of these situations is due to user error
+          }
+        }));
 
       setAnimationState(false);
     }
@@ -276,8 +281,16 @@ function UrlEdition() {
     };
 
     myUrlIds.forEach((id) => fetch(`http://localhost:8000/actions/compare/${id}`, requestOptions)
-      .then((res) => res.text())
-      .then((res) => console.log(res)));
+      .then((res) => {
+        if (res.status === 200) {
+          console.log(`Comparison for id ${id} has started`);
+        } else if (res.status === 412) {
+          console.log(`Comparison for id ${id} has not started because there is no older capture for this URL`);
+          // TODO: show error message for this situation?
+        } else if (res.status === 400 || res.status === 404 || res.status === 500) {
+          // TODO: show error message? None of these situations is due to user error
+        }
+      }));
 
     setAnimationState(false);
   }
