@@ -21,7 +21,7 @@ const VisualComparison = (props) => {
 
         <div className="Comparison-Card">
 
-          <Accordion >
+          <Accordion>
             <Card>
               <Card.Header>
                 <Accordion.Toggle as={Button} variant="link" eventKey="0">

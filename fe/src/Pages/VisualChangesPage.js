@@ -47,7 +47,7 @@ class VisualChangesPage extends Component {
             <Spinner animation="border" />
             <h2>Information is loading... Hang in there!</h2>
           </div>
-        </>  
+        </>
       );
     }
     return (
