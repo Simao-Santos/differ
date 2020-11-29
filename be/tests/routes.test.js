@@ -1,5 +1,6 @@
 const request = require('supertest');
 const app = require('../src/app');
+const database = require('../src/database');
 
 describe('/urls/ Route', () => {
   it('should get all urls (empty)', async () => {
@@ -77,22 +78,19 @@ describe('/captures/ Route', () => {
   });
 
   it('should get all captures (1 capture))', async () => {
-    await request(app)
-      .post('/urls')
-      .send({
-        url: 'http://wttr.in/',
-      });
+    const url = 'http://wttr.in/'
+    const today = new Date();
 
-    // Need to do this timeout because it takes a while for the capture to be inserted
-    // Is there a better way to do this?
-    await new Promise((r) => setTimeout(r, 15000));
+    const { rows } = await database.query('INSERT INTO page (username, url) VALUES (default, $1) RETURNING id', [url]);
+    await database.query('INSERT INTO capture (page_id, image_location, text_location, date) VALUES ($1, $2, $3, $4) RETURNING id',
+      [rows[0].id, '/shots/test.png', '/shots/test.html', today]);
 
     const res = await request(app)
       .get('/captures').send();
     expect(res.statusCode).toEqual(200);
     expect(res.body.length).toEqual(1);
     expect(res.body[0]).toHaveProperty('id', 1);
-  }, 20000);
+  });
 
   it('should get capture', async () => {
     const res = await request(app)
