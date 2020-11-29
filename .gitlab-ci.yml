@@ -139,6 +139,7 @@ eslint-frontend:
 # audit backend's npm dependencies
 npm_audit_backend:
   stage: test
+  image: node:latest
   services:
     - docker:dind
   script:
@@ -156,6 +157,7 @@ npm_audit_backend:
 # audit frontend's npm dependencies
 npm_audit_frontend:
   stage: test
+  image: node:latest
   services:
     - docker:dind
   script:
