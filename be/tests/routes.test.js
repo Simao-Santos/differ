@@ -78,7 +78,7 @@ describe('/captures/ Route', () => {
   });
 
   it('should get all captures (1 capture))', async () => {
-    const url = 'http://wttr.in/'
+    const url = 'http://wttr.in/';
     const today = new Date();
 
     const { rows } = await database.query('INSERT INTO page (username, url) VALUES (default, $1) RETURNING id', [url]);

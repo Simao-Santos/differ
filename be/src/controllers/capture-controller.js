@@ -66,7 +66,7 @@ exports.delete_captures = function deleteCaptures(req, res, next) {
 
   if (req.params.id && utils.isInteger(req.params.id)) {
     const query = {
-      text: 'UPDATE capture SET deleted=$1 WHERE id=$2 AND deleted=$3 RETURNING id',
+      text: 'UPDATE capture SET deleted=$1 WHERE id=$2 AND deleted=$3 RETURNING id, text_location, image_location, date',
       values: [true, req.params.id, false],
     };
 
