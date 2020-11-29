@@ -13,7 +13,7 @@ describe('/urls/ Route', () => {
     const res = await request(app)
       .post('/urls')
       .send({
-        url: 'https'
+        url: 'https',
       });
     expect(res.statusCode).toEqual(400);
   });
@@ -23,7 +23,7 @@ describe('/urls/ Route', () => {
       .post('/urls')
       .send({
         url: 'https://www.google.com/',
-        doNotCapture: true
+        doNotCapture: true,
       });
     expect(res.statusCode).toEqual(200);
     expect(res.body).toHaveProperty('id', 1);

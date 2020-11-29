@@ -47,8 +47,7 @@ function getListOfUrls(setBeURLReply) {
       if (res.status === 200) {
         res.text()
           .then((content) => setBeURLReply(JSON.parse(content)));
-      }
-      else if(res.status === 500) {
+      } else if (res.status === 500) {
         // TODO: show error message
       }
     });
@@ -75,8 +74,7 @@ function getListOfImages(beReplyUrls, setBeReply) {
         if (res.status === 200) {
           res.text()
             .then((content) => setBeReply({ type: 'get_captures_by_page_id', content: JSON.parse(content) }));
-        }
-        else if (res.status === 400 || res.status === 500) {
+        } else if (res.status === 400 || res.status === 500) {
           // TODO: show error message
         }
       });

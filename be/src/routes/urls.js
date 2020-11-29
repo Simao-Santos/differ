@@ -95,7 +95,7 @@ router.get('/:id', urlController.get_urls);
  *      schema:
  *       type: object
  *       required:
- *        - doNotCapture
+ *        - url
  *       properties:
  *        url:
  *         type: string
@@ -103,7 +103,8 @@ router.get('/:id', urlController.get_urls);
  *         example: https://gitlab.com/
  *        doNotCapture:
  *         type: boolean
- *         description: Add this parameter to specificy if a capture should be taken as soon as the URL is added
+ *         description: Add this parameter to specificy if a
+ *          capture should be taken as soon as the URL is added
  *         default: false
  *   responses:
  *    "200":

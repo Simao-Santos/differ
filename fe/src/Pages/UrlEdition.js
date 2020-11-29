@@ -72,29 +72,22 @@ function UrlEdition() {
   useEffect(() => {
     switch (beReply.type) {
       case 'get_urls':
-        if (beReply.status === 200)
-          setUrls(beReply.content);
-        else if (beReply.status === 500)
-          setNotificationMsg('Couldn\'t retrieve URLs');
+        if (beReply.status === 200) setUrls(beReply.content);
+        else if (beReply.status === 500) setNotificationMsg('Couldn\'t retrieve URLs');
         break;
       case 'post_url':
         if (beReply.status === 200) {
           getListOfUrls(setBeReply);
           setNotificationMsg('URL added');
-        }
-        else if (beReply.status === 400)
-          setNotificationMsg('Invalid URL');
-        else if (beReply.status === 500)
-          setNotificationMsg('Couldn\'t add URL');
+        } else if (beReply.status === 400) setNotificationMsg('Invalid URL');
+        else if (beReply.status === 500) setNotificationMsg('Couldn\'t add URL');
         break;
       case 'delete_url':
         if (beReply.status === 200) {
           getListOfUrls(setBeReply);
           setNotificationMsg('URL deleted');
-        }
-        // TODO: is this message ok for all this status?
-        else if (beReply.status === 400 || beReply.status === 404 || beReply.status === 500)
-          setNotificationMsg('Couldn\'t delete URL');
+        } else if (beReply.status === 400 || beReply.status === 404 || beReply.status === 500) setNotificationMsg('Couldn\'t delete URL');
+        // TODO: is this message ok for all these status?
         break;
       default: console.log(`Something unexpected has happened => ${beReply.type}`);
     }

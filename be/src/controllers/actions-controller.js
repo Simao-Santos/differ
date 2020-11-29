@@ -192,7 +192,7 @@ async function captureUrlAsync(id, url, compareNext) {
       }
     }
   } else {
-    console.log(`Could not capture page`);
+    console.log('Could not capture page');
   }
 }
 

@@ -74,9 +74,8 @@ exports.add_url = function addUrl(req, res, next) {
         res.status(200).send(resultInsert.rows[0]);
 
         console.log(`URL saved with ID ${resultInsert.rows[0].id}`);
-        
-        if(!req.body.doNotCapture)
-          actionsController.captureUrlSync(resultInsert.rows[0].id, null);
+
+        if (!req.body.doNotCapture) actionsController.captureUrlSync(resultInsert.rows[0].id, null);
       }
     });
   } else {
