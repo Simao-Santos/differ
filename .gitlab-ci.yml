@@ -134,43 +134,7 @@ eslint-frontend:
 
 ########################################################################
 
-### TEST
-
-# audit backend's npm dependencies
-npm_audit_backend:
-  stage: test
-  image: node:latest
-  services:
-    - docker:dind
-  script:
-    - cd be
-    - npm install npm-audit-html
-    - echo "Running NPM Audit on Backend..."
-    - npm audit --json | npm-audit-html
-    - echo "Report generated"
-  artifacts:
-    when: always
-    paths:
-      - be/npm-audit.html
-    expire_in: 1 week
-
-# audit frontend's npm dependencies
-npm_audit_frontend:
-  stage: test
-  image: node:latest
-  services:
-    - docker:dind
-  script:
-    - cd fe
-    - npm install npm-audit-html
-    - echo "Running NPM Audit on Backend..."
-    - npm audit --json | npm-audit-html
-    - echo "Report generated"
-  artifacts:
-    when: always
-    paths:
-      - fe/npm-audit.html
-    expire_in: 1 week    
+### TEST   
 
 # tests the backend
 test_backend:
