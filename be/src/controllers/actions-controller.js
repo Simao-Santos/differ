@@ -236,14 +236,14 @@ function captureUrl(id, res) {
   database.query(querySelect, (err, resultSelect) => {
     if (err) {
       console.log('Couldn\'t get URL to capture');
-      res.sendStatus(500);
+      if (res) res.sendStatus(500);
     } else if (resultSelect.rowCount === 0) {
       console.log('Specified URL does not exist');
-      res.sendStatus(404);
+      if (res) res.sendStatus(404);
     } else {
       captureUrlAsync(id, resultSelect.rows[0].url, false);
       console.log('URL capture has started');
-      res.sendStatus(200);
+      if (res) res.sendStatus(200);
     }
   });
 }
