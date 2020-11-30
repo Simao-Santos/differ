@@ -12,6 +12,7 @@ services:
     volumes:
       - ./fe/src/:/app/fe/src/
       - ./fe/public/:/app/fe/public/
+      - ./fe/tests:/app/fe/tests
     ports:
       - 3000:3000
     depends_on:

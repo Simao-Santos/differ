@@ -172,6 +172,11 @@ test_frontend:
     - echo "Testing Frontend..."
     - docker-compose -f docker-compose.test_frontend.yml up --exit-code-from frontend
     - echo "All Tests successful!"
+  artifacts:
+    when: always
+    paths:
+      - fe/tests/reports/
+    expire_in: 1 week
 
 ########################################################################
 
