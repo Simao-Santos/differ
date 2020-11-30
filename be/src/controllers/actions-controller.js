@@ -28,6 +28,7 @@ async function compareCaptures(id1, id2, textLocation1, textLocation2,
   const textFile = null;
   const imageFile = `${saveFolder + ((saveFolder.endsWith('/')) ? '' : '/') + filename}.png`;
 
+  // eslint-disable-next-line no-warning-comments
   // TODO: compare text
 
   console.log('Comparing screenshots...');
