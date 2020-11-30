@@ -33,11 +33,11 @@ async function compareCaptures(id1, id2, textLocation1, textLocation2,
   const imageFile = `${saveFolder + ((saveFolder.endsWith('/')) ? '' : '/') + filename}.png`;
   const jsonFile = `${saveFolder + ((saveFolder.endsWith('/')) ? '' : '/') + filename}.json`;
 
-  const camelOld = fs.readFileSync(`./src/public${textLocation1}`).toString();
-  const camelActual = fs.readFileSync(`./src/public${textLocation2}`).toString();
+  const codeCaptureOld = fs.readFileSync(`./src/public${textLocation1}`).toString();
+  const codeCaptureActual = fs.readFileSync(`./src/public${textLocation2}`).toString();
 
-  const lc = theDiff.lib.stringAsLines(camelOld);
-  const rc = theDiff.lib.stringAsLines(camelActual);
+  const lc = theDiff.lib.stringAsLines(codeCaptureOld);
+  const rc = theDiff.lib.stringAsLines(codeCaptureActual);
 
   theDiff.lib.SequenceMatcher(lc, rc);
 
