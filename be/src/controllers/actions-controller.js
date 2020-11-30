@@ -5,7 +5,7 @@ const fs = require('fs');
 const { PNG } = require('pngjs');
 const request = require('../html_request');
 const database = require('../database');
-const theDiff = require('../lib/diff.js');
+const diffLib = require('../lib/diff.js');
 const {
   baseText, newText,
 } = require('../lib/constants.js');
@@ -36,12 +36,12 @@ async function compareCaptures(id1, id2, textLocation1, textLocation2,
   const codeCaptureOld = fs.readFileSync(`./src/public${textLocation1}`).toString();
   const codeCaptureActual = fs.readFileSync(`./src/public${textLocation2}`).toString();
 
-  const lc = theDiff.lib.stringAsLines(codeCaptureOld);
-  const rc = theDiff.lib.stringAsLines(codeCaptureActual);
+  const lc = diffLib.lib.stringAsLines(camelOld);
+  const rc = diffLib.lib.stringAsLines(camelActual);
 
-  theDiff.lib.SequenceMatcher(lc, rc);
+  diffLib.lib.SequenceMatcher(lc, rc);
 
-  const opcodes = theDiff.lib.get_opcodes();
+  const opcodes = diffLib.lib.get_opcodes();
   const baseTextName = baseText;
   const newTextName = newText;
 
