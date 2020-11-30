@@ -7,7 +7,7 @@ import 'react-medium-image-zoom/dist/styles.css';
 
 const VisualComparison = (props) => {
   const {
-    pageName, link, image1, image2, timeStamp1, timeStamp2,
+    pageName, link, image1, image2, timeStamp1, timeStamp2, comparison,
   } = props;
   return (
     <>
@@ -39,7 +39,7 @@ const VisualComparison = (props) => {
                 </Accordion.Toggle>
               </Card.Header>
               <Accordion.Collapse eventKey="1">
-                <Card.Body>Place for image</Card.Body>
+                <Card.Body><div className="loneImage"><Zoom><img src={comparison} id="comparison_image" alt="comparisonIMage"/></Zoom></div></Card.Body>
               </Accordion.Collapse>
             </Card>
 

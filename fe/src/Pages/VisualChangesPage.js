@@ -4,10 +4,24 @@ import Spinner from 'react-bootstrap/Spinner';
 import VisualComparison from '../Components/VisualComparison';
 
 function groupInformation(response) {
+  console.log("i am response");
+  console.log(response)
   const test = [];
   for (let i = 0; i < (response.length - 1); i += 1) {
     if (response[i].id === response[i + 1].id) {
-      test.push([response[i], response[i + 1]]);
+
+      if (response[i].comparisonid === response[i+1].comparisonid ) {
+        if (response[i].comparisonid2 < response[i+1].comparisonid2) {
+            response[i].complocation = response[i+1].complocation;
+        }
+      } else if (response[i].comparisonid < response[i+1].comparisonid ) {
+        response[i].complocation = response[i+1].complocation;
+      }
+      else response[i+1].complocation = response[i].complocation;
+
+      if(response[i].date > response[i+1].date)
+        test.push([response[i+1], response[i]]);
+      else test.push([response[i], response[i + 1]]);
       i += 1;
     }
   }
@@ -27,7 +41,7 @@ class VisualChangesPage extends Component {
 
   componentDidMount() {
     const u = 0;
-    const v = 10;
+    const v = 6;
     const requestOptions = {
       method: 'GET',
     };
@@ -40,6 +54,7 @@ class VisualChangesPage extends Component {
 
   render() {
     const { isLoading, data } = this.state;
+    console.log(data);
     if (isLoading) {
       return (
         <>
@@ -55,7 +70,7 @@ class VisualChangesPage extends Component {
         <div className="Comparison-Cards">
           {
             data[0].map((ub) => (
-              <VisualComparison pageName={`Page ${ub[0].id}`} link={ub[0].url} timeStamp1={ub[0].date} timeStamp2={ub[1].date} image1={`http://localhost:8000${ub[0].image_location}`} image2={`http://localhost:8000${ub[1].image_location}`} />
+              <VisualComparison pageName={`Page ${ub[0].id}`} link={ub[0].url} timeStamp1={ub[0].date} timeStamp2={ub[1].date} image1={`http://localhost:8000${ub[0].image_location}`} image2={`http://localhost:8000${ub[1].image_location}`}  comparison={`http://localhost:8000${ub[0].complocation}`}/>
             ))
           }
         </div>
