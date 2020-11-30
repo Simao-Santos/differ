@@ -39,7 +39,13 @@ const VisualComparison = (props) => {
                 </Accordion.Toggle>
               </Card.Header>
               <Accordion.Collapse eventKey="1">
-                <Card.Body><div className="loneImage"><Zoom><img src={comparison} id="comparison_image" alt="comparisonIMage"/></Zoom></div></Card.Body>
+                <Card.Body>
+                  <div className="loneImage">
+                    <Zoom>
+                      <img src={comparison} id="comparison_image" alt="comparisonIMage" />
+                    </Zoom>
+                  </div>
+                </Card.Body>
               </Accordion.Collapse>
             </Card>
 
@@ -73,6 +79,7 @@ VisualComparison.propTypes = {
   image2: PropTypes.string.isRequired,
   timeStamp1: PropTypes.string.isRequired,
   timeStamp2: PropTypes.string.isRequired,
+  comparison: PropTypes.string.isRequired,
 
 };
 
