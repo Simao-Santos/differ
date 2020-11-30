@@ -5,6 +5,9 @@ const fs = require('fs');
 const { PNG } = require('pngjs');
 const request = require('../html_request');
 const database = require('../database');
+const theDiff = require('../lib/diff.js');
+const { sameMsg, emptyMsg, baseText, newText, editorConfig } = require('../lib/constants.js');
+
 
 // Function that compares two captures
 async function compareCaptures(id1, id2, textLocation1, textLocation2,
@@ -27,8 +30,26 @@ async function compareCaptures(id1, id2, textLocation1, textLocation2,
   const filename = `comparison_${id1}_${id2}_${date}`;
   const textFile = null;
   const imageFile = `${saveFolder + ((saveFolder.endsWith('/')) ? '' : '/') + filename}.png`;
+  const jsonFile = `${saveFolder + ((saveFolder.endsWith('/')) ? '' : '/') + filename}.json`;
 
-  // TODO: compare text
+  const camelOld = fs.readFileSync(`./src/public${textLocation1}`).toString();
+  const camelActual = fs.readFileSync(`./src/public${textLocation2}`).toString();
+  
+  const lc = theDiff.lib.stringAsLines(camelOld);
+  const rc = theDiff.lib.stringAsLines(camelActual);
+
+  theDiff.lib.SequenceMatcher(lc, rc);
+
+  const opcodes = theDiff.lib.get_opcodes();
+  baseTextName = baseText;
+  newTextName = newText;
+  contextSize = null;
+
+  const jsonToSave = JSON.stringify([lc, rc, opcodes, baseTextName, newTextName]);
+  
+  const fileName = 'code_json' + textLocation2.substring(10, textLocation2.length - 5) + '.json';
+  fs.writeFileSync(`./src/public${jsonFile}`, jsonToSave);
+
 
   console.log('Comparing screenshots...');
 
