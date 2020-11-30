@@ -7,13 +7,13 @@ const editorConfig = {
   printMargin: false,
   displayIndentGuides: false,
   useWorker: false,
-  selectionStyle: "text"
-}
+  selectionStyle: 'text',
+};
 
 module.exports = {
   sameMsg,
   emptyMsg,
   baseText,
   newText,
-  editorConfig
-}
+  editorConfig,
+};

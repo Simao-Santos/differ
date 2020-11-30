@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const lib = {
     defaultJunkFunction: function (d) {
         return {

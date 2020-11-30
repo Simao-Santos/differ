@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const fs = require('fs');
 
 const addWarningMessage = (el, message) => el.textContent = message;
