@@ -35,19 +35,6 @@ services:
       - ./be/src:/app/be/src
       - ./be/tests:/app/be/tests
     depends_on:
-      - pgadmin
-    networks:
-      - app
-
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin
-      PGADMIN_DEFAULT_PASSWORD: admin
-    ports:
-      - 5555:80
-    depends_on:
       - db
     networks:
       - app
