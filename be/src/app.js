@@ -11,7 +11,6 @@ const urlsRoute = require('./routes/urls');
 const capturesRoute = require('./routes/captures');
 const comparisonsRoute = require('./routes/comparisons');
 const actionsRoute = require('./routes/actions');
-const diffRouter = require('./routes/diff');
 
 const app = express();
 
