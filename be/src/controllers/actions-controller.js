@@ -5,7 +5,7 @@ const fs = require('fs');
 const { PNG } = require('pngjs');
 const request = require('../html_request');
 const database = require('../database');
-const theDiff = require('../lib/diff.js');
+const diffLib = require('../lib/diff.js');
 const {
   baseText, newText,
 } = require('../lib/constants.js');
