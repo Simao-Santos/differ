@@ -36,8 +36,8 @@ async function compareCaptures(id1, id2, textLocation1, textLocation2,
   const codeCaptureOld = fs.readFileSync(`./src/public${textLocation1}`).toString();
   const codeCaptureActual = fs.readFileSync(`./src/public${textLocation2}`).toString();
 
-  const lc = diffLib.lib.stringAsLines(camelOld);
-  const rc = diffLib.lib.stringAsLines(camelActual);
+  const lc = diffLib.lib.stringAsLines(codeCaptureOld);
+  const rc = diffLib.lib.stringAsLines(codeCaptureActual);
 
   diffLib.lib.SequenceMatcher(lc, rc);
 
