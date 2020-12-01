@@ -41,8 +41,8 @@ class VisualChangesPage extends Component {
 
   componentDidMount() {
     console.log(this.state.page);
-    const u = (this.state.page - 1) * 10 + 1;
-    const v = this.state.page * 10;
+    const u = (this.state.page - 1) * 20;
+    const v = this.state.page * 20;
     const requestOptions = {
       method: 'GET',
     };
