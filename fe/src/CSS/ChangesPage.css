@@ -20,3 +20,11 @@
 .centered h2{
     padding-top: 2rem;
 }
+
+.ant-pagination{
+    padding-bottom: 2em!important;
+}
+
+.ant-select-selector, .ant-pagination-options{
+    display: none!important;
+}
