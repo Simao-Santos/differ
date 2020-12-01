@@ -5,6 +5,10 @@ const fs = require('fs');
 const { PNG } = require('pngjs');
 const request = require('../html_request');
 const database = require('../database');
+const diffLib = require('../lib/diff.js');
+const {
+  baseText, newText,
+} = require('../lib/constants.js');
 
 // Function that compares two captures
 async function compareCaptures(id1, id2, textLocation1, textLocation2,
@@ -27,8 +31,23 @@ async function compareCaptures(id1, id2, textLocation1, textLocation2,
   const filename = `comparison_${id1}_${id2}_${date}`;
   const textFile = null;
   const imageFile = `${saveFolder + ((saveFolder.endsWith('/')) ? '' : '/') + filename}.png`;
+  const jsonFile = `${saveFolder + ((saveFolder.endsWith('/')) ? '' : '/') + filename}.json`;
 
-  // TODO: compare text
+  const codeCaptureOld = fs.readFileSync(`./src/public${textLocation1}`).toString();
+  const codeCaptureActual = fs.readFileSync(`./src/public${textLocation2}`).toString();
+
+  const lc = diffLib.lib.stringAsLines(codeCaptureOld);
+  const rc = diffLib.lib.stringAsLines(codeCaptureActual);
+
+  diffLib.lib.SequenceMatcher(lc, rc);
+
+  const opcodes = diffLib.lib.get_opcodes();
+  const baseTextName = baseText;
+  const newTextName = newText;
+
+  const jsonToSave = JSON.stringify([lc, rc, opcodes, baseTextName, newTextName]);
+
+  fs.writeFileSync(`./src/public${jsonFile}`, jsonToSave);
 
   console.log('Comparing screenshots...');
 
