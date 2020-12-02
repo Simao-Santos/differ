@@ -153,6 +153,9 @@ test_backend:
     - echo "All Tests successful!"
   artifacts:
     when: always
+    reports:
+      junit:
+        - be/tests/junit.xml
     paths:
       - be/tests/reports/
     expire_in: 1 week
@@ -174,6 +177,9 @@ test_frontend:
     - echo "All Tests successful!"
   artifacts:
     when: always
+    reports:
+      junit:
+        - fe/tests/junit.xml
     paths:
       - fe/tests/reports/
     expire_in: 1 week
