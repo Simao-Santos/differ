@@ -13,11 +13,12 @@ Some minor adjustments were also done in order to either fix some running aspect
 ### Added
 - The connection of the backend with the frontend is completed. The frontend is now able to ask all of the required information to the backend and display it accordingly. ([#8](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/issues/8), !24).
 - Files for the comparison of the captures in backend. These files were changed to allow the creation of the `.json` file with the information of the pages' code (#10, !21).
-
+- Documentation done with SwaggerAPI. Now the backend API of the project is well documented and all the replies and interactions with it can be checkout in that document.
 
 ### Changed
 - Removed hardcoded test data and replaced it with real data. ([#8](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/issues/8)).
 - Altered the view of code changes to only display a comparison. ([#8](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/issues/8)).
+
 ### Removed
 - Database credentials from public files. Now these credentials are kept hidden in a .env file so they are more secure.
 
