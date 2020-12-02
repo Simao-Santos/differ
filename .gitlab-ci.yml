@@ -1,7 +1,10 @@
 image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:ci_image_$CI_COMMIT_REF_SLUG
  
 include:
+  - template: Security/Dependency-Scanning.gitlab-ci.yml
   - template: Security/License-Scanning.gitlab-ci.yml
+  - template: Security/SAST.gitlab-ci.yml
+  - template: Security/Secret-Detection.gitlab-ci.yml
 
 # Every job should always run (does not include on_failure)
 # Specific rules override this
@@ -19,6 +22,26 @@ stages:
 # Override template jobs to also run on merge requests
 
 license_scanning:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - when: on_success
+
+eslint-sast:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - when: on_success
+
+secret_detection:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - when: on_success
+
+gemnasium-dependency_scanning:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - when: on_success
+
+retire-js-dependency_scanning:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
     - when: on_success

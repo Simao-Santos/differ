@@ -132,7 +132,7 @@ async function compareUrlAsync(id) {
 }
 
 // Function that will screenshot the url page
-async function saveUrlScreenshot(codeFilePath, filename, saveFolder) {
+async function saveUrlScreenshot(url, filename, saveFolder) {
   console.log('Generating page screenshot...');
 
   // A rare bug can occur when launching Chrome.
@@ -142,7 +142,7 @@ async function saveUrlScreenshot(codeFilePath, filename, saveFolder) {
   //
   // There are still problems with some characters and some images that aren't displayed correctly
   await new Pageres({ delay: 2 })
-    .src(`./src/public${codeFilePath}`, ['1920x1080'], { filename })
+    .src(url, ['1920x1080'], { filename })
     .dest(`./src/public${saveFolder}`)
     .run();
 
@@ -171,13 +171,7 @@ async function captureUrlAsync(id, url, compareNext) {
   const filename = `url_${id}_${date}`;
 
   // Get content from url
-  let body = await request.getRequest(url);
-
-  // The following code will identify every link that starts with a single "/",
-  // which refers to the root of the website,
-  // And add the url before it (so it can actually get the content, which won't be saved locally)
-  const regex = /"\/(?!\/)/gi;
-  body = body.replace(regex, `"${url}${(url.endsWith('/')) ? '' : '/'}`);
+  const body = await request.getRequest(url);
 
   const contentPath = `${folder + ((folder.endsWith('/')) ? '' : '/') + filename}.html`;
 
@@ -191,7 +185,7 @@ async function captureUrlAsync(id, url, compareNext) {
       fs.writeFileSync(`./src/public${contentPath}`, body);
       console.log('Page content saved!');
 
-      const screenshotPath = await saveUrlScreenshot(contentPath, filename, folder);
+      const screenshotPath = await saveUrlScreenshot(url, filename, folder);
 
       const query = {
         text: 'INSERT INTO capture (page_id, image_location, text_location, date) VALUES ($1, $2, $3, $4) RETURNING id',
