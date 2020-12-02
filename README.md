@@ -102,6 +102,7 @@ POSTGRES_PASSWORD=<postgres_password>
 POSTGRES_DB=<postgres_database_name>
 POSTGRES_HOST=<name_of_the_postgres_container>
 POSTGRES_PORT=<port_number>
+POSTGRES_NAME=<postgres_name>
 ```
 In the previous example is what the value should represent for each environment variable. You can name the variables to fit your necessities, for example:
 
