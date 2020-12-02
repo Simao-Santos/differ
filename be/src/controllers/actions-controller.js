@@ -132,7 +132,7 @@ async function compareUrlAsync(id) {
 }
 
 // Function that will screenshot the url page
-async function saveUrlScreenshot(codeFilePath, filename, saveFolder) {
+async function saveUrlScreenshot(url, filename, saveFolder) {
   console.log('Generating page screenshot...');
 
   // A rare bug can occur when launching Chrome.
@@ -142,7 +142,7 @@ async function saveUrlScreenshot(codeFilePath, filename, saveFolder) {
   //
   // There are still problems with some characters and some images that aren't displayed correctly
   await new Pageres({ delay: 2 })
-    .src(`./src/public${codeFilePath}`, ['1920x1080'], { filename })
+    .src(url, ['1920x1080'], { filename })
     .dest(`./src/public${saveFolder}`)
     .run();
 
@@ -191,7 +191,7 @@ async function captureUrlAsync(id, url, compareNext) {
       fs.writeFileSync(`./src/public${contentPath}`, body);
       console.log('Page content saved!');
 
-      const screenshotPath = await saveUrlScreenshot(contentPath, filename, folder);
+      const screenshotPath = await saveUrlScreenshot(url, filename, folder);
 
       const query = {
         text: 'INSERT INTO capture (page_id, image_location, text_location, date) VALUES ($1, $2, $3, $4) RETURNING id',
