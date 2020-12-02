@@ -7,7 +7,13 @@
     "coverageDirectory": "./tests/reports/coverage/",
     "reporters": [
       "default",
-      "jest-junit",
+      [
+        "jest-junit",
+        {
+          "outputName": "junit.xml",
+          "outputDirectory": "./tests/reports"
+        }
+      ],
       [
         "./node_modules/jest-html-reporter",
         {
