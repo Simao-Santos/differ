@@ -36,18 +36,21 @@
     "cors": "^2.8.5",
     "debug": "~2.6.9",
     "express": "~4.16.1",
+    "express-promise-router": "^4.0.1",
     "got": "^11.8.0",
     "http-errors": "~1.6.3",
     "iconv-lite": "^0.6.2",
     "jade": "~1.11.0",
     "morgan": "~1.9.1",
+    "node-fetch": "^2.6.1",
     "pageres": "^5.2.1",
     "pg": "^8.4.2",
     "pixelmatch": "^5.2.1",
     "pngjs": "^6.0.0",
-    "sharp": "^0.26.2",
+    "sharp": "^0.26.3",
     "swagger-jsdoc": "^5.0.1",
-    "swagger-ui-express": "^4.1.5"
+    "swagger-ui-express": "^4.1.5",
+    "xmlhttprequest": "^1.8.0"
   },
   "devDependencies": {
     "eslint": "^7.13.0",

@@ -176,4 +176,6 @@ router.get('/:id', comparisonController.get_comparisons);
  */
 router.delete('/:id', comparisonController.delete_comparisons);
 
+router.get('/comparisonRange/:id/:offset', comparisonController.get_comparison_range);
+
 module.exports = router;

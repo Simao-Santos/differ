@@ -1,60 +1,117 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Accordion, Card, Button } from 'react-bootstrap';
 import '../CSS/ComparisonComponents.css';
+import Spinner from 'react-bootstrap/Spinner';
+import { view } from '../lib/diff';
 
-const CodeComparison = (props) => {
-  const { pageName, link, code1 } = props;
-  const { name, timeStamp } = code1;
-  return (
-    <>
-      <div className="Comparison-Component">
-        <div className="Component-Header">
-          <h2>{pageName}</h2>
-          <Button style={{ float: 'right' }} type="submit" className="btn btn-outline-light">
-            Update
-          </Button>
-        </div>
+class CodeComparison extends Component {
+  constructor(props) {
+    super(props);
 
-        <div className="Comparison-Card">
+    this.props = props;
 
-          <Accordion defaultActiveKey="0">
-            <Card>
-              <Card.Header>
-                <Accordion.Toggle as={Button} variant="link" eventKey="1">
-                  Link ⌄
-                </Accordion.Toggle>
-              </Card.Header>
-              <Accordion.Collapse eventKey="1">
-                <Card.Body>{link}</Card.Body>
-              </Accordion.Collapse>
-            </Card>
-          </Accordion>
+    this.state = {
+      isLoading: true,
+      jsonFile: null,
+    };
+  }
 
-          <div className="Comparison-Content">
-            <img src={name} className="App-logo" alt="logo" />
-            <img src="../arrow.png" className="Arrow" alt="logo" />
-            <img src={name} className="App-logo" alt="logo" />
+  componentDidMount() {
+    const { comparison } = this.props;
+    const requestOptions = {
+      method: 'GET',
+    };
+    fetch(`http://localhost:8000${comparison}`, requestOptions)
+      .then((res) => (res.clone().text()))
+      .then((res) => (this.setState(() => ({
+        jsonFile: JSON.parse(res),
+        isLoading: false,
+      }))));
+  }
+
+  render() {
+    const {
+      pageName, link, timeStamp1, timeStamp2,
+    } = this.props;
+
+    const {
+      isLoading, jsonFile,
+    } = this.state;
+
+    if (isLoading) {
+      return (
+        <>
+          <Spinner animation="border" />
+          <h2>
+            {pageName}
+            {' '}
+            is loading... Hang in there!
+          </h2>
+        </>
+      );
+    }
+    return (
+
+      <>
+        <div className="Comparison-Component">
+          <div className="Component-Header">
+            <h2>{pageName}</h2>
+            <Button style={{ float: 'right' }} type="submit" className="btn btn-outline-light">
+              Update
+            </Button>
           </div>
 
-        </div>
+          <div className="Comparison-Card">
 
-        <div className="TimeStamp">
-          <h3>{timeStamp}</h3>
-          <h3>{timeStamp}</h3>
+            <Accordion>
+              <Card>
+                <Card.Header>
+                  <Accordion.Toggle as={Button} variant="link" eventKey="0">
+                    Link ⌄
+                  </Accordion.Toggle>
+                </Card.Header>
+                <Accordion.Collapse eventKey="0">
+                  <Card.Body>{link}</Card.Body>
+                </Accordion.Collapse>
+              </Card>
+
+            </Accordion>
+
+            <div className="Comparison-Content">
+              <div
+                className="Content1"
+                dangerouslySetInnerHTML={{
+                  __html: view.buildView(jsonFile).outerHTML,
+                }}
+              />
+
+              <div
+                className="Content2"
+                dangerouslySetInnerHTML={{
+                  __html: view.buildView(jsonFile).outerHTML,
+                }}
+              />
+            </div>
+
+          </div>
+
+          <div className="TimeStamp">
+            <h3>{timeStamp1}</h3>
+            <h3>{timeStamp2}</h3>
+          </div>
         </div>
-      </div>
-    </>
-  );
-};
+      </>
+    );
+  }
+}
 
 CodeComparison.propTypes = {
   pageName: PropTypes.string.isRequired,
   link: PropTypes.string.isRequired,
-  code1: PropTypes.exact({
-    name: PropTypes.string.isRequired,
-    timeStamp: PropTypes.string.isRequired,
-  }).isRequired,
+  timeStamp1: PropTypes.string.isRequired,
+  timeStamp2: PropTypes.string.isRequired,
+  comparison: PropTypes.string.isRequired,
 };
 
 export default CodeComparison;
