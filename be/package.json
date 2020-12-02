@@ -7,12 +7,22 @@
     "coverageDirectory": "./tests/reports/coverage/",
     "reporters": [
       "default",
-      ["./node_modules/jest-html-reporter", {
-        "pageTitle": "Test Report",
-        "outputPath": "./tests/reports/test-report.html",
-        "includeFailureMsg": true,
-        "includeConsoleLog": true
-      }]
+      [
+        "jest-junit",
+        {
+          "outputName": "junit.xml",
+          "outputDirectory": "./tests/reports"
+        }
+      ],
+      [
+        "./node_modules/jest-html-reporter",
+        {
+          "pageTitle": "Test Report",
+          "outputPath": "./tests/reports/test-report.html",
+          "includeFailureMsg": true,
+          "includeConsoleLog": true
+        }
+      ]
     ]
   },
   "scripts": {
@@ -46,6 +56,7 @@
     "eslint-plugin-jest": "^24.1.3",
     "jest": "^26.6.3",
     "jest-html-reporter": "^3.3.0",
+    "jest-junit": "^12.0.0",
     "supertest": "^6.0.1"
   }
 }
