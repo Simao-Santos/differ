@@ -1,7 +1,10 @@
 image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:ci_image_$CI_COMMIT_REF_SLUG
  
 include:
+  - template: Security/Dependency-Scanning.gitlab-ci.yml
   - template: Security/License-Scanning.gitlab-ci.yml
+  - template: Security/SAST.gitlab-ci.yml
+  - template: Security/Secret-Detection.gitlab-ci.yml
 
 # Every job should always run (does not include on_failure)
 # Specific rules override this
