@@ -29,9 +29,8 @@ async function compareCaptures(id1, id2, textLocation1, textLocation2,
     hour}_${min}_${sec}_${millisec}`;
 
   const filename = `comparison_${id1}_${id2}_${date}`;
-  const textFile = null;
   const imageFile = `${saveFolder + ((saveFolder.endsWith('/')) ? '' : '/') + filename}.png`;
-  const jsonFile = `${saveFolder + ((saveFolder.endsWith('/')) ? '' : '/') + filename}.json`;
+  const textFile = `${saveFolder + ((saveFolder.endsWith('/')) ? '' : '/') + filename}.json`;
 
   const codeCaptureOld = fs.readFileSync(`./src/public${textLocation1}`).toString();
   const codeCaptureActual = fs.readFileSync(`./src/public${textLocation2}`).toString();
@@ -47,7 +46,7 @@ async function compareCaptures(id1, id2, textLocation1, textLocation2,
 
   const jsonToSave = JSON.stringify([lc, rc, opcodes, baseTextName, newTextName]);
 
-  fs.writeFileSync(`./src/public${jsonFile}`, jsonToSave);
+  fs.writeFileSync(`./src/public${textFile}`, jsonToSave);
 
   console.log('Comparing screenshots...');
 
