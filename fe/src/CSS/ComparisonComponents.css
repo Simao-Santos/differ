@@ -98,28 +98,47 @@ button.btn.btn-link {
 
 }
 
-
-.Content{
-    overflow-y: scroll;
-    overflow-x: scroll;
-}
-
 td.delete{
-    background-color: crimson;
+    background-color: #FF6776;
 }
 
 td.replace{
-    background-color: yellow;
+    background-color: #FFFFB1;
 }
 
 td.insert{
-    background-color: blue;
+    background-color: #77dd77;
 }
 
 th{
     padding-left: 0.5rem;
 }
 
-.diff tr td:nth-last-child(1), .diff tr th:first-child{
-    background-color: blue;
+.Content1 , .Content2{
+    overflow: auto;
+    height: 50vmax;
+    width: 50%;
+}
+
+.Content2 .diff tbody tr th:first-of-type, .Content2  .diff tbody tr td:first-of-type, .Content2 .diff thead th:nth-child(-n+2){
+    display: none;
+}
+
+.Content1 .diff tbody tr th:last-of-type, .Content1 .diff tbody tr td:last-of-type, .Content1 .diff thead th:nth-last-child(-n+2){
+    display: none;
+}
+
+
+.Content2 .diff tbody tr th:last-of-type, .Content1 .diff tbody tr th:first-of-type{
+    color: #ffba8c;
+}
+
+.Content2 .diff thead th:nth-last-child(-n+2), .Content1 .diff thead th:nth-child(-n+2){
+    color: orange;
+    font-weight: bold;
+    font-size: large;
+}
+
+.Spinner-Comparison{
+    
 }

@@ -39,7 +39,7 @@ class CodeComparison extends Component {
       return (
         <>
           <div className="centered">
-            <Spinner animation="border" />
+            <Spinner className="Spinner-Comparison" animation="border" />
             <h2>Information is loading... Hang in there!</h2>
           </div>
         </>
@@ -74,7 +74,13 @@ class CodeComparison extends Component {
 
             <div className="Comparison-Content">
               <div
-                className="Content"
+                className="Content1"
+                dangerouslySetInnerHTML={{
+                  __html: view.buildView(this.state.jsonFile).outerHTML
+                }}></div>
+
+              <div
+                className="Content2"
                 dangerouslySetInnerHTML={{
                   __html: view.buildView(this.state.jsonFile).outerHTML
                 }}></div>
