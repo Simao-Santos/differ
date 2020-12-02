@@ -11,17 +11,18 @@
     flex-direction: row;
     justify-content: space-between;
     background-color: #ff9853;
-    color: white;
+    color: white!important;
     margin: 0;
     padding: 0.5rem;
 }
 
 .Component-Header h2{
     margin: 0;
+    color: white!important;
 }
 
 div.card-header {
-    background-color: white;
+    background-color: white!important;
 }
 
 button.btn.btn-link {
