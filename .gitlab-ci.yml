@@ -155,7 +155,7 @@ test_backend:
     when: always
     reports:
       junit:
-        - be/tests/junit.xml
+        - junit.xml
     paths:
       - be/tests/reports/
     expire_in: 1 week
@@ -179,7 +179,7 @@ test_frontend:
     when: always
     reports:
       junit:
-        - fe/tests/junit.xml
+        - junit.xml
     paths:
       - fe/tests/reports/
     expire_in: 1 week
