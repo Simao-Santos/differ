@@ -90,12 +90,13 @@ button.btn.btn-link {
 }
 
 img#comparison_image{
-    height: 50vmin;
-    width: 50vmin;
+   overflow: scroll;
 }
 
 .loneImage{
     display: flex;
     flex-direction: row;
     justify-content: center;
+    overflow: scroll;
+    height: 50vmin;
 }
