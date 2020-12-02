@@ -166,8 +166,6 @@ const lib = {
             }
             for (var A in v.push(w = document.createElement("tbody")), y) y.hasOwnProperty(A) && w.appendChild(y[A]);
             for (var A in w = f("table", "diff" + (u ? " inlinediff" : "")), v) v.hasOwnProperty(A) && w.appendChild(v[A]);
-            console.log("###############################")
-            console.log(w);
             return w
         }
     };

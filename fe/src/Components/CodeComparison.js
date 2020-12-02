@@ -74,8 +74,9 @@ class CodeComparison extends Component {
 
             <div className="Comparison-Content">
               <div
+                className="Content"
                 dangerouslySetInnerHTML={{
-                  __html: view.buildView(this.state.jsonFile)
+                  __html: view.buildView(this.state.jsonFile).outerHTML
                 }}></div>
             </div>
 

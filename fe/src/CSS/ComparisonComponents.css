@@ -97,3 +97,29 @@ button.btn.btn-link {
     height: 50vmin;
 
 }
+
+
+.Content{
+    overflow-y: scroll;
+    overflow-x: scroll;
+}
+
+td.delete{
+    background-color: crimson;
+}
+
+td.replace{
+    background-color: yellow;
+}
+
+td.insert{
+    background-color: blue;
+}
+
+th{
+    padding-left: 0.5rem;
+}
+
+.diff tr td:nth-last-child(1), .diff tr th:first-child{
+    background-color: blue;
+}
