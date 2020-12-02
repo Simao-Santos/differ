@@ -156,9 +156,6 @@ test_backend:
     reports:
       junit:
         - junit.xml
-    paths:
-      - be/tests/reports/
-    expire_in: 1 week
 
 # tests the frontend
 test_frontend:
@@ -180,9 +177,6 @@ test_frontend:
     reports:
       junit:
         - junit.xml
-    paths:
-      - fe/tests/reports/
-    expire_in: 1 week
 
 ########################################################################
 
