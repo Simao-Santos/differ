@@ -38,10 +38,8 @@ class CodeComparison extends Component {
     if (this.state.isLoading) {
       return (
         <>
-          <div className="centered">
-            <Spinner className="Spinner-Comparison" animation="border" />
-            <h2>Information is loading... Hang in there!</h2>
-          </div>
+          <Spinner animation="border" />
+          <h2>{pageName} is loading... Hang in there!</h2>
         </>
       );
     }
