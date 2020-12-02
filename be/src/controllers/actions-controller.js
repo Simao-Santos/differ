@@ -173,12 +173,6 @@ async function captureUrlAsync(id, url, compareNext) {
   // Get content from url
   let body = await request.getRequest(url);
 
-  // The following code will identify every link that starts with a single "/",
-  // which refers to the root of the website,
-  // And add the url before it (so it can actually get the content, which won't be saved locally)
-  const regex = /"\/(?!\/)/gi;
-  body = body.replace(regex, `"${url}${(url.endsWith('/')) ? '' : '/'}`);
-
   const contentPath = `${folder + ((folder.endsWith('/')) ? '' : '/') + filename}.html`;
 
   // Saves the url content to file
