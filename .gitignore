@@ -12,3 +12,6 @@ pgdata
 
 # Ignore log files
 *.log
+
+# Ignore .env file
+.env

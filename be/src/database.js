@@ -1,13 +1,11 @@
 const { Pool } = require('pg');
 
-// eslint-disable-next-line no-warning-comments
-// TODO: remove credentials (use secrets)
 const pool = new Pool({
-  user: 'postgres',
-  host: 'postgres',
-  database: 'postgres',
-  password: 'postgres',
-  port: 5432,
+  user: process.env.POSTGRES_USER,
+  host: process.env.POSTGRES_HOST,
+  database: process.env.POSTGRES_DB,
+  password: process.env.POSTGRES_PASSWORD,
+  port: process.env.POSTGRES_PORT,
 });
 
 module.exports = pool;
