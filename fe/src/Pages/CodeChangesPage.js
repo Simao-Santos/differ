@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import '../CSS/ChangesPage.css';
 import Spinner from 'react-bootstrap/Spinner';
-import CodeComparison from '../Components/CodeComparison';
 import { Pagination } from 'antd';
+import CodeComparison from '../Components/CodeComparison';
 import 'antd/dist/antd.css';
 
 function groupInformation(response) {
@@ -30,7 +30,6 @@ class CodeChangesPage extends Component {
   constructor(props) {
     super(props);
 
-
     this.state = {
       count: 0,
       page: 1,
@@ -40,15 +39,16 @@ class CodeChangesPage extends Component {
   }
 
   componentDidMount() {
-    console.log(this.state.page);
-    const u = (this.state.page - 1) * 20;
-    const v = this.state.page * 20;
+    const { page, data } = this.state;
+    console.log(page);
+    const u = (page - 1) * 20;
+    const v = page * 20;
     const requestOptions = {
       method: 'GET',
     };
-    console.log(this.state.data);
-    fetch(`http://localhost:8000/captures/count`, requestOptions).then((res) => (res.clone().text())).then((res) => (this.setState((prevState) => ({
-      count: parseInt(JSON.parse(res).captures[0].count),
+    console.log(data);
+    fetch('http://localhost:8000/captures/count', requestOptions).then((res) => (res.clone().text())).then((res) => (this.setState(() => ({
+      count: parseInt(JSON.parse(res).captures[0].count, 10),
     }))));
     fetch(`http://localhost:8000/captures/${u}/${v}`, requestOptions).then((res) => (res.clone().text())).then((res) => (this.setState((prevState) => ({
       isLoading: !prevState.isLoading,
@@ -56,21 +56,23 @@ class CodeChangesPage extends Component {
     }))));
   }
 
-  onChange = page => {
-    console.log(page)
+  onChange(page) {
+    console.log(page);
     this.setState({
-      page: page,
+      page,
       data: [],
       isLoading: true,
     }, function () {
       console.log('set state completed', this.state);
       this.componentDidMount();
-    })
-  };
+    });
+  }
 
   render() {
-    console.log(this.state.count);
-    const { isLoading, data } = this.state;
+    const {
+      isLoading, data, count, page,
+    } = this.state;
+    console.log(count);
     if (isLoading) {
       return (
         <>
@@ -90,8 +92,8 @@ class CodeChangesPage extends Component {
             ))
           }
           <Pagination
-            total={this.state.count}
-            current={this.state.page}
+            total={count}
+            current={page}
             onChange={this.onChange}
           />
         </div>
