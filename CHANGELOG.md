@@ -6,18 +6,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## Sprint 3
+The main focus of this Sprint was to improve the UI when accessing the different main pages that make up the application. After finishing the feature of the API that saves the necessary information for the frontend to display in a directory, the frontend was improved so that users can now actually see the changes in visually and in the code in a user friendly way.
+Some minor adjustments were also done in order to either fix some running aspect of the application or make it more secure.
+
 ### Added
-- The connection of the backend with the frontend is completed. The frontend is now able to ask all of the required information to the backend and display it accordingly. ([#8](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/issues/8)).
+- The connection of the backend with the frontend is completed. The frontend is now able to ask all of the required information to the backend and display it accordingly. ([#8](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/issues/8), !24).
+- Files for the comparison of the captures in backend. These files were changed to allow the creation of the `.json` file with the information of the pages' code (#10, !21).
 
 
 ### Changed
 - Removed hardcoded test data and replaced it with real data. ([#8](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/issues/8)).
 - Altered the view of code changes to only display a comparison. ([#8](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/issues/8)).
 ### Removed
-- 
+- Database credentials from public files. Now these credentials are kept hidden in a .env file so they are more secure.
 
 ### Fixed
 - Fixed the query that fetches information, from the database, relative to the visual comparison component. ([#8](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/issues/8)).
+- Files for the generation of the visual captures. The captures being generated sometimes used custom fonts that there was no access to. After these changes, the icons now load correctly (#23, !23).
 
 ## Sprint 2
 
