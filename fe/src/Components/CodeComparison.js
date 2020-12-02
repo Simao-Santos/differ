@@ -1,72 +1,99 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Accordion, Card, Button } from 'react-bootstrap';
 import '../CSS/ComparisonComponents.css';
+import Spinner from 'react-bootstrap/Spinner';
+import { view } from '../lib/diff'
 
-const CodeComparison = (props) => {
-  const {
-    pageName, link, image1, image2, timeStamp1, timeStamp2, comparison,
-  } = props;
-  return (
-    <>
-      <div className="Comparison-Component">
-        <div className="Component-Header">
-          <h2>{pageName}</h2>
-          <Button style={{ float: 'right' }} type="submit" className="btn btn-outline-light">
-            Update
-          </Button>
-        </div>
+class CodeComparison extends Component {
+  constructor(props) {
+    super(props);
 
-        <div className="Comparison-Card">
+    this.props = props;
 
-          <Accordion>
-            <Card>
-              <Card.Header>
-                <Accordion.Toggle as={Button} variant="link" eventKey="0">
-                  Link ⌄
-                </Accordion.Toggle>
-              </Card.Header>
-              <Accordion.Collapse eventKey="0">
-                <Card.Body>{link}</Card.Body>
-              </Accordion.Collapse>
-            </Card>
-            <Card>
-              <Card.Header>
-                <Accordion.Toggle as={Button} variant="link" eventKey="1">
-                  See Differences ⌄
-                </Accordion.Toggle>
-              </Card.Header>
-              <Accordion.Collapse eventKey="1">
-                <Card.Body>
-                  <h2>{comparison}</h2>
-                </Card.Body>
-              </Accordion.Collapse>
-            </Card>
+    this.state = {
+      isLoading: true,
+      jsonFile: null,
+    };
+  }
 
-          </Accordion>
+  componentDidMount() {
+    const requestOptions = {
+      method: 'GET',
+    };
+    console.log(this.props.comparison);
+    fetch(`http://localhost:8000${this.props.comparison}`, requestOptions)
+      .then((res) => (res.clone().text()))
+      .then((res) => (this.setState(() => ({
+        jsonFile: JSON.parse(res),
+        isLoading: false,
+      }), () => (console.log(this.state.jsonFile)))));
+  }
 
-          <div className="Comparison-Content">
-            <h2>{image1}</h2>
-            <img src="../arrow.png" className="Arrow" alt="logo" />
-            <h2>{image2}</h2>
+  render() {
+    const {
+      pageName, link, timeStamp1, timeStamp2, comparison,
+    } = this.props;
+
+    if (this.state.isLoading) {
+      return (
+        <>
+          <div className="centered">
+            <Spinner animation="border" />
+            <h2>Information is loading... Hang in there!</h2>
+          </div>
+        </>
+      );
+    }
+    return (
+
+      <>
+        <div className="Comparison-Component">
+          <div className="Component-Header">
+            <h2>{pageName}</h2>
+            <Button style={{ float: 'right' }} type="submit" className="btn btn-outline-light">
+              Update
+            </Button>
           </div>
 
-        </div>
+          <div className="Comparison-Card">
 
-        <div className="TimeStamp">
-          <h3>{timeStamp1}</h3>
-          <h3>{timeStamp2}</h3>
+            <Accordion>
+              <Card>
+                <Card.Header>
+                  <Accordion.Toggle as={Button} variant="link" eventKey="0">
+                    Link ⌄
+                  </Accordion.Toggle>
+                </Card.Header>
+                <Accordion.Collapse eventKey="0">
+                  <Card.Body>{link}</Card.Body>
+                </Accordion.Collapse>
+              </Card>
+
+            </Accordion>
+
+            <div className="Comparison-Content">
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: view.buildView(this.state.jsonFile)
+                }}></div>
+            </div>
+
+          </div>
+
+          <div className="TimeStamp">
+            <h3>{timeStamp1}</h3>
+            <h3>{timeStamp2}</h3>
+          </div>
         </div>
-      </div>
-    </>
-  );
-};
+      </>
+    );
+  }
+}
 
 CodeComparison.propTypes = {
   pageName: PropTypes.string.isRequired,
   link: PropTypes.string.isRequired,
-  image1: PropTypes.string.isRequired,
-  image2: PropTypes.string.isRequired,
   timeStamp1: PropTypes.string.isRequired,
   timeStamp2: PropTypes.string.isRequired,
   comparison: PropTypes.string.isRequired,

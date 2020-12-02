@@ -89,14 +89,11 @@ button.btn.btn-link {
     text-decoration: underline;
 }
 
-img#comparison_image{
-   overflow: scroll;
-}
-
 .loneImage{
     display: flex;
     flex-direction: row;
     justify-content: center;
     overflow: scroll;
     height: 50vmin;
+
 }

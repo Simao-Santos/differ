@@ -137,12 +137,12 @@ const lib = {
             function m(K, L, M, N, O) {
                 K.appendChild(g("th", null == L ? "" : (L + 1).toString(), O)), K.appendChild(g("th", null == M ? "" : (M + 1).toString(), O)), K.appendChild(h("td", O, N[null == L ? M : L].replace(/\t/g, "\xA0\xA0\xA0\xA0")))
             }
-            var o = d.baseTextLines,
-                p = d.newTextLines,
-                q = d.opcodes,
-                r = d.baseTextName ? d.baseTextName : "Base Text",
-                s = d.newTextName ? d.newTextName : "New Text",
-                t = d.contextSize,
+            var o = d[0],
+                p = d[1],
+                q = d[2],
+                r = d[3] ? d[3] : "Base Text",
+                s = d[4] ? d[4] : "New Text",
+                t = d[5],
                 u = 0 == d.viewType || 1 == d.viewType ? d.viewType : 0;
             if (null == o) throw "Cannot build diff view; baseTextLines is not defined.";
             if (null == p) throw "Cannot build diff view; newTextLines is not defined.";
@@ -166,6 +166,8 @@ const lib = {
             }
             for (var A in v.push(w = document.createElement("tbody")), y) y.hasOwnProperty(A) && w.appendChild(y[A]);
             for (var A in w = f("table", "diff" + (u ? " inlinediff" : "")), v) v.hasOwnProperty(A) && w.appendChild(v[A]);
+            console.log("###############################")
+            console.log(w);
             return w
         }
     };

@@ -55,7 +55,7 @@ class VisualChangesPage extends Component {
     }))));
   }
 
-  onChange(page) {
+  onChange = page => {
     console.log(page);
     this.setState({
       page,

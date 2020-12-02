@@ -9,16 +9,11 @@ function groupInformation(response) {
   const test = [];
   for (let i = 0; i < (response.length - 1); i += 1) {
     if (response[i].id === response[i + 1].id) {
-      if (response[i].comparisonid === response[i + 1].comparisonid) {
-        if (response[i].comparisonid2 < response[i + 1].comparisonid2) {
-          response[i].complocation = response[i + 1].complocation;
-        }
-      } else if (response[i].comparisonid < response[i + 1].comparisonid) {
-        response[i].complocation = response[i + 1].complocation;
-      } else response[i + 1].complocation = response[i].complocation;
-      if (response[i].date > response[i + 1].date) {
-        test.push([response[i + 1], response[i]]);
-      } else test.push([response[i], response[i + 1]]);
+      if (response[i].complocation != null && response[i+1].complocation != null ){
+        if (response[i].date > response[i + 1].date) {
+          test.push([response[i + 1], response[i]]);
+        } else test.push([response[i], response[i + 1]]);  
+      }
       i += 1;
     }
   }
@@ -47,16 +42,16 @@ class CodeChangesPage extends Component {
       method: 'GET',
     };
     console.log(data);
-    fetch('http://localhost:8000/captures/count', requestOptions).then((res) => (res.clone().text())).then((res) => (this.setState(() => ({
+    fetch(`http://localhost:8000/captures/count`, requestOptions).then((res) => (res.clone().text())).then((res) => (this.setState(() => ({
       count: parseInt(JSON.parse(res).captures[0].count, 10),
     }))));
-    fetch(`http://localhost:8000/captures/${u}/${v}`, requestOptions).then((res) => (res.clone().text())).then((res) => (this.setState((prevState) => ({
+    fetch(`http://localhost:8000/comparisons/comparisonRange/${u}/${v}`, requestOptions).then((res) => (res.clone().text())).then((res) => (this.setState((prevState) => ({
       isLoading: !prevState.isLoading,
       data: [...prevState.data, groupInformation(JSON.parse(res).captures)],
     }))));
   }
 
-  onChange(page) {
+  onChange = page => {
     console.log(page);
     this.setState({
       page,
@@ -72,7 +67,7 @@ class CodeChangesPage extends Component {
     const {
       isLoading, data, count, page,
     } = this.state;
-    console.log(count);
+    console.log(data);
     if (isLoading) {
       return (
         <>
@@ -88,7 +83,15 @@ class CodeChangesPage extends Component {
         <div className="Comparison-Cards">
           {
             data[0].map((ub) => (
-              <CodeComparison pageName={`Page ${ub[0].id}`} link={ub[0].url} timeStamp1={ub[0].date} timeStamp2={ub[1].date} image1={`http://localhost:8000${ub[0].image_location}`} image2={`http://localhost:8000${ub[1].image_location}`} comparison={`http://localhost:8000${ub[0].complocation}`} />
+              <CodeComparison
+                pageName={`Page ${ub[0].id}`} 
+                link={ub[0].url}
+                timeStamp1={ub[0].date}
+                timeStamp2={ub[1].date}
+                comparison={ub[0].complocation}
+                >
+              </CodeComparison>
+             
             ))
           }
           <Pagination
