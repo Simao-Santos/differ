@@ -43,7 +43,11 @@ class CodeComparison extends Component {
       return (
         <>
           <Spinner animation="border" />
-          <h2>{pageName} is loading... Hang in there!</h2>
+          <h2>
+            {pageName}
+            {' '}
+            is loading... Hang in there!
+          </h2>
         </>
       );
     }
