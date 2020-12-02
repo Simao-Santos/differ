@@ -42,7 +42,7 @@ class CodeComparison extends Component {
     if (isLoading) {
       return (
         <>
-          <Spinner className="Spinner-Comparison" animation="border" />
+          <Spinner animation="border" />
           <h2>{pageName} is loading... Hang in there!</h2>
         </>
       );
