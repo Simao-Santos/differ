@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Accordion, Card, Button } from 'react-bootstrap';
 import '../CSS/ComparisonComponents.css';
 import Spinner from 'react-bootstrap/Spinner';
-import { view } from '../lib/diff'
+import { view } from '../lib/diff';
 
 class CodeComparison extends Component {
   constructor(props) {
@@ -18,30 +18,32 @@ class CodeComparison extends Component {
   }
 
   componentDidMount() {
+    const { comparison } = this.props;
     const requestOptions = {
       method: 'GET',
     };
-    console.log(this.props.comparison);
-    fetch(`http://localhost:8000${this.props.comparison}`, requestOptions)
+    fetch(`http://localhost:8000${comparison}`, requestOptions)
       .then((res) => (res.clone().text()))
       .then((res) => (this.setState(() => ({
         jsonFile: JSON.parse(res),
         isLoading: false,
-      }), () => (console.log(this.state.jsonFile)))));
+      }))));
   }
 
   render() {
     const {
-      pageName, link, timeStamp1, timeStamp2, comparison,
+      pageName, link, timeStamp1, timeStamp2,
     } = this.props;
 
-    if (this.state.isLoading) {
+    const {
+      isLoading, jsonFile,
+    } = this.state;
+
+    if (isLoading) {
       return (
         <>
-          <div className="centered">
-            <Spinner className="Spinner-Comparison" animation="border" />
-            <h2>Information is loading... Hang in there!</h2>
-          </div>
+          <Spinner className="Spinner-Comparison" animation="border" />
+          <h2>{pageName} is loading... Hang in there!</h2>
         </>
       );
     }
@@ -76,14 +78,16 @@ class CodeComparison extends Component {
               <div
                 className="Content1"
                 dangerouslySetInnerHTML={{
-                  __html: view.buildView(this.state.jsonFile).outerHTML
-                }}></div>
+                  __html: view.buildView(jsonFile).outerHTML,
+                }}
+              />
 
               <div
                 className="Content2"
                 dangerouslySetInnerHTML={{
-                  __html: view.buildView(this.state.jsonFile).outerHTML
-                }}></div>
+                  __html: view.buildView(jsonFile).outerHTML,
+                }}
+              />
             </div>
 
           </div>

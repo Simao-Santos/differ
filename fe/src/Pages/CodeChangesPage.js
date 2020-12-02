@@ -9,10 +9,10 @@ function groupInformation(response) {
   const test = [];
   for (let i = 0; i < (response.length - 1); i += 1) {
     if (response[i].id === response[i + 1].id) {
-      if (response[i].complocation != null && response[i+1].complocation != null ){
+      if (response[i].complocation != null && response[i + 1].complocation != null) {
         if (response[i].date > response[i + 1].date) {
           test.push([response[i + 1], response[i]]);
-        } else test.push([response[i], response[i + 1]]);  
+        } else test.push([response[i], response[i + 1]]);
       }
       i += 1;
     }
@@ -31,6 +31,8 @@ class CodeChangesPage extends Component {
       isLoading: true,
       data: [],
     };
+
+    this.onChange = this.onChange.bind(this);
   }
 
   componentDidMount() {
@@ -42,7 +44,7 @@ class CodeChangesPage extends Component {
       method: 'GET',
     };
     console.log(data);
-    fetch(`http://localhost:8000/captures/count`, requestOptions).then((res) => (res.clone().text())).then((res) => (this.setState(() => ({
+    fetch('http://localhost:8000/captures/count', requestOptions).then((res) => (res.clone().text())).then((res) => (this.setState(() => ({
       count: parseInt(JSON.parse(res).captures[0].count, 10),
     }))));
     fetch(`http://localhost:8000/comparisons/comparisonRange/${u}/${v}`, requestOptions).then((res) => (res.clone().text())).then((res) => (this.setState((prevState) => ({
@@ -51,8 +53,7 @@ class CodeChangesPage extends Component {
     }))));
   }
 
-  onChange = page => {
-    console.log(page);
+  onChange(page) {
     this.setState({
       page,
       data: [],
@@ -84,14 +85,13 @@ class CodeChangesPage extends Component {
           {
             data[0].map((ub) => (
               <CodeComparison
-                pageName={`Page ${ub[0].id}`} 
+                pageName={`Page ${ub[0].id}`}
                 link={ub[0].url}
                 timeStamp1={ub[0].date}
                 timeStamp2={ub[1].date}
                 comparison={ub[0].complocation}
-                >
-              </CodeComparison>
-             
+              />
+
             ))
           }
           <Pagination

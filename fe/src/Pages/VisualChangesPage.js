@@ -36,6 +36,8 @@ class VisualChangesPage extends Component {
       isLoading: true,
       data: [],
     };
+
+    this.onChange = this.onChange.bind(this);
   }
 
   componentDidMount() {
@@ -55,7 +57,7 @@ class VisualChangesPage extends Component {
     }))));
   }
 
-  onChange = page => {
+  onChange(page) {
     console.log(page);
     this.setState({
       page,
