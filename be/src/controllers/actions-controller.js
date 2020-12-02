@@ -171,7 +171,7 @@ async function captureUrlAsync(id, url, compareNext) {
   const filename = `url_${id}_${date}`;
 
   // Get content from url
-  let body = await request.getRequest(url);
+  const body = await request.getRequest(url);
 
   const contentPath = `${folder + ((folder.endsWith('/')) ? '' : '/') + filename}.html`;
 
