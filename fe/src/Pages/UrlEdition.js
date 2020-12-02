@@ -87,7 +87,6 @@ function UrlEdition() {
           getListOfUrls(setBeReply);
           setNotificationMsg('URL deleted');
         } else if (beReply.status === 400 || beReply.status === 404 || beReply.status === 500) setNotificationMsg('Couldn\'t delete URL');
-        // TODO: is this message ok for all these status?
         break;
       default: console.log(`Something unexpected has happened => ${beReply.type}`);
     }
@@ -246,7 +245,7 @@ function UrlEdition() {
           if (res.status === 200) {
             console.log(`Capture for id ${id} has started`);
           } else if (res.status === 400 || res.status === 404 || res.status === 500) {
-            // TODO: show error message? None of these situations is due to user error
+            setNotificationMsg('Could not capture URL');
           }
         }));
 
@@ -286,9 +285,9 @@ function UrlEdition() {
           console.log(`Comparison for id ${id} has started`);
         } else if (res.status === 412) {
           console.log(`Comparison for id ${id} has not started because there is no older capture for this URL`);
-          // TODO: show error message for this situation?
+          setNotificationMsg('Comparison has not started because there is no older capture for this URL');
         } else if (res.status === 400 || res.status === 404 || res.status === 500) {
-          // TODO: show error message? None of these situations is due to user error
+          setNotificationMsg('Could not compare URL');
         }
       }));
 
