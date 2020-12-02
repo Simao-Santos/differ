@@ -6,7 +6,7 @@ const comparisonController = require('../controllers/comparison-controller');
 
 router.get('/byPageId/:id', comparisonController.get_comparisons_by_page_id);
 router.get('/', comparisonController.get_comparisons);
-router.get('/comparisonRange/:id/:id1', comparisonController.get_comparison_range);
+router.get('/comparisonRange/:id/:offset', comparisonController.get_comparison_range);
 router.get('/:id', comparisonController.get_comparisons);
 router.delete('/:id', comparisonController.delete_comparisons);
 
