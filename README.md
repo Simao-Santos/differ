@@ -30,55 +30,53 @@ To use Docker on your computer start by:
 
 #### Installing Docker:
 
-It is recommended that you install Docker on your linux distribution. Alternatively, if you want to use windows and do not own neither windows 10 pro nor windowns 10 entreprise, you may want to use windows subsistems for linux 2 (wsl 2).
+It is recommended that you install Docker on your Linux distribution. Alternatively, if you want to use Windows and do not own neither Windows 10 Pro nor Windows 10 Entreprise, you may want to use Windows Subsystems for Linux 2 (WSL 2).
 
 For either case follow the instructions in this link https://docs.docker.com/get-docker/
 
-To learn how to enable wsl 2 on your machine go to https://docs.microsoft.com/en-us/windows/wsl/install-win10 and to learn how to integrate docker and wsl 2 go to https://docs.docker.com/docker-for-windows/wsl/ and follow the innstructions.
+To learn how to enable WSL 2 on your machine go to https://docs.microsoft.com/en-us/windows/wsl/install-win10 and to learn how to integrate Docker and WSL 2 go to https://docs.docker.com/docker-for-windows/wsl/ and follow the instructions.
 
-Note that even though your are using wsl 2 you want to install Docker in windows 10 and only the docker-compose in linux.
+Note that even though your are using WSL 2 you want to install Docker in Windows 10 and only the docker-compose in Linux.
 
 #### Installing docker-compose:
 
-After completing the instalation of Docker you need to install docker-compose. In the link https://docs.docker.com/compose/install/ you will find all the instructions you need to do that, just make sure you are following the instrutions to your OS.
+After completing the installation of Docker you need to install docker-compose. In the link https://docs.docker.com/compose/install/ you will find all the instructions you need to do that, just make sure you are following the instructions to your OS.
 
 #### Using Docker:
 
-To use Docker you must be on the project directory and use the comand to build the images that will alow you to see the code working:
+To use Docker you must be on the project directory and use the command to build the images that will allow you to see the code working:
 
 ```
-    docker-compose build
+docker-compose build
 ```
 
 Then to start the containers use the command:
 
 ```
-    docker-compose up
+docker-compose up
 ```
 
-After everything initializes you can check the frontend in the port 3000 and the backend in the port 8000. (insert the url localhost:3000 or similar in your browser)
+After everything initializes you can check the frontend in the port 3000 and the backend in the port 8000 (insert the url localhost:3000 or similar in your browser).
 
-To stop the containers hit ctrl+C or the equivalent in your OS. If you use the following command you will need to rebuild the containers:
+To stop the containers hit Ctrl+C or the equivalent in your OS. If you use the following command you will need to rebuild the containers:
 
 ```
-    docker-compose down
+docker-compose down
 ```
 
 Use this command only if you are having problems with the containers and you need a clean build.
 
-Normaly if you made changes to the code you would have to rebuild the containers but if the docker-compose.yml is correctly set, the containers are build with pointers to the actuall code so the changes you make can be seen in real time by refreshing the browser you are using.
+Normally if you made changes to the code you would have to rebuild the containers but if the docker-compose.yml is correctly set, the containers are build with pointers to the actual code so the changes you make can be seen in real time by refreshing the browser you are using. This is only applicable to the frontend, in the backend you need to restart the running container to see the changes.
 
-Be warned the clean builds take their time. Don't be surprised if the first time you are running the build command or after a down commad the operation takes time.
+Be warned the clean builds take their time. Don't be surprised if the first time you are running the build command or after a down command the operation takes time.
 
 **Run the application with** `sh scripts/start.sh`, which grants the needed permissions and runs docker-compose (see !5).
 
-If you want to run the backend tests, do `sh scripts/start-test_backend.sh`, which grants the needed permissions and runs docker-compose.test_backend.yml.
+If you want to run the tests, do `sh scripts/start-test_backend.sh` for the backend or `sh scripts/start-test_frontend.sh` for the frontend, which grants the needed permissions and runs docker-compose.test_backend.yml or docker-compose.test_frontend.yml.
 
 #### Errors:
 
 Node 10.18.1 minimum version is needed.
-
-If there is an error when the container attempts to run .node/bin/www (or if the backend doesn't launch) you must run npm install from your terminal in the be/ directory and then use docker-compose build and try again. It should work this time. It is necessary so that npm updates package.json.
 
 If it appears a message saying that a port is already allocated, for example the 5432 which is the one from the db, you must use the following commands:
 
