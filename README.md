@@ -66,7 +66,7 @@ docker-compose down
 
 Use this command only if you are having problems with the containers and you need a clean build.
 
-Normally if you made changes to the code you would have to rebuild the containers but if the docker-compose.yml is correctly set, the containers are build with pointers to the actual code so the changes you make can be seen in real time by refreshing the browser you are using. This is only applicable to the frontend, in the backend you need to restart the running container to see the changes.
+Normally if you made changes to the code you would have to rebuild the containers but if the docker-compose.yml is correctly set, the containers are built with pointers to the actual code so the changes you make can be seen in real time by refreshing the browser you are using. This is only applicable to the frontend, in the backend you need to restart the running container to see the changes.
 
 Be warned the clean builds take their time. Don't be surprised if the first time you are running the build command or after a down command the operation takes time.
 
