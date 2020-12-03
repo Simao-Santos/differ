@@ -70,7 +70,9 @@ Normaly if you made changes to the code you would have to rebuild the containers
 
 Be warned the clean builds take their time. Don't be surprised if the first time you are running the build command or after a down commad the operation takes time.
 
-**Run the application with** `sh start.sh`, which grants the needed permissions and runs docker-compose (see !5).
+**Run the application with** `sh scripts/start.sh`, which grants the needed permissions and runs docker-compose (see !5).
+
+If you want to run the backend tests, do `sh scripts/start-test_backend.sh`, which grants the needed permissions and runs docker-compose.test_backend.yml.
 
 #### Errors:
 

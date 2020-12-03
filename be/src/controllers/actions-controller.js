@@ -5,10 +5,9 @@ const fs = require('fs');
 const { PNG } = require('pngjs');
 const request = require('../html_request');
 const database = require('../database');
+const utils = require('../utils');
 const diffLib = require('../lib/diff.js');
-const {
-  baseText, newText,
-} = require('../lib/constants.js');
+const { baseText, newText } = require('../lib/constants.js');
 
 // Function that compares two captures
 async function compareCaptures(id1, id2, textLocation1, textLocation2,
@@ -25,8 +24,7 @@ async function compareCaptures(id1, id2, textLocation1, textLocation2,
   const sec = String(today.getSeconds()).padStart(2, '0');
   const millisec = String(today.getMilliseconds()).padStart(3, '0');
 
-  const date = `${year}_${mon}_${day}_${
-    hour}_${min}_${sec}_${millisec}`;
+  const date = `${year}_${mon}_${day}_${hour}_${min}_${sec}_${millisec}`;
 
   const filename = `comparison_${id1}_${id2}_${date}`;
   const imageFile = `${saveFolder + ((saveFolder.endsWith('/')) ? '' : '/') + filename}.png`;
@@ -164,8 +162,7 @@ async function captureUrlAsync(id, url, compareNext) {
   const sec = String(today.getSeconds()).padStart(2, '0');
   const millisec = String(today.getMilliseconds()).padStart(3, '0');
 
-  const date = `${year}_${mon}_${day}_${
-    hour}_${min}_${sec}_${millisec}`;
+  const date = `${year}_${mon}_${day}_${hour}_${min}_${sec}_${millisec}`;
 
   const filename = `url_${id}_${date}`;
 
@@ -213,29 +210,24 @@ function compareUrl(id, res) {
     values: [id, false],
   };
 
-  database.query(querySelect, (err, resultSelect) => {
-    if (err || resultSelect.rowCount === 0) {
+  database.query(querySelect, async (err, resultSelect) => {
+    if (err) {
       console.log('Couldn\'t get URL to compare');
-
-      if (res) {
-        const json = {
-          type: 'error',
-          id,
-          msg: 'Couldn\'t get URL to compare',
-        };
-
-        res.send(json);
-      }
+      res.sendStatus(500);
+    } else if (resultSelect.rowCount === 0) {
+      console.log('Specified URL does not exist');
+      res.sendStatus(404);
     } else {
-      captureUrlAsync(id, resultSelect.rows[0].url, true);
+      // Test if there already exists a capture
+      const { rowCount } = await database.query('SELECT id FROM capture WHERE page_id=$1 AND deleted=$2 LIMIT 1', [id, false]);
 
-      const json = {
-        type: 'compare_url',
-        id,
-        msg: 'Comparison started',
-      };
-
-      res.send(json);
+      if (rowCount === 0) {
+        console.log('Specified URL does not have an older capture');
+        res.sendStatus(412);
+      } else {
+        captureUrlAsync(id, resultSelect.rows[0].url, true);
+        res.sendStatus(200);
+      }
     }
   });
 }
@@ -248,30 +240,16 @@ function captureUrl(id, res) {
   };
 
   database.query(querySelect, (err, resultSelect) => {
-    if (err || resultSelect.rowCount === 0) {
+    if (err) {
       console.log('Couldn\'t get URL to capture');
-
-      if (res) {
-        const json = {
-          type: 'error',
-          id,
-          msg: 'Couldn\'t get URL to capture',
-        };
-
-        res.send(json);
-      }
+      if (res) res.sendStatus(500);
+    } else if (resultSelect.rowCount === 0) {
+      console.log('Specified URL does not exist');
+      if (res) res.sendStatus(404);
     } else {
       captureUrlAsync(id, resultSelect.rows[0].url, false);
-
-      if (res) {
-        const json = {
-          type: 'capture_url',
-          id,
-          msg: 'Capture started',
-        };
-
-        res.send(json);
-      }
+      console.log('URL capture has started');
+      if (res) res.sendStatus(200);
     }
   });
 }
@@ -282,16 +260,10 @@ exports.captureUrlSync = captureUrl;
 exports.capture_url = function captureUrlCall(req, res, next) {
   console.log('Capturing url...');
 
-  if (req.params.id) {
+  if (req.params.id && utils.isInteger(req.params.id)) {
     captureUrl(req.params.id, res);
   } else {
-    const json = {
-      type: 'error',
-      id: -1,
-      msg: 'No specified URL id',
-    };
-
-    res.send(json);
+    res.sendStatus(400);
   }
 };
 
@@ -299,15 +271,9 @@ exports.capture_url = function captureUrlCall(req, res, next) {
 exports.compare_url = function compareUrlCall(req, res, next) {
   console.log('Starting url comparison...');
 
-  if (req.params.id) {
+  if (req.params.id && utils.isInteger(req.params.id)) {
     compareUrl(req.params.id, res);
   } else {
-    const json = {
-      type: 'error',
-      id: -1,
-      msg: 'No specified URL id',
-    };
-
-    res.send(json);
+    res.sendStatus(400);
   }
 };

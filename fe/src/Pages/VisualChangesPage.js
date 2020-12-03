@@ -48,13 +48,17 @@ class VisualChangesPage extends Component {
       method: 'GET',
     };
     console.log(data);
-    fetch('http://localhost:8000/captures/count', requestOptions).then((res) => (res.clone().text())).then((res) => (this.setState(() => ({
-      count: parseInt(JSON.parse(res).captures[0].count, 10),
-    }))));
-    fetch(`http://localhost:8000/captures/${u}/${v}`, requestOptions).then((res) => (res.clone().text())).then((res) => (this.setState((prevState) => ({
-      isLoading: !prevState.isLoading,
-      data: [...prevState.data, groupInformation(JSON.parse(res).captures)],
-    }))));
+    fetch('http://localhost:8000/captures/count', requestOptions)
+      .then((res) => (res.clone().text()))
+      .then((res) => (this.setState(() => ({
+        count: parseInt(JSON.parse(res).captures[0].count, 10),
+      }))));
+    fetch(`http://localhost:8000/captures/${u}/${v}`, requestOptions)
+      .then((res) => (res.clone().text()))
+      .then((res) => (this.setState((prevState) => ({
+        isLoading: !prevState.isLoading,
+        data: [...prevState.data, groupInformation(JSON.parse(res).captures)],
+      }))));
   }
 
   onChange(page) {

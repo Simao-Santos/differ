@@ -16,6 +16,7 @@
     "rules": {
         // https://github.com/expressjs/generator/issues/78#issuecomment-232890226
         "no-unused-vars": ["error", { "argsIgnorePattern": "next" }],
-        "no-console": "off"
+        "no-console": "off",
+        "no-warning-comments": "error"
     }
 }

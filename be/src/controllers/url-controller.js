@@ -1,5 +1,6 @@
 const database = require('../database');
 const actionsController = require('./actions-controller');
+const utils = require('../utils');
 
 // Get URLs added by a specific user from the database
 exports.get_urls = function getUrls(req, res, next) {
@@ -7,38 +8,39 @@ exports.get_urls = function getUrls(req, res, next) {
 
   if (req.body.username) username = req.body.username;
 
-  let query;
-
   if (req.params.id) {
-    query = {
-      text: 'SELECT id, url FROM page WHERE username=$1 AND deleted=$2 AND id=$3',
-      values: [username, false, req.params.id],
-    };
+    if (utils.isInteger(req.params.id)) {
+      const query = {
+        text: 'SELECT id, url FROM page WHERE username=$1 AND deleted=$2 AND id=$3',
+        values: [username, false, req.params.id],
+      };
+
+      database.query(query, (err, result) => {
+        if (err) {
+          res.sendStatus(500);
+        } else if (result.rowCount === 0) {
+          res.sendStatus(404);
+        } else {
+          res.status(200).send(result.rows[0]);
+        }
+      });
+    } else {
+      res.sendStatus(400);
+    }
   } else {
-    query = {
+    const query = {
       text: 'SELECT id, url FROM page WHERE username=$1 AND deleted=$2',
       values: [username, false],
     };
+
+    database.query(query, (err, result) => {
+      if (err) {
+        res.sendStatus(500);
+      } else {
+        res.status(200).send(result.rows);
+      }
+    });
   }
-
-  database.query(query, (err, result) => {
-    if (err) {
-      const json = {
-        type: 'error',
-        msg: 'Couldn\'t access database',
-      };
-
-      res.send(json);
-    } else {
-      const json = {
-        type: 'get_urls',
-        urls: result.rows,
-        msg: 'Operation successful',
-      };
-
-      res.send(json);
-    }
-  });
 };
 
 // Add a new URL to the database
@@ -49,7 +51,15 @@ exports.add_url = function addUrl(req, res, next) {
 
   console.log('Adding url...');
 
-  if (req.body.url) {
+  // RegExp pattern to test URL validity
+  const pattern = new RegExp('^(https?:\\/\\/)?' // protocol
+    + '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' // domain name
+    + '((\\d{1,3}\\.){3}\\d{1,3})|localhost)' // OR ip (v4) address
+    + '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' // port and path
+    + '(\\?[;&a-z\\d%_.~+=-]*)?' // query string
+    + '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+
+  if (req.body.url && pattern.test(req.body.url)) {
     const queryInsert = {
       text: 'INSERT INTO page (username, url) VALUES ($1, $2) RETURNING id',
       values: [username, req.body.url],
@@ -59,50 +69,17 @@ exports.add_url = function addUrl(req, res, next) {
 
     database.query(queryInsert, (err, resultInsert) => {
       if (err) {
-        const json = {
-          type: 'error',
-          msg: 'Couldn\'t add URL',
-        };
-
-        res.send(json);
+        res.sendStatus(500);
       } else {
-        const querySelect = {
-          text: 'SELECT id, url FROM page WHERE username=$1 AND deleted=$2',
-          values: [username, false],
-        };
-
-        database.query(querySelect, (err2, resultSelect) => {
-          if (err2) {
-            console.log('URL added, but couldn\'t retrieve URL list');
-
-            const json = {
-              type: 'post_url',
-              msg: 'Operation successful, but couldn\'t retrieve URL list',
-            };
-
-            res.send(json);
-          } else {
-            const json = {
-              type: 'post_url',
-              urls: resultSelect.rows,
-              msg: 'Operation successful',
-            };
-
-            res.send(json);
-          }
-        });
+        res.status(200).send(resultInsert.rows[0]);
 
         console.log(`URL saved with ID ${resultInsert.rows[0].id}`);
-        actionsController.captureUrlSync(resultInsert.rows[0].id, null);
+
+        if (!req.body.doNotCapture) actionsController.captureUrlSync(resultInsert.rows[0].id, null);
       }
     });
   } else {
-    const json = {
-      type: 'error',
-      msg: 'No specified URL',
-    };
-
-    res.send(json);
+    res.sendStatus(400);
   }
 };
 
@@ -110,42 +87,25 @@ exports.add_url = function addUrl(req, res, next) {
 exports.delete_url = function deleteUrl(req, res, next) {
   console.log('Deleting url...');
 
-  if (req.params.id) {
+  if (req.params.id && utils.isInteger(req.params.id)) {
     const query = {
-      text: 'UPDATE page SET deleted=$1 WHERE id=$2 AND deleted=$3 RETURNING id',
+      text: 'UPDATE page SET deleted=$1 WHERE id=$2 AND deleted=$3 RETURNING id, url',
       values: [true, req.params.id, false],
     };
 
     database.query(query, (err, result) => {
-      if (err || result.rowCount === 0) {
+      if (err) {
         console.log(`Couldn't mark page with ID ${req.params.id} as deleted`);
-
-        const json = {
-          type: 'error',
-          id: req.params.id,
-          msg: 'Couldn\'t delete URL',
-        };
-
-        res.send(json);
+        res.sendStatus(500);
+      } else if (result.rowCount === 0) {
+        console.log(`Page with ID ${req.params.id} does not exist`);
+        res.sendStatus(404);
       } else {
         console.log(`Page with ID ${req.params.id} marked as deleted`);
-
-        const json = {
-          type: 'delete_url',
-          id: req.params.id,
-          msg: 'Operation successful',
-        };
-
-        res.send(json);
+        res.status(200).send(result.rows[0]);
       }
     });
   } else {
-    const json = {
-      type: 'error',
-      id: -1,
-      msg: 'No specified URL id',
-    };
-
-    res.send(json);
+    res.sendStatus(400);
   }
 };

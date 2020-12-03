@@ -12,6 +12,7 @@ services:
     volumes:
       - ./fe/src/:/app/fe/src/
       - ./fe/public/:/app/fe/public/
+      - ./fe/tests:/app/fe/tests
     ports:
       - 3000:3000
     depends_on:
@@ -35,19 +36,6 @@ services:
       - ./be/src:/app/be/src
       - ./be/tests:/app/be/tests
     depends_on:
-      - pgadmin
-    networks:
-      - app
-
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin
-      PGADMIN_DEFAULT_PASSWORD: admin
-    ports:
-      - 5555:80
-    depends_on:
       - db
     networks:
       - app
@@ -61,7 +49,6 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: auto-testing
     volumes:
-      - ./pgdata:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - 5432:5432

@@ -4,6 +4,9 @@ be/node_modules/
 # Ignore shots folder
 be/src/public/shots/
 
+# Ignore test reports
+be/tests/reports
+
 # Ignore database data
 pgdata
 

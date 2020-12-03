@@ -12,8 +12,10 @@ function getListOfUrls(setBeReply) {
   };
 
   fetch('http://localhost:8000/urls/', requestOptions)
-    .then((res) => res.text())
-    .then((res) => setBeReply(JSON.parse(res)));
+    .then((res) => {
+      res.text()
+        .then((content) => setBeReply({ type: 'get_urls', status: res.status, content: JSON.parse(content) }));
+    });
 }
 
 function UrlEdition() {
@@ -29,6 +31,7 @@ function UrlEdition() {
 
   const [beReply, setBeReply] = useState('{}');
   const [doAnimation, setAnimationState] = useState(true);
+  const [notificationMsg, setNotificationMsg] = useState('');
   const urlAddressRef = useRef();
 
   // useEffects 1. load urls from local storage
@@ -68,13 +71,22 @@ function UrlEdition() {
 
   useEffect(() => {
     switch (beReply.type) {
-      case 'get_urls': setUrls(beReply.urls);
+      case 'get_urls':
+        if (beReply.status === 200) setUrls(beReply.content);
+        else if (beReply.status === 500) setNotificationMsg('Couldn\'t retrieve URLs');
         break;
-      case 'post_url': setUrls(beReply.urls);
+      case 'post_url':
+        if (beReply.status === 200) {
+          getListOfUrls(setBeReply);
+          setNotificationMsg('URL added');
+        } else if (beReply.status === 400) setNotificationMsg('Invalid URL');
+        else if (beReply.status === 500) setNotificationMsg('Couldn\'t add URL');
         break;
-      case 'delete_url': getListOfUrls(setBeReply);
-        break;
-      case 'error': console.log(`ERROR => ${beReply.msg}`);
+      case 'delete_url':
+        if (beReply.status === 200) {
+          getListOfUrls(setBeReply);
+          setNotificationMsg('URL deleted');
+        } else if (beReply.status === 400 || beReply.status === 404 || beReply.status === 500) setNotificationMsg('Couldn\'t delete URL');
         break;
       default: console.log(`Something unexpected has happened => ${beReply.type}`);
     }
@@ -130,16 +142,18 @@ function UrlEdition() {
 
     setSelectAll([true, false]);
 
-    const requestDelOptions = {
+    const requestOptions = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
       },
       body: JSON.stringify({ url: address }),
     };
-    fetch('http://localhost:8000/urls', requestDelOptions)
-      .then((res) => res.text())
-      .then((res) => setBeReply(JSON.parse(res)));
+    fetch('http://localhost:8000/urls', requestOptions)
+      .then((res) => {
+        res.text()
+          .then((content) => setBeReply({ type: 'post_url', status: res.status, content: JSON.parse(content) }));
+      });
 
     setAnimationState(false);
   }
@@ -163,16 +177,18 @@ function UrlEdition() {
 
     setSelectAll([true, false]);
 
-    const requestDelOptions = {
+    const requestOptions = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
       },
       body: JSON.stringify({ url: address }),
     };
-    fetch('http://localhost:8000/urls', requestDelOptions)
-      .then((res) => res.text())
-      .then((res) => setBeReply(JSON.parse(res)));
+    fetch('http://localhost:8000/urls', requestOptions)
+      .then((res) => {
+        res.text()
+          .then((content) => setBeReply({ type: 'post_url', status: res.status, content: JSON.parse(content) }));
+      });
 
     setAnimationState(false);
   }
@@ -200,8 +216,10 @@ function UrlEdition() {
       };
 
       myUrlIds.forEach((id) => fetch(`http://localhost:8000/urls/${id}`, requestOptions)
-        .then((res) => res.text())
-        .then((res) => setBeReply(JSON.parse(res))));
+        .then((res) => {
+          res.text()
+            .then((content) => setBeReply({ type: 'delete_url', status: res.status, content: JSON.parse(content) }));
+        }));
 
       setAnimationState(false);
     }
@@ -223,8 +241,13 @@ function UrlEdition() {
       };
 
       myUrlIds.forEach((id) => fetch(`http://localhost:8000/actions/capture/${id}`, requestOptions)
-        .then((res) => res.text())
-        .then((res) => console.log(res)));
+        .then((res) => {
+          if (res.status === 200) {
+            console.log(`Capture for id ${id} has started`);
+          } else if (res.status === 400 || res.status === 404 || res.status === 500) {
+            setNotificationMsg('Could not capture URL');
+          }
+        }));
 
       setAnimationState(false);
     }
@@ -257,8 +280,16 @@ function UrlEdition() {
     };
 
     myUrlIds.forEach((id) => fetch(`http://localhost:8000/actions/compare/${id}`, requestOptions)
-      .then((res) => res.text())
-      .then((res) => console.log(res)));
+      .then((res) => {
+        if (res.status === 200) {
+          console.log(`Comparison for id ${id} has started`);
+        } else if (res.status === 412) {
+          console.log(`Comparison for id ${id} has not started because there is no older capture for this URL`);
+          setNotificationMsg('Comparison has not started because there is no older capture for this URL');
+        } else if (res.status === 400 || res.status === 404 || res.status === 500) {
+          setNotificationMsg('Could not compare URL');
+        }
+      }));
 
     setAnimationState(false);
   }
@@ -289,7 +320,7 @@ function UrlEdition() {
     <>
       <header>
         <Notification
-          message={beReply.msg}
+          message={notificationMsg}
           toggleAnimation={setAnimationState}
           animate={doAnimation}
         />

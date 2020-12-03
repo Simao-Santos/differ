@@ -66,6 +66,7 @@ build_backend:
       - be/package.json
       - be/package-lock.json
       - be/Dockerfile
+      - be/wait-for-pg.sh
       when: on_success
     - if: $CI_COMMIT_MESSAGE =~ /\[build-backend\]/
       when: on_success
@@ -156,7 +157,7 @@ eslint-frontend:
 
 ########################################################################
 
-### TEST
+### TEST   
 
 # tests the backend
 test_backend:
@@ -173,6 +174,14 @@ test_backend:
     - echo "Testing Backend..."
     - docker-compose -f docker-compose.test_backend.yml up --exit-code-from backend
     - echo "All Tests successful!"
+  artifacts:
+    when: always
+    reports:
+      junit:
+        - be/tests/reports/junit.xml
+    paths:
+      - be/tests/reports/
+    expire_in: 1 week
 
 # tests the frontend
 test_frontend:
@@ -189,6 +198,15 @@ test_frontend:
     - echo "Testing Frontend..."
     - docker-compose -f docker-compose.test_frontend.yml up --exit-code-from frontend
     - echo "All Tests successful!"
+  artifacts:
+    when: always
+    reports:
+      junit:
+        - fe/tests/reports/junit.xml
+    paths:
+      - fe/tests/reports/
+    expire_in: 1 week
+
 
 ########################################################################
 
