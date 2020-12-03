@@ -118,6 +118,8 @@ router.get('/', comparisonController.get_comparisons);
  */
 router.get('/byPageId/:id', comparisonController.get_comparisons_by_page_id);
 
+router.get('/comparisonRange/:id/:offset', comparisonController.get_comparison_range);
+
 /**
  * @swagger
  * /comparisons/{id}:
@@ -175,7 +177,5 @@ router.get('/:id', comparisonController.get_comparisons);
  *     description: Server could not handle request
  */
 router.delete('/:id', comparisonController.delete_comparisons);
-
-router.get('/comparisonRange/:id/:offset', comparisonController.get_comparison_range);
 
 module.exports = router;

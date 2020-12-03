@@ -94,6 +94,8 @@ router.get('/', captureController.get_captures);
  */
 router.get('/byPageId/:id', captureController.get_captures_by_page_id);
 
+router.get('/count', captureController.get_count);
+
 /**
  * @swagger
  * /captures/{id}:
@@ -152,7 +154,6 @@ router.get('/:id', captureController.get_captures);
  */
 router.delete('/:id', captureController.delete_captures);
 
-router.get('/count', captureController.get_count);
 router.get('/:id/:offset', captureController.get_captures_range);
 
 module.exports = router;
