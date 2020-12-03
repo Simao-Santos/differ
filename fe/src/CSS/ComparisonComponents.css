@@ -11,17 +11,18 @@
     flex-direction: row;
     justify-content: space-between;
     background-color: #ff9853;
-    color: white;
+    color: white!important;
     margin: 0;
     padding: 0.5rem;
 }
 
 .Component-Header h2{
     margin: 0;
+    color: white!important;
 }
 
 div.card-header {
-    background-color: white;
+    background-color: white!important;
 }
 
 button.btn.btn-link {
@@ -33,11 +34,17 @@ button.btn.btn-link {
     display:flex;
     flex-direction: row;
     justify-content: space-around;
-    padding: 2em;
+    padding-top: 0.5em;
+    align-items: center;
 }
 
 .Arrow{
-    height: 9vmin;
+    height: 5vmin;
+}
+
+.View-images {
+    height: 50vmin;
+    width: 50vmin;
 }
 
 .TimeStamp {
@@ -82,4 +89,56 @@ button.btn.btn-link {
     text-decoration: underline;
 }
 
+.loneImage{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    overflow: scroll;
+    height: 50vmin;
 
+}
+
+td.delete{
+    background-color: #FF6776;
+}
+
+td.replace{
+    background-color: #FFFFB1;
+}
+
+td.insert{
+    background-color: #77dd77;
+}
+
+th{
+    padding-left: 0.5rem;
+}
+
+.Content1 , .Content2{
+    overflow: auto;
+    height: 50vmax;
+    width: 50%;
+}
+
+.Content2 .diff tbody tr th:first-of-type, .Content2  .diff tbody tr td:first-of-type, .Content2 .diff thead th:nth-child(-n+2){
+    display: none;
+}
+
+.Content1 .diff tbody tr th:last-of-type, .Content1 .diff tbody tr td:last-of-type, .Content1 .diff thead th:nth-last-child(-n+2){
+    display: none;
+}
+
+
+.Content2 .diff tbody tr th:last-of-type, .Content1 .diff tbody tr th:first-of-type{
+    color: #ffba8c;
+}
+
+.Content2 .diff thead th:nth-last-child(-n+2), .Content1 .diff thead th:nth-child(-n+2){
+    color: orange;
+    font-weight: bold;
+    font-size: large;
+}
+
+.Spinner-Comparison{
+    
+}

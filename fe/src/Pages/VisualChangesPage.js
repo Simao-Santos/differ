@@ -1,123 +1,110 @@
-import React, {useState, useRef, useEffect } from 'react';
+import React, { Component } from 'react';
 import '../CSS/ChangesPage.css';
+import Spinner from 'react-bootstrap/Spinner';
+import { Pagination } from 'antd';
 import VisualComparison from '../Components/VisualComparison';
+import 'antd/dist/antd.css';
 
-var visualData1 =[
-  {
-    id: 1,
-    name: 'Page 1',
-    link: 'https://google.com',
-    timeStamp: '10/02/2020',
-    images: [
-      {
-        timeStamp: '20/11/2020 - 17:45:00',
-        name: '../logo.png',
-      }, {
-        timeStamp: '10/02/2020 - 17:45:00',
-        name: '../logo.png',
-      },
-    ],
-  },
-  {
-      id: 2,
-      name: 'Page 2',
-      link: 'https://site.com/login',
-      images: [
-          {
-            timeStamp: '20/11/2020 - 17:45:00',
-            name: '../logo.png',
-            id: 2,
-          }, {
-            timeStamp: '10/02/2020 - 17:45:00',
-            name: "../logo.png"
-          }
-      ]
-  }
-];
-
-function VisualChangesPage() {
-
-  const [be_reply, setBeReply] = useState('{}')
-  const [be_reply_urls, setBeURLReply] = useState('{}')
-
-  useEffect(() => {
-    getListOfUrls() 
-
-  }, []) 
-
-  useEffect(() => {
-  
-    switch(be_reply.type){
-      case 'get_captures': setBeReply(be_reply.captures)
-      break
-      case 'get_captures_by_page_id':setBeReply(be_reply.captures)
-      console.log(be_reply)
-      break
-      case 'delete_capture': console.log("Delete captures")
-      break
-      case 'error': console.log('ERROR => ' + be_reply.msg)
-      break
+function groupInformation(response) {
+  const test = [];
+  for (let i = 0; i < (response.length - 1); i += 1) {
+    if (response[i].id === response[i + 1].id) {
+      if (response[i].comparisonid === response[i + 1].comparisonid) {
+        if (response[i].comparisonid2 < response[i + 1].comparisonid2) {
+          response[i].complocation = response[i + 1].complocation;
+        }
+      } else if (response[i].comparisonid < response[i + 1].comparisonid) {
+        response[i].complocation = response[i + 1].complocation;
+      } else response[i + 1].complocation = response[i].complocation;
+      if (response[i].date > response[i + 1].date) {
+        test.push([response[i + 1], response[i]]);
+      } else test.push([response[i], response[i + 1]]);
+      i += 1;
     }
-  
-  }, [be_reply]) 
+  }
 
-  useEffect(() => {
-    console.log(be_reply_urls)
-   
-    getListOfImages()
-  }, [be_reply_urls])
-        
-  function getListOfUrls() {   
+  return test;
+}
 
-    console.log('getting urls from db')
+class VisualChangesPage extends Component {
+  constructor(props) {
+    super(props);
 
+    this.state = {
+      count: 0,
+      page: 1,
+      isLoading: true,
+      data: [],
+    };
+
+    this.onChange = this.onChange.bind(this);
+  }
+
+  componentDidMount() {
+    const { page, data } = this.state;
+    const u = (page - 1) * 20;
+    const v = page * 20;
     const requestOptions = {
-      method: 'GET'
-    }
-
-    fetch("http://localhost:8000/urls/", requestOptions)
-    .then(res => res.text())
-    .then(res => setBeURLReply(JSON.parse(res).urls))
+      method: 'GET',
+    };
+    console.log(data);
+    fetch('http://localhost:8000/captures/count', requestOptions)
+      .then((res) => (res.clone().text()))
+      .then((res) => (this.setState(() => ({
+        count: parseInt(JSON.parse(res).captures[0].count, 10),
+      }))));
+    fetch(`http://localhost:8000/captures/${u}/${v}`, requestOptions)
+      .then((res) => (res.clone().text()))
+      .then((res) => (this.setState((prevState) => ({
+        isLoading: !prevState.isLoading,
+        data: [...prevState.data, groupInformation(JSON.parse(res).captures)],
+      }))));
   }
 
-  function getListOfImages() {
-
-    console.log('getting images from db')
-
-    const requestOptions = {
-      method: 'GET'
-    }
-
-    console.log(be_reply_urls)
-    console.log("urls length" + be_reply_urls.length)
-    if(be_reply_urls.length > 0){
-      if( be_reply_urls[0].id == undefined)
-      return;
-    }
-    
-    for( var i=0 ; i<be_reply_urls.length ; i++){
-      console.log(be_reply_urls[i].id)
-      console.log('http://localhost:8000/captures/byPageId/' + be_reply_urls[i].id)
-    fetch('http://localhost:8000/captures/byPageId/' + be_reply_urls[i].id, requestOptions)
-    .then(res => res.text())
-    .then(res => setBeReply(JSON.parse(res)))
-    }
+  onChange(page) {
+    console.log(page);
+    this.setState({
+      page,
+      data: [],
+      isLoading: true,
+    }, function () {
+      console.log('set state completed', this.state);
+      this.componentDidMount();
+    });
   }
 
+  render() {
+    const {
+      isLoading, data, count, page,
+    } = this.state;
+    if (isLoading) {
+      return (
+        <>
+          <div className="centered">
+            <Spinner animation="border" />
+            <h2>Information is loading... Hang in there!</h2>
+          </div>
+        </>
+      );
+    }
     return (
       <>
         <div className="Comparison-Cards">
           {
-          visualData1.map((ub) => (
-            <VisualComparison pageName={ub.name} link={ub.link} image1={ub.images[0]} image2={ub.images[1]} />
-          ))
-        }
+            data[0].map((ub) => (
+              <VisualComparison pageName={`Page ${ub[0].id}`} link={ub[0].url} timeStamp1={ub[0].date} timeStamp2={ub[1].date} image1={`http://localhost:8000${ub[0].image_location}`} image2={`http://localhost:8000${ub[1].image_location}`} comparison={`http://localhost:8000${ub[0].complocation}`} />
+            ))
+          }
+          <Pagination
+            total={count}
+            current={page}
+            onChange={this.onChange}
+          />
         </div>
+
       </>
     );
-  
-  
-  
+  }
 }
 
 export default VisualChangesPage;

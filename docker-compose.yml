@@ -21,6 +21,12 @@ services:
   backend:
     image: ldso/backend
     container_name: backend
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PORT: ${POSTGRES_PORT}
     build:
       context: ./be
       dockerfile: Dockerfile
@@ -31,20 +37,8 @@ services:
     ports:
       - 8000:8000
     volumes:
-      - ./be:/app/be
-    depends_on:
-      - pgadmin
-    networks:
-      - app
-
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin
-      PGADMIN_DEFAULT_PASSWORD: admin
-    ports:
-      - 5555:80
+      - ./be/src:/app/be/src
+      - ./be/tests:/app/be/tests
     depends_on:
       - db
     networks:
@@ -55,9 +49,9 @@ services:
     container_name: postgres
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: auto-testing
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_NAME}
     volumes:
       - ./pgdata:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql

@@ -1,7 +1,17 @@
-
+# Ignore downloaded dependencies
 be/node_modules/
-be/bin/
-be/public/shots/
+
+# Ignore shots folder
+be/src/public/shots/
+
+# Ignore test reports
+be/tests/reports
+
+# Ignore database data
 pgdata
 
+# Ignore log files
 *.log
+
+# Ignore .env file
+.env
