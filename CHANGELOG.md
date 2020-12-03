@@ -13,14 +13,18 @@ Some minor adjustments were also done in order to either fix some running aspect
 ### Added
 - The connection of the backend with the frontend is completed. The frontend is now able to ask all of the required information to the backend and display it accordingly. ([#8](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/issues/8), !24).
 - Files for the comparison of the captures in backend. These files were changed to allow the creation of the `.json` file with the information of the pages' code (#10, !21).
-- Documentation done with SwaggerAPI. Now the backend API of the project is well documented and all the replies and interactions with it can be checkout in that document.
+- Documentation done with SwaggerAPI (http://localhost:8000/api-docs). Now the backend API of the project is well documented and all the replies and interactions with it can be checkout in that document. ([8b85c6](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/commit/8b85c64507aac1cb43d50b01b79e55ca567ee42b))
+- Unit tests to the backend. ([8b85c6](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/commit/8b85c64507aac1cb43d50b01b79e55ca567ee42b))
+- Script for the backend to wait for the DB to be ready before starting to run. ([c3100c47](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/commit/c3100c47c076a1ba7dff3b3213f51abfa4d6aa8a))
 
 ### Changed
 - Removed hardcoded test data and replaced it with real data. ([#8](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/issues/8)).
 - Altered the view of code changes to only display a comparison. ([#8](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/issues/8)).
+- Project scripts location. ([04f3fab1](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/commit/04f3fab10cb535911158649ebe08306f145daca2))
 
 ### Removed
 - Database credentials from public files. Now these credentials are kept hidden in a .env file so they are more secure.
+- PgAdmin from docker-compose files. ([f67a5347](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/commit/f67a53475d6d43ab25dd31761c251026776dc7e7))
 
 ### Fixed
 - Fixed the query that fetches information, from the database, relative to the visual comparison component. ([#8](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/issues/8)).
