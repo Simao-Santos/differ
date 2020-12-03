@@ -87,3 +87,23 @@ sudo lsof -i -P -n | grep 5432
 ```
 
 In order to run the application you are required to be using Linux OS. Windows users can smoothly run the application by using WSL.
+
+#### Environment variables:
+
+To run the project you need to have a .env file which contains the environment variables of this project. 
+
+The file should be of this format:
+
+```
+POSTGRES_USER=<postgres_user>
+POSTGRES_PASSWORD=<postgres_password>
+POSTGRES_DB=<postgres_database_name>
+POSTGRES_HOST=<name_of_the_postgres_container>
+POSTGRES_PORT=<port_number>
+POSTGRES_NAME=<postgres_name>
+```
+In the previous example is what the value should represent for each environment variable. You can name the variables to fit your necessities, for example:
+
+```
+POSTGRES_USER=postgress
+```
