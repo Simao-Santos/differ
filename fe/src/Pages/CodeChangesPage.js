@@ -44,9 +44,18 @@ class CodeChangesPage extends Component {
       method: 'GET',
     };
     console.log(data);
-    fetch('http://localhost:8000/captures/count', requestOptions).then((res) => (res.clone().text())).then((res) => (this.setState(() => ({
-      count: parseInt(JSON.parse(res).captures[0].count, 10),
-    }))));
+    fetch('http://localhost:8000/urls/count', requestOptions)
+      .then((res) => {
+        if (res.status === 200) {
+          res.clone().text().then((res) => (
+            this.setState(() => ({
+              count: JSON.parse(res).count,
+            }))
+          ))
+        } else if (res.status === 500) {
+          // TODO: show error msg
+        }
+      });
     fetch(`http://localhost:8000/comparisons/range/${u}/${v}`, requestOptions)
       .then((res) => {
         if (res.status === 200) {
@@ -56,7 +65,7 @@ class CodeChangesPage extends Component {
               data: [...prevState.data, groupInformation(JSON.parse(res))],
             }))
           ))
-        } else if(res.status === 400 || res.status === 500) {
+        } else if (res.status === 400 || res.status === 500) {
           // TODO: show error msg
         }
       });
