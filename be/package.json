@@ -5,6 +5,7 @@
   "jest": {
     "collectCoverage": true,
     "coverageDirectory": "./tests/reports/coverage/",
+    "coveragePathIgnorePatterns": ["./src/lib/"],
     "reporters": [
       "default",
       [
