@@ -8,8 +8,8 @@ import 'antd/dist/antd.css';
 function groupInformation(response) {
   const test = [];
   for (let i = 0; i < (response.length - 1); i += 1) {
-    if (response[i].id === response[i + 1].id) {
-      if (response[i].complocation != null && response[i + 1].complocation != null) {
+    if (response[i].page_id === response[i + 1].page_id) {
+      if (response[i].comp_text_location != null && response[i + 1].comp_text_location != null) {
         if (response[i].date > response[i + 1].date) {
           test.push([response[i + 1], response[i]]);
         } else test.push([response[i], response[i + 1]]);
@@ -47,10 +47,19 @@ class CodeChangesPage extends Component {
     fetch('http://localhost:8000/captures/count', requestOptions).then((res) => (res.clone().text())).then((res) => (this.setState(() => ({
       count: parseInt(JSON.parse(res).captures[0].count, 10),
     }))));
-    fetch(`http://localhost:8000/comparisons/comparisonRange/${u}/${v}`, requestOptions).then((res) => (res.clone().text())).then((res) => (this.setState((prevState) => ({
-      isLoading: !prevState.isLoading,
-      data: [...prevState.data, groupInformation(JSON.parse(res).captures)],
-    }))));
+    fetch(`http://localhost:8000/comparisons/range/${u}/${v}`, requestOptions)
+      .then((res) => {
+        if (res.status === 200) {
+          res.clone().text().then((res) => (
+            this.setState((prevState) => ({
+              isLoading: !prevState.isLoading,
+              data: [...prevState.data, groupInformation(JSON.parse(res))],
+            }))
+          ))
+        } else if(res.status === 400 || res.status === 500) {
+          // TODO: show error msg
+        }
+      });
   }
 
   onChange(page) {
@@ -85,11 +94,11 @@ class CodeChangesPage extends Component {
           {
             data[0].map((ub) => (
               <CodeComparison
-                pageName={`Page ${ub[0].id}`}
+                pageName={`Page ${ub[0].page_id}`}
                 link={ub[0].url}
                 timeStamp1={ub[0].date}
                 timeStamp2={ub[1].date}
-                comparison={ub[0].complocation}
+                comparison={ub[0].comp_text_location}
               />
 
             ))
