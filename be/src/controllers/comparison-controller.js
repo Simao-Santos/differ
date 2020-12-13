@@ -62,29 +62,35 @@ exports.get_comparisons_by_page_id = function getComparisonsByPageId(req, res, n
   }
 };
 
-// Get Captures Range
+// Get Comparisons Bundle Range
 exports.get_comparison_range = function getComparisonRange(req, res, next) {
-  const query = {
-    text: 'select capture.date, page.id , page.url, comparison.text_location as complocation from capture, page , comparison where capture.page_id = page.id and capture.deleted = $3 and (comparison.capture_1_id = capture.id or comparison.capture_2_id = capture.id)  and capture.id in (Select id from capture where page_id = page.id ORDER BY id DESC LIMIT 2)  and comparison.id in  ( select id from comparison where comparison.capture_1_id = capture.id or comparison.capture_2_id = capture.id order by id DESC LIMIT 1) ORDER BY page.id ASC LIMIT $2 offset $1',
-    values: [req.params.id, req.params.offset, false],
-  };
-  database.query(query, (err, result) => {
-    if (err) {
-      const json = {
-        type: 'error',
-        msg: 'Couldn\'t access database',
-      };
+  if (req.params.offset && utils.isInteger(req.params.offset) && req.params.amount && utils.isInteger(req.params.amount)) {
+    const query = {
+      text: 'SELECT capture.date, comparison.id AS comp_id, page.id AS page_id, page.url, comparison.text_location AS comp_text_location, \
+              comparison.image_location AS comp_image_location, capture.image_location AS capt_image_location, \
+              comparison.capture_1_id as comp_capt_id_1 , comparison.capture_2_id as comp_capt_id_2 \
+              FROM capture, page, comparison \
+              WHERE capture.page_id = page.id AND capture.deleted = $3 \
+                    AND (comparison.capture_1_id = capture.id OR comparison.capture_2_id = capture.id) \
+                    AND capture.id IN (SELECT id FROM capture WHERE page_id = page.id ORDER BY id DESC LIMIT 2) \
+                    AND comparison.id IN (SELECT id \
+                                          FROM comparison \
+                                          WHERE comparison.capture_1_id = capture.id OR comparison.capture_2_id = capture.id \
+                                          ORDER BY id DESC LIMIT 1) \
+              ORDER BY page.id ASC LIMIT $2 offset $1',
+      values: [req.params.offset, req.params.amount, false],
+    };
 
-      res.send(json);
-    } else {
-      const json = {
-        type: 'get_comparison_range',
-        captures: result.rows,
-        msg: 'Operation successful',
-      };
-      res.send(json);
-    }
-  });
+    database.query(query, (err, result) => {
+      if (err) {
+        res.sendStatus(500);
+      } else {
+        res.status(200).send(result.rows);
+      }
+    });
+  } else {
+    res.sendStatus(400);
+  }
 };
 
 // Delete Comparisons
