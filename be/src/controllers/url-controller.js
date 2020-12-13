@@ -123,7 +123,7 @@ exports.get_count = function getCount(req, res, next) {
     } else {
       const count = parseInt(result.rows[0].count, 10);
 
-      res.status(200).send({ count: count });
+      res.status(200).send({ count });
     }
   });
 };

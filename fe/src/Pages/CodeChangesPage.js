@@ -47,11 +47,11 @@ class CodeChangesPage extends Component {
     fetch('http://localhost:8000/urls/count', requestOptions)
       .then((res) => {
         if (res.status === 200) {
-          res.clone().text().then((res) => (
+          res.clone().text().then((content) => (
             this.setState(() => ({
-              count: JSON.parse(res).count,
+              count: JSON.parse(content).count,
             }))
-          ))
+          ));
         } else if (res.status === 500) {
           // TODO: show error msg
         }
@@ -59,12 +59,12 @@ class CodeChangesPage extends Component {
     fetch(`http://localhost:8000/comparisons/range/${u}/${v}`, requestOptions)
       .then((res) => {
         if (res.status === 200) {
-          res.clone().text().then((res) => (
+          res.clone().text().then((content) => (
             this.setState((prevState) => ({
               isLoading: !prevState.isLoading,
-              data: [...prevState.data, groupInformation(JSON.parse(res))],
+              data: [...prevState.data, groupInformation(JSON.parse(content))],
             }))
-          ))
+          ));
         } else if (res.status === 400 || res.status === 500) {
           // TODO: show error msg
         }
