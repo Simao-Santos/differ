@@ -39,31 +39,6 @@ exports.get_captures = function getCaptures(req, res, next) {
   }
 };
 
-// Get Pages Count
-exports.get_count = function getCount(req, res, next) {
-  const query = {
-    text: 'select count(*) from page where deleted =$1',
-    values: [false],
-  };
-  database.query(query, (err, result) => {
-    if (err) {
-      const json = {
-        type: 'error',
-        msg: 'Couldn\'t access database',
-      };
-
-      res.send(json);
-    } else {
-      const json = {
-        type: 'get_count',
-        captures: result.rows,
-        msg: 'Operation successful',
-      };
-      res.send(json);
-    }
-  });
-};
-
 // Get Captures by Page Id
 exports.get_captures_by_page_id = function getCapturesByPageId(req, res, next) {
   // Should we check username?
