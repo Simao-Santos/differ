@@ -118,7 +118,68 @@ router.get('/', comparisonController.get_comparisons);
  */
 router.get('/byPageId/:id', comparisonController.get_comparisons_by_page_id);
 
-router.get('/comparisonRange/:id/:offset', comparisonController.get_comparison_range);
+/**
+ * @swagger
+ * /comparisons/range/{offset}/{amount}:
+ *  get:
+ *   summary: Gets list of comparisons bundled with capture and page information
+ *   tags: [Comparisons]
+ *   parameters:
+ *    - in: path
+ *      name: offset
+ *      schema:
+ *       type: integer
+ *      required: true
+ *      description: Offset of the first comparison in the list
+ *    - in: path
+ *      name: amount
+ *      schema:
+ *       type: integer
+ *      required: true
+ *      description: Amount of comparisons to return
+ *   responses:
+ *    "200":
+ *     description: Operation successful, returns the list of bundled comparisons.
+ *     content:
+ *      application/json:
+ *       schema:
+ *        type: array
+ *        items:
+ *         type: object
+ *         properties:
+ *          date:
+ *           type: string
+ *           example: 2020-12-03T00:31:32.328Z
+ *          comp_id:
+ *           type: integer
+ *           example: 2
+ *          page_id:
+ *           type: integer
+ *           example: 1
+ *          url:
+ *           type: string
+ *           example: https://www.google.com/
+ *          comp_text_location:
+ *           type: string
+ *           example: /shots/comparison_2_1_2020_12_03_00_31_36_978.json
+ *          comp_image_location:
+ *           type: string
+ *           example: /shots/comparison_2_1_2020_12_03_00_31_36_978.png
+ *          capt_image_location:
+ *           type: string
+ *           example: /shots/url_1_2020_12_03_00_31_22_670.png
+ *          comp_capt_id_1:
+ *           type: integer
+ *           example: 2
+ *          comp_capt_id_2:
+ *           type: integer
+ *           example: 1
+ *    "400":
+ *     description: Invalid parameters supplied
+ *    "500":
+ *     description: Server could not handle request
+ */
+router.get('/range/:offset/:amount', comparisonController.get_comparison_range);
 
 /**
  * @swagger
