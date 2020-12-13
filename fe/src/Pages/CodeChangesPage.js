@@ -29,6 +29,7 @@ class CodeChangesPage extends Component {
       count: 0,
       page: 1,
       isLoading: true,
+      error: false,
       data: [],
     };
 
@@ -53,7 +54,7 @@ class CodeChangesPage extends Component {
             }))
           ));
         } else if (res.status === 500) {
-          // TODO: show error msg
+          this.setState(() => ({ error: true, isLoading: false }));
         }
       });
     fetch(`http://localhost:8000/comparisons/range/${u}/${v}`, requestOptions)
@@ -66,7 +67,7 @@ class CodeChangesPage extends Component {
             }))
           ));
         } else if (res.status === 400 || res.status === 500) {
-          // TODO: show error msg
+          this.setState(() => ({ error: true, isLoading: false }));
         }
       });
   }
@@ -84,7 +85,7 @@ class CodeChangesPage extends Component {
 
   render() {
     const {
-      isLoading, data, count, page,
+      isLoading, data, count, page, error,
     } = this.state;
     console.log(data);
     if (isLoading) {
@@ -93,6 +94,16 @@ class CodeChangesPage extends Component {
           <div className="centered">
             <Spinner animation="border" />
             <h2>Information is loading... Hang in there!</h2>
+          </div>
+        </>
+      );
+    }
+    if (error) {
+      return (
+        <>
+          <div className="centered">
+            <h1>Oops, something went wrong...</h1>
+            <h1>Try again later!</h1>
           </div>
         </>
       );
