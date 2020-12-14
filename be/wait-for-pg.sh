@@ -3,8 +3,7 @@
 
 set -e
 
-# TODO: change to environment variables
-until PGPASSWORD="postgres" psql -h "postgres" -U "postgres" -c '\q' > /dev/null 2>&1; do
+until PGPASSWORD="${POSTGRES_PASSWORD}" psql -d "${POSTGRES_DB}" -U "${POSTGRES_USER}" -h "${POSTGRES_HOST}" -p "${POSTGRES_PORT}" -c '\q' > /dev/null 2>&1; do
   >&2 echo "Postgres is not yet ready - trying again in 10 seconds"
   sleep 10
 done
