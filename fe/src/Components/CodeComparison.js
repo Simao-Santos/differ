@@ -22,7 +22,7 @@ class CodeComparison extends Component {
     const requestOptions = {
       method: 'GET',
     };
-    fetch(`http://localhost:8000${comparison}`, requestOptions)
+    fetch(`${process.env.REACT_APP_BACKEND_HOST}${comparison}`, requestOptions)
       .then((res) => (res.clone().text()))
       .then((res) => (this.setState(() => ({
         jsonFile: JSON.parse(res),

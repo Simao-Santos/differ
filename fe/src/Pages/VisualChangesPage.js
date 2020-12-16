@@ -48,12 +48,12 @@ class VisualChangesPage extends Component {
       method: 'GET',
     };
     console.log(data);
-    fetch('http://localhost:8000/captures/count', requestOptions)
+    fetch(`${process.env.REACT_APP_BACKEND_HOST}/captures/count`, requestOptions)
       .then((res) => (res.clone().text()))
       .then((res) => (this.setState(() => ({
         count: parseInt(JSON.parse(res).captures[0].count, 10),
       }))));
-    fetch(`http://localhost:8000/captures/${u}/${v}`, requestOptions)
+    fetch(`${process.env.REACT_APP_BACKEND_HOST}/captures/${u}/${v}`, requestOptions)
       .then((res) => (res.clone().text()))
       .then((res) => (this.setState((prevState) => ({
         isLoading: !prevState.isLoading,
@@ -92,7 +92,7 @@ class VisualChangesPage extends Component {
         <div className="Comparison-Cards">
           {
             data[0].map((ub) => (
-              <VisualComparison pageName={`Page ${ub[0].id}`} link={ub[0].url} timeStamp1={ub[0].date} timeStamp2={ub[1].date} image1={`http://localhost:8000${ub[0].image_location}`} image2={`http://localhost:8000${ub[1].image_location}`} comparison={`http://localhost:8000${ub[0].complocation}`} />
+              <VisualComparison pageName={`Page ${ub[0].id}`} link={ub[0].url} timeStamp1={ub[0].date} timeStamp2={ub[1].date} image1={`${process.env.REACT_APP_BACKEND_HOST}${ub[0].image_location}`} image2={`${process.env.REACT_APP_BACKEND_HOST}${ub[1].image_location}`} comparison={`${process.env.REACT_APP_BACKEND_HOST}${ub[0].complocation}`} />
             ))
           }
           <Pagination

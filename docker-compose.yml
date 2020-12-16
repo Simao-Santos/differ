@@ -4,6 +4,9 @@ services:
   frontend:
     image: ldso/frontend
     container_name: frontend
+    environment:
+      # React environment variables need the REACT_APP_ prefix
+      REACT_APP_BACKEND_HOST: ${BACKEND_HOST}
     build:
       context: ./fe
       dockerfile: Dockerfile
@@ -27,6 +30,7 @@ services:
       POSTGRES_PORT: ${POSTGRES_PORT}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      BACKEND_HOST: ${BACKEND_HOST}
     build:
       context: ./be
       dockerfile: Dockerfile

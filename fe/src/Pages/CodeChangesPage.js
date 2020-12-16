@@ -44,10 +44,10 @@ class CodeChangesPage extends Component {
       method: 'GET',
     };
     console.log(data);
-    fetch('http://localhost:8000/captures/count', requestOptions).then((res) => (res.clone().text())).then((res) => (this.setState(() => ({
+    fetch(`${process.env.REACT_APP_BACKEND_HOST}/captures/count`, requestOptions).then((res) => (res.clone().text())).then((res) => (this.setState(() => ({
       count: parseInt(JSON.parse(res).captures[0].count, 10),
     }))));
-    fetch(`http://localhost:8000/comparisons/comparisonRange/${u}/${v}`, requestOptions).then((res) => (res.clone().text())).then((res) => (this.setState((prevState) => ({
+    fetch(`${process.env.REACT_APP_BACKEND_HOST}/comparisons/comparisonRange/${u}/${v}`, requestOptions).then((res) => (res.clone().text())).then((res) => (this.setState((prevState) => ({
       isLoading: !prevState.isLoading,
       data: [...prevState.data, groupInformation(JSON.parse(res).captures)],
     }))));
