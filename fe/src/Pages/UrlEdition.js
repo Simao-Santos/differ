@@ -11,7 +11,7 @@ function getListOfUrls(setBeReply) {
     method: 'GET',
   };
 
-  fetch('http://localhost:8000/urls/', requestOptions)
+  fetch(`${process.env.REACT_APP_BACKEND_HOST}/urls/`, requestOptions)
     .then((res) => {
       res.text()
         .then((content) => setBeReply({ type: 'get_urls', status: res.status, content: JSON.parse(content) }));
@@ -149,7 +149,7 @@ function UrlEdition() {
       },
       body: JSON.stringify({ url: address }),
     };
-    fetch('http://localhost:8000/urls', requestOptions)
+    fetch(`${process.env.REACT_APP_BACKEND_HOST}/urls`, requestOptions)
       .then((res) => {
         res.text()
           .then((content) => setBeReply({ type: 'post_url', status: res.status, content: JSON.parse(content) }));
@@ -184,7 +184,7 @@ function UrlEdition() {
       },
       body: JSON.stringify({ url: address }),
     };
-    fetch('http://localhost:8000/urls', requestOptions)
+    fetch(`${process.env.REACT_APP_BACKEND_HOST}/urls`, requestOptions)
       .then((res) => {
         res.text()
           .then((content) => setBeReply({ type: 'post_url', status: res.status, content: JSON.parse(content) }));
@@ -215,7 +215,7 @@ function UrlEdition() {
         method: 'DELETE',
       };
 
-      myUrlIds.forEach((id) => fetch(`http://localhost:8000/urls/${id}`, requestOptions)
+      myUrlIds.forEach((id) => fetch(`${process.env.REACT_APP_BACKEND_HOST}/urls/${id}`, requestOptions)
         .then((res) => {
           res.text()
             .then((content) => setBeReply({ type: 'delete_url', status: res.status, content: JSON.parse(content) }));
@@ -240,7 +240,7 @@ function UrlEdition() {
 
       };
 
-      myUrlIds.forEach((id) => fetch(`http://localhost:8000/actions/capture/${id}`, requestOptions)
+      myUrlIds.forEach((id) => fetch(`${process.env.REACT_APP_BACKEND_HOST}/actions/capture/${id}`, requestOptions)
         .then((res) => {
           if (res.status === 200) {
             console.log(`Capture for id ${id} has started`);
@@ -279,7 +279,7 @@ function UrlEdition() {
       method: 'GET',
     };
 
-    myUrlIds.forEach((id) => fetch(`http://localhost:8000/actions/compare/${id}`, requestOptions)
+    myUrlIds.forEach((id) => fetch(`${process.env.REACT_APP_BACKEND_HOST}/actions/compare/${id}`, requestOptions)
       .then((res) => {
         if (res.status === 200) {
           console.log(`Comparison for id ${id} has started`);

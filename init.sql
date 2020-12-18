@@ -1,17 +1,3 @@
--- Database: postgres
-DROP DATABASE IF EXISTS postgres;
-
-CREATE DATABASE postgres
-    WITH 
-    OWNER = postgres
-    ENCODING = 'UTF8'
-    LC_COLLATE = 'en_US.utf8'
-    LC_CTYPE = 'en_US.utf8'
-    TABLESPACE = pg_default
-    CONNECTION LIMIT = -1;
-    
-\c postgres
-
 -- Table: app_user
 CREATE TABLE app_user
 (
@@ -22,11 +8,7 @@ CREATE TABLE app_user
 
 TABLESPACE pg_default;
 
-ALTER TABLE app_user
-    OWNER to postgres;
-
 INSERT INTO app_user (username, password) VALUES ('default', 'default');
-
 
 -- Table: page
 CREATE TABLE page
@@ -41,10 +23,6 @@ CREATE TABLE page
 )
 
 TABLESPACE pg_default;
-
-ALTER TABLE page
-    OWNER to postgres;
-
 
 -- Table: capture
 CREATE TABLE capture
@@ -61,10 +39,6 @@ CREATE TABLE capture
 )
 
 TABLESPACE pg_default;
-
-ALTER TABLE capture
-    OWNER to postgres;
-
 
 -- Table: comparison
 CREATE TABLE comparison
@@ -86,10 +60,6 @@ CREATE TABLE comparison
 )
 
 TABLESPACE pg_default;
-
-ALTER TABLE comparison
-    OWNER to postgres;
-
 
 -- FUNCTIONS
 CREATE OR REPLACE FUNCTION delete_page_connections()
@@ -123,7 +93,6 @@ BEGIN
 	RETURN NEW;
 END;
 $$;
-
 
 -- TRIGGERS
 CREATE TRIGGER delete_page_trigger

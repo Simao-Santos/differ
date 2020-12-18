@@ -92,18 +92,26 @@ In order to run the application you are required to be using Linux OS. Windows u
 
 To run the project you need to have a .env file which contains the environment variables of this project. 
 
-The file should be of this format:
+There are the following environment variables:
+* **POSTGRES_USER**: username to access PostgreSQL
+* **POSTGRES_PASSWORD**: password to access PostgreSQL
+* **POSTGRES_DB**: PostgreSQL database name
+* **POSTGRES_HOST**: name of PostgreSQL container or address of PostgreSQL server
+* **POSTGRES_PORT**: port PostgreSQL will be running on
+* **BACKEND_HOST**: address of backend server
 
+The file should be of this format:
 ```
 POSTGRES_USER=<postgres_user>
 POSTGRES_PASSWORD=<postgres_password>
 POSTGRES_DB=<postgres_database_name>
 POSTGRES_HOST=<name_of_the_postgres_container>
 POSTGRES_PORT=<port_number>
-POSTGRES_NAME=<postgres_name>
+BACKEND_HOST=<address_of_backend_server>
 ```
 In the previous example is what the value should represent for each environment variable. You can name the variables to fit your necessities, for example:
+```
+POSTGRES_USER=postgres
+```
 
-```
-POSTGRES_USER=postgress
-```
+**NOTE:** the frontend environment variables are loaded with the *REACT_APP_* prefix, otherwise they'll not be shown. This is handled automatically in the docker-compose files.
