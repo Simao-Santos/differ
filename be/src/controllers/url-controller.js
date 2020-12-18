@@ -109,3 +109,21 @@ exports.delete_url = function deleteUrl(req, res, next) {
     res.sendStatus(400);
   }
 };
+
+// Get Pages Count
+exports.get_count = function getCount(req, res, next) {
+  const query = {
+    text: 'SELECT COUNT(*) FROM page WHERE deleted=$1',
+    values: [false],
+  };
+
+  database.query(query, (err, result) => {
+    if (err || !utils.isInteger(result.rows[0].count)) {
+      res.sendStatus(500);
+    } else {
+      const count = parseInt(result.rows[0].count, 10);
+
+      res.status(200).send({ count });
+    }
+  });
+};

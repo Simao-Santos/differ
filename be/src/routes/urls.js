@@ -55,6 +55,28 @@ router.get('/', urlController.get_urls);
 
 /**
  * @swagger
+ * /urls/count/:
+ *  get:
+ *   summary: Gets number of URLs
+ *   tags: [URLs]
+ *   responses:
+ *    "200":
+ *     description: Operation successful, returns number of URLs.
+ *     content:
+ *      application/json:
+ *       schema:
+ *        type: object
+ *        properties:
+ *         count:
+ *          type: integer
+ *          example: 5
+ *    "500":
+ *     description: Server could not handle request
+ */
+router.get('/count', urlController.get_count);
+
+/**
+ * @swagger
  * /urls/{id}:
  *  get:
  *   summary: Gets an URL by id

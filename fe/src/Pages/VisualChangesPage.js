@@ -8,14 +8,14 @@ import 'antd/dist/antd.css';
 function groupInformation(response) {
   const test = [];
   for (let i = 0; i < (response.length - 1); i += 1) {
-    if (response[i].id === response[i + 1].id) {
-      if (response[i].comparisonid === response[i + 1].comparisonid) {
-        if (response[i].comparisonid2 < response[i + 1].comparisonid2) {
-          response[i].complocation = response[i + 1].complocation;
+    if (response[i].page_id === response[i + 1].page_id) {
+      if (response[i].comp_capt_id_1 === response[i + 1].comp_capt_id_1) {
+        if (response[i].comp_capt_id_2 < response[i + 1].comp_capt_id_2) {
+          response[i].comp_image_location = response[i + 1].comp_image_location;
         }
-      } else if (response[i].comparisonid < response[i + 1].comparisonid) {
-        response[i].complocation = response[i + 1].complocation;
-      } else response[i + 1].complocation = response[i].complocation;
+      } else if (response[i].comp_capt_id_1 < response[i + 1].comp_capt_id_1) {
+        response[i].comp_image_location = response[i + 1].comp_image_location;
+      } else response[i + 1].comp_image_location = response[i].comp_image_location;
       if (response[i].date > response[i + 1].date) {
         test.push([response[i + 1], response[i]]);
       } else test.push([response[i], response[i + 1]]);
@@ -34,6 +34,7 @@ class VisualChangesPage extends Component {
       count: 0,
       page: 1,
       isLoading: true,
+      error: false,
       data: [],
     };
 
@@ -48,17 +49,30 @@ class VisualChangesPage extends Component {
       method: 'GET',
     };
     console.log(data);
-    fetch('http://localhost:8000/captures/count', requestOptions)
-      .then((res) => (res.clone().text()))
-      .then((res) => (this.setState(() => ({
-        count: parseInt(JSON.parse(res).captures[0].count, 10),
-      }))));
-    fetch(`http://localhost:8000/captures/${u}/${v}`, requestOptions)
-      .then((res) => (res.clone().text()))
-      .then((res) => (this.setState((prevState) => ({
-        isLoading: !prevState.isLoading,
-        data: [...prevState.data, groupInformation(JSON.parse(res).captures)],
-      }))));
+    fetch('http://localhost:8000/urls/count', requestOptions)
+      .then((res) => {
+        if (res.status === 200) {
+          res.clone().text().then((content) => (
+            this.setState(() => ({
+              count: JSON.parse(content).count,
+            }))
+          ));
+        } else if (res.status === 500) {
+          this.setState(() => ({ error: true, isLoading: false }));
+        }
+      });
+    fetch(`http://localhost:8000/comparisons/range/${u}/${v}`, requestOptions).then((res) => {
+      if (res.status === 200) {
+        res.clone().text().then((content) => (
+          this.setState((prevState) => ({
+            isLoading: !prevState.isLoading,
+            data: [...prevState.data, groupInformation(JSON.parse(content))],
+          }))
+        ));
+      } else if (res.status === 400 || res.status === 500) {
+        this.setState(() => ({ error: true, isLoading: false }));
+      }
+    });
   }
 
   onChange(page) {
@@ -75,7 +89,7 @@ class VisualChangesPage extends Component {
 
   render() {
     const {
-      isLoading, data, count, page,
+      isLoading, data, count, page, error,
     } = this.state;
     if (isLoading) {
       return (
@@ -87,12 +101,22 @@ class VisualChangesPage extends Component {
         </>
       );
     }
+    if (error) {
+      return (
+        <>
+          <div className="centered">
+            <h1>Oops, something went wrong...</h1>
+            <h1>Try again later!</h1>
+          </div>
+        </>
+      );
+    }
     return (
       <>
         <div className="Comparison-Cards">
           {
             data[0].map((ub) => (
-              <VisualComparison pageName={`Page ${ub[0].id}`} link={ub[0].url} timeStamp1={ub[0].date} timeStamp2={ub[1].date} image1={`http://localhost:8000${ub[0].image_location}`} image2={`http://localhost:8000${ub[1].image_location}`} comparison={`http://localhost:8000${ub[0].complocation}`} />
+              <VisualComparison pageName={`Page ${ub[0].page_id}`} link={ub[0].url} timeStamp1={ub[0].date} timeStamp2={ub[1].date} image1={`http://localhost:8000${ub[0].capt_image_location}`} image2={`http://localhost:8000${ub[1].capt_image_location}`} comparison={`http://localhost:8000${ub[0].comp_image_location}`} />
             ))
           }
           <Pagination

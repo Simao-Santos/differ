@@ -10,6 +10,13 @@ describe('/urls/ Route', () => {
     expect(res.body).toEqual([]);
   });
 
+  it('should get url count (empty)', async () => {
+    const res = await request(app)
+      .get('/urls/count').send();
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toHaveProperty('count', 0);
+  });
+
   it('should fail to add url (invalid url)', async () => {
     const res = await request(app)
       .post('/urls')
@@ -28,6 +35,13 @@ describe('/urls/ Route', () => {
       });
     expect(res.statusCode).toEqual(200);
     expect(res.body).toHaveProperty('id', 1);
+  });
+
+  it('should get url count (1)', async () => {
+    const res = await request(app)
+      .get('/urls/count').send();
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toHaveProperty('count', 1);
   });
 
   it('should get url', async () => {
@@ -166,18 +180,64 @@ describe('/comparisons/ Route', () => {
 
     const { rows: rowsPage } = await database.query('INSERT INTO page (username, url) VALUES (default, $1) RETURNING id', [url]);
     const { rows: rowsCapture1 } = await database.query('INSERT INTO capture (page_id, image_location, text_location, date) VALUES ($1, $2, $3, $4) RETURNING id',
-      [rowsPage[0].id, '/shots/test.png', '/shots/test.html', today1]);
+      [rowsPage[0].id, '/shots/test_1.png', '/shots/test_1.html', today1]);
     const { rows: rowsCapture2 } = await database.query('INSERT INTO capture (page_id, image_location, text_location, date) VALUES ($1, $2, $3, $4) RETURNING id',
-      [rowsPage[0].id, '/shots/test.png', '/shots/test.html', today2]);
+      [rowsPage[0].id, '/shots/test_2.png', '/shots/test_2.html', today2]);
 
     await database.query('INSERT INTO comparison (capture_1_id, capture_2_id, image_location, text_location, diff_pixels, total_pixels, date) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',
-      [rowsCapture1[0].id, rowsCapture2[0].id, '/shots/test.png', '/shots/test.html', 100, 200, today2]);
+      [rowsCapture2[0].id, rowsCapture1[0].id, '/shots/test_comp.png', '/shots/test_comp.json', 100, 200, today2]);
 
     const res = await request(app)
       .get('/comparisons').send();
     expect(res.statusCode).toEqual(200);
     expect(res.body.length).toEqual(1);
     expect(res.body[0]).toHaveProperty('id', 1);
+  });
+
+  it('should get comparison from range (amount 20)', async () => {
+    const res = await request(app)
+      .get('/comparisons/range/0/20').send();
+    expect(res.statusCode).toEqual(200);
+    expect(res.body.length).toEqual(2);
+    expect(res.body[0]).toHaveProperty('page_id', 3);
+    expect(res.body[0]).toHaveProperty('comp_id', 1);
+    expect(res.body[0]).toHaveProperty('comp_capt_id_1', 3);
+    expect(res.body[0]).toHaveProperty('comp_capt_id_2', 2);
+    expect(res.body[0]).toHaveProperty('url', 'http://wttr.in/');
+    expect(res.body[0]).toHaveProperty('comp_text_location', '/shots/test_comp.json');
+    expect(res.body[0]).toHaveProperty('comp_image_location', '/shots/test_comp.png');
+    expect(res.body[0]).toHaveProperty('capt_image_location', '/shots/test_1.png');
+    expect(res.body[1]).toHaveProperty('capt_image_location', '/shots/test_2.png');
+  });
+
+  it('should get comparison from range (amount 1)', async () => {
+    const res = await request(app)
+      .get('/comparisons/range/0/1').send();
+    expect(res.statusCode).toEqual(200);
+    expect(res.body.length).toEqual(1);
+    expect(res.body[0]).toHaveProperty('page_id', 3);
+    expect(res.body[0]).toHaveProperty('comp_id', 1);
+    expect(res.body[0]).toHaveProperty('comp_capt_id_1', 3);
+    expect(res.body[0]).toHaveProperty('comp_capt_id_2', 2);
+    expect(res.body[0]).toHaveProperty('url', 'http://wttr.in/');
+    expect(res.body[0]).toHaveProperty('comp_text_location', '/shots/test_comp.json');
+    expect(res.body[0]).toHaveProperty('comp_image_location', '/shots/test_comp.png');
+    expect(res.body[0]).toHaveProperty('capt_image_location', '/shots/test_1.png');
+  });
+
+  it('should get comparison from range (offset 1)', async () => {
+    const res = await request(app)
+      .get('/comparisons/range/1/20').send();
+    expect(res.statusCode).toEqual(200);
+    expect(res.body.length).toEqual(1);
+    expect(res.body[0]).toHaveProperty('page_id', 3);
+    expect(res.body[0]).toHaveProperty('comp_id', 1);
+    expect(res.body[0]).toHaveProperty('comp_capt_id_1', 3);
+    expect(res.body[0]).toHaveProperty('comp_capt_id_2', 2);
+    expect(res.body[0]).toHaveProperty('url', 'http://wttr.in/');
+    expect(res.body[0]).toHaveProperty('comp_text_location', '/shots/test_comp.json');
+    expect(res.body[0]).toHaveProperty('comp_image_location', '/shots/test_comp.png');
+    expect(res.body[0]).toHaveProperty('capt_image_location', '/shots/test_2.png');
   });
 
   it('should get comparison', async () => {
