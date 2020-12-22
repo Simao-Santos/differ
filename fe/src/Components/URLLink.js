@@ -2,12 +2,87 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import '../CSS/URLEdition.css';
 import '../CSS/PrettyChecks.scss';
+import CryptoJS from 'crypto-js';
+import getCssSelector from 'css-selector-generator';
 
 export default function URLLink({ link, toggleSelected }) {
   const backgroundOn = link.selected;
 
   const [showFull, setShowFull] = useState(false);
   const [extHTML, setExtHTML] = useState('<h1>Oops, you\'re not supposed to here</h1>');
+
+  function frameInteraction() {
+    const iframe = document.querySelector(`#html-render-${link.id}`);
+
+    console.log("Adding events");
+    const iframeBody = iframe.contentWindow.document.querySelector("body");
+    iframeBody.addEventListener('mouseover', event => {
+      console.log("Entered " + event.target);
+
+      const overlayDiv = document.createElement('div');
+
+      const elemDomRect = event.target.getBoundingClientRect();
+      const bodyDomRect = iframeBody.getBoundingClientRect();
+
+      overlayDiv.style.height = `${Math.round(elemDomRect.height)}px`;
+      overlayDiv.style.width = `${Math.round(elemDomRect.width)}px`;
+      overlayDiv.style.position = 'absolute';
+      overlayDiv.style.zIndex = Number.MAX_SAFE_INTEGER;
+      overlayDiv.style.top = `${Math.round(elemDomRect.top - bodyDomRect.top)}px`;
+      overlayDiv.style.left = `${Math.round(elemDomRect.left - bodyDomRect.left)}px`;
+
+      overlayDiv.style.backgroundColor = 'rgba(0, 0, 180, 0.5)';
+
+      overlayDiv.style.pointerEvents = 'none';
+
+      overlayDiv.className = 'overlayDiv';
+
+      iframeBody.appendChild(overlayDiv);
+    });
+    iframeBody.addEventListener('mouseout', event => {
+      console.log("Exited " + event.target);
+
+      const overlayDivs = iframeBody.querySelectorAll(".overlayDiv");
+      console.log(overlayDivs);
+      overlayDivs.forEach(element => element.remove());
+    });
+    iframeBody.addEventListener('click', event => {
+      console.log("Clicked " + event.target);
+
+      event.stopPropagation();
+      event.preventDefault();
+
+      const cssSelector = getCssSelector(event.target, { selectors: ['class', 'id', 'tag', 'nthchild'] });
+
+      const hash = CryptoJS.MD5(cssSelector).toString(CryptoJS.enc.Base64);
+
+      let selectedDiv = iframeBody.querySelector(`[id='selectedDiv-${hash}']`);
+
+      if (selectedDiv !== null) {
+        selectedDiv.remove();
+      } else {
+        selectedDiv = document.createElement('div');
+
+        const elemDomRect = event.target.getBoundingClientRect();
+        const bodyDomRect = iframeBody.getBoundingClientRect();
+
+        selectedDiv.style.height = `${Math.round(elemDomRect.height)}px`;
+        selectedDiv.style.width = `${Math.round(elemDomRect.width)}px`;
+        selectedDiv.style.position = 'absolute';
+        selectedDiv.style.zIndex = Number.MAX_SAFE_INTEGER;
+        selectedDiv.style.top = `${Math.round(elemDomRect.top - bodyDomRect.top)}px`;
+        selectedDiv.style.left = `${Math.round(elemDomRect.left - bodyDomRect.left)}px`;
+
+        selectedDiv.style.backgroundColor = 'rgba(148, 148, 148, 0.5)';
+
+        selectedDiv.style.pointerEvents = 'none';
+
+        selectedDiv.id = `selectedDiv-${hash}`;
+
+        iframeBody.appendChild(selectedDiv);
+      }
+    }, true);
+  }
 
   function handleUrlSelect() {
     return toggleSelected(link.id);
@@ -31,6 +106,9 @@ export default function URLLink({ link, toggleSelected }) {
     const divLink = document.querySelector(`#link-${link.id}`);
     const expandButton = document.querySelector(`#expand-button-${link.id}`);
 
+    const iframe = document.querySelector(`#html-render-${link.id}`);
+    iframe.onload = frameInteraction;
+    
     if (divLink.classList.contains('link-hide')) {
       fetch(`${process.env.REACT_APP_BACKEND_HOST}/captures/byPageId/${link.id}`)
         .then(response => {
@@ -90,7 +168,7 @@ export default function URLLink({ link, toggleSelected }) {
         </div>
         <div id={`link-${link.id}`} class="link url-elements link-hide">
           <div>
-            <iframe class="html-render" sandbox="allow-same-origin allow-scripts" srcdoc={extHTML}>
+            <iframe id={`html-render-${link.id}`} class="html-render" sandbox="allow-same-origin allow-scripts" srcdoc={extHTML}>
             </iframe>
           </div>
         </div>
