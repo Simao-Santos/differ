@@ -7,6 +7,7 @@ export default function URLLink({ link, toggleSelected }) {
   const backgroundOn = link.selected;
 
   const [showFull, setShowFull] = useState(false);
+  const [extHTML, setExtHTML] = useState('<h1>Oops, you\'re not supposed to here</h1>');
 
   function handleUrlSelect() {
     return toggleSelected(link.id);
@@ -30,7 +31,36 @@ export default function URLLink({ link, toggleSelected }) {
     const divLink = document.querySelector(`#link-${link.id}`);
     const expandButton = document.querySelector(`#expand-button-${link.id}`);
 
-    if(divLink.classList.contains('link-hide')) {
+    if (divLink.classList.contains('link-hide')) {
+      fetch(`${process.env.REACT_APP_BACKEND_HOST}/captures/byPageId/${link.id}`)
+        .then(response => {
+          if (response.status === 200) {
+            return response.json();
+          } else {
+            // TODO: handle this error somehow
+          }
+        })
+        .then(content => {
+          if (content.length === 0) {
+            // TODO: handle this error somehow
+          } else {
+            // TODO: change file
+            fetch(`${process.env.REACT_APP_BACKEND_HOST}${content[content.length - 1].text_location}`)
+              .then(res => res.text(), err => {
+                // TODO: handle this error somehow
+              }
+              ).then(htmlContent => {
+                // The following code will identify every link that starts with a single "/",
+                // which refers to the root of the website,
+                // And add the url before it (so it can actually get the content)
+                const regex = /"\/(?!\/)/gi;
+                const fixedContent = htmlContent.replace(regex, `"${link.url}${(link.url.endsWith('/')) ? '' : '/'}`);
+
+                setExtHTML(fixedContent);
+              });
+          }
+        });
+
       divLink.classList.remove('link-hide');
       expandButton.textContent = '∧';
     } else {
@@ -60,7 +90,7 @@ export default function URLLink({ link, toggleSelected }) {
         </div>
         <div id={`link-${link.id}`} class="link url-elements link-hide">
           <div>
-            <iframe class="html-render" sandbox="allow-same-origin allow-scripts" src="https://zerozero.pt" title="Zero Zero">
+            <iframe class="html-render" sandbox="allow-same-origin allow-scripts" srcdoc={extHTML}>
             </iframe>
           </div>
         </div>
