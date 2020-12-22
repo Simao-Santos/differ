@@ -26,6 +26,19 @@ export default function URLLink({ link, toggleSelected }) {
     return auxLink.url;
   }
 
+  function toggleExpand() {
+    const divLink = document.querySelector(`#link-${link.id}`);
+    const expandButton = document.querySelector(`#expand-button-${link.id}`);
+
+    if(divLink.classList.contains('link-hide')) {
+      divLink.classList.remove('link-hide');
+      expandButton.textContent = '∧';
+    } else {
+      divLink.classList.add('link-hide');
+      expandButton.textContent = '∨';
+    }
+  }
+
   return (
     <>
       <div
@@ -33,13 +46,24 @@ export default function URLLink({ link, toggleSelected }) {
         onMouseEnter={() => setShowFull(true)}
         onMouseLeave={() => setShowFull(false)}
       >
-        <label htmlFor="id-checkbox" className="checkbox path row">
-          <input id="id-checkbox" type="checkbox" checked={link.selected} onChange={handleUrlSelect} />
-          {handleUrlSize(link)}
-          <svg viewBox="0 0 21 21">
-            <path d="M5,10.75 L8.5,14.25 L19.4,2.3 C18.8333333,1.43333333 18.0333333,1 17,1 L4,1 C2.35,1 1,2.35 1,4 L1,17 C1,18.65 2.35,20 4,20 L17,20 C18.65,20 20,18.65 20,17 L20,7.99769186" />
-          </svg>
-        </label>
+        <div class="link url-link">
+          <label htmlFor="id-checkbox" className="checkbox-label checkbox path row">
+            <input id="id-checkbox" type="checkbox" checked={link.selected} onChange={handleUrlSelect} />
+            {handleUrlSize(link)}
+            <svg viewBox="0 0 21 21">
+              <path d="M5,10.75 L8.5,14.25 L19.4,2.3 C18.8333333,1.43333333 18.0333333,1 17,1 L4,1 C2.35,1 1,2.35 1,4 L1,17 C1,18.65 2.35,20 4,20 L17,20 C18.65,20 20,18.65 20,17 L20,7.99769186" />
+            </svg>
+          </label>
+          <button id={`expand-button-${link.id}`} class="expand-button" onClick={toggleExpand}>
+            ∨
+          </button>
+        </div>
+        <div id={`link-${link.id}`} class="link url-elements link-hide">
+          <div>
+            <iframe class="html-render" sandbox="allow-same-origin allow-scripts" src="https://zerozero.pt" title="Zero Zero">
+            </iframe>
+          </div>
+        </div>
       </div>
       {
         showFull && isUrlTooBig(link) && (
