@@ -45,7 +45,7 @@
     "xmlhttprequest": "^1.8.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "npm run build && serve -s build",
     "build": "react-scripts build",
     "test": "jest",
     "eject": "react-scripts eject",
