@@ -4,6 +4,7 @@ import '../CSS/URLEdition.css';
 import '../CSS/PrettyChecks.scss';
 import CryptoJS from 'crypto-js';
 import getCssSelector from 'css-selector-generator';
+import Spinner from 'react-bootstrap/Spinner';
 
 export default function URLLink({ link, toggleSelected }) {
   const backgroundOn = link.selected;
@@ -12,57 +13,57 @@ export default function URLLink({ link, toggleSelected }) {
   const [extHTML, setExtHTML] = useState('<h1>Oops, you\'re not supposed to here</h1>');
 
   function mouseOver(event) {
-      console.log("Entered " + event.target);
+    console.log("Entered " + event.target);
 
-      const overlayDiv = document.createElement('div');
+    const overlayDiv = document.createElement('div');
 
-      const elemDomRect = event.target.getBoundingClientRect();
+    const elemDomRect = event.target.getBoundingClientRect();
     const bodyDomRect = this.getBoundingClientRect();
 
-      overlayDiv.style.height = `${Math.round(elemDomRect.height)}px`;
-      overlayDiv.style.width = `${Math.round(elemDomRect.width)}px`;
-      overlayDiv.style.position = 'absolute';
-      overlayDiv.style.zIndex = Number.MAX_SAFE_INTEGER;
-      overlayDiv.style.top = `${Math.round(elemDomRect.top - bodyDomRect.top)}px`;
-      overlayDiv.style.left = `${Math.round(elemDomRect.left - bodyDomRect.left)}px`;
+    overlayDiv.style.height = `${Math.round(elemDomRect.height)}px`;
+    overlayDiv.style.width = `${Math.round(elemDomRect.width)}px`;
+    overlayDiv.style.position = 'absolute';
+    overlayDiv.style.zIndex = Number.MAX_SAFE_INTEGER;
+    overlayDiv.style.top = `${Math.round(elemDomRect.top - bodyDomRect.top)}px`;
+    overlayDiv.style.left = `${Math.round(elemDomRect.left - bodyDomRect.left)}px`;
 
-      overlayDiv.style.backgroundColor = 'rgba(0, 0, 180, 0.5)';
+    overlayDiv.style.backgroundColor = 'rgba(0, 0, 180, 0.5)';
 
-      overlayDiv.style.pointerEvents = 'none';
+    overlayDiv.style.pointerEvents = 'none';
 
-      overlayDiv.className = 'overlayDiv';
+    overlayDiv.className = 'overlayDiv';
 
     this.appendChild(overlayDiv);
   }
 
   function mouseOut(event) {
-      console.log("Exited " + event.target);
+    console.log("Exited " + event.target);
 
     const overlayDivs = this.querySelectorAll(".overlayDiv");
-      console.log(overlayDivs);
-      overlayDivs.forEach(element => element.remove());
+    console.log(overlayDivs);
+    overlayDivs.forEach(element => element.remove());
   }
 
   function mouseClick(event) {
-      console.log("Clicked " + event.target);
+    console.log("Clicked " + event.target);
 
-      event.stopPropagation();
-      event.preventDefault();
+    event.stopPropagation();
+    event.preventDefault();
 
-      const cssSelector = getCssSelector(event.target, { selectors: ['class', 'id', 'tag', 'nthchild'] });
+    const cssSelector = getCssSelector(event.target, { selectors: ['class', 'id', 'tag', 'nthchild'] });
 
-      const hash = CryptoJS.MD5(cssSelector).toString(CryptoJS.enc.Base64);
+    const hash = CryptoJS.MD5(cssSelector).toString(CryptoJS.enc.Base64);
 
     let selectedDiv = this.querySelector(`[id='selectedDiv-${hash}']`);
 
-      if (selectedDiv !== null) {
-        selectedDiv.remove();
+    if (selectedDiv !== null) {
+      selectedDiv.remove();
 
       //TODO request to delete css selector path from the backend
-      } else {
-        selectedDiv = document.createElement('div');
+    } else {
+      selectedDiv = document.createElement('div');
 
-        const elemDomRect = event.target.getBoundingClientRect();
+      const elemDomRect = event.target.getBoundingClientRect();
       const bodyDomRect = this.getBoundingClientRect();
 
       selectedDiv.style.height = `${Math.round(elemDomRect.height)}px`;
@@ -98,11 +99,11 @@ export default function URLLink({ link, toggleSelected }) {
       for(let i = 0; i < elementList.length; i++){
         const element = this.contentWindow.document.querySelector(elementList[i].element_selector);
         const cssSelector = getCssSelector(element, { selectors: ['class', 'id', 'tag', 'nthchild'] });
-  
+
         const hash = CryptoJS.MD5(cssSelector).toString(CryptoJS.enc.Base64);
-  
+
         const selectedDiv = document.createElement('div');
-  
+
         const elemDomRect = element.getBoundingClientRect();
         const bodyDomRect = iframeBody.getBoundingClientRect();
 
@@ -121,10 +122,14 @@ export default function URLLink({ link, toggleSelected }) {
 
         iframeBody.appendChild(selectedDiv);
       }
+
       iframeBody.addEventListener('mouseover', mouseOver);
       iframeBody.addEventListener('mouseout', mouseOut);
       iframeBody.addEventListener('click', mouseClick, true);
 
+      const spinner = document.querySelector(`#spinner-${link.id}`);
+      spinner.classList.add('link-hide');
+      this.classList.remove('iframe-hide');
     }, 3000);
 
   }
@@ -149,36 +154,40 @@ export default function URLLink({ link, toggleSelected }) {
 
   function toggleExpand() {
     const divLink = document.querySelector(`#link-${link.id}`);
+    const spinner = document.querySelector(`#spinner-${link.id}`);
+
     const expandButton = document.querySelector(`#expand-button-${link.id}`);
 
     const iframe = document.querySelector(`#html-render-${link.id}`);
-    
+
     iframe.onload = null;
+    iframe.classList.add('iframe-hide');
+    spinner.classList.remove('link-hide');
 
     if (divLink.classList.contains('link-hide')) {
       fetch(`${process.env.REACT_APP_BACKEND_HOST}/captures/byPageId/${link.id}`)
         .then(response => {
           if (response.status === 200) {
             response.json()
-        .then(content => {
-          if (content.length === 0) {
+              .then(content => {
+                if (content.length === 0) {
                   setExtHTML('<h1>There has been an error processing the page</h1>');
-          } else {
-            fetch(`${process.env.REACT_APP_BACKEND_HOST}${content[content.length - 1].text_location}`)
+                } else {
+                  fetch(`${process.env.REACT_APP_BACKEND_HOST}${content[content.length - 1].text_location}`)
                     .then(res => {
                       if (res.status === 200) {
                         res.text()
                         .then(htmlContent => {
                           iframe.onload = frameInteraction;
 
-                // The following code will identify every link that starts with a single "/",
-                // which refers to the root of the website,
-                // And add the url before it (so it can actually get the content)
-                const regex = /"\/(?!\/)/gi;
-                const fixedContent = htmlContent.replace(regex, `"${link.url}${(link.url.endsWith('/')) ? '' : '/'}`);
+                          // The following code will identify every link that starts with a single "/",
+                          // which refers to the root of the website,
+                          // And add the url before it (so it can actually get the content)
+                          const regex = /"\/(?!\/)/gi;
+                          const fixedContent = htmlContent.replace(regex, `"${link.url}${(link.url.endsWith('/')) ? '' : '/'}`);
 
-                setExtHTML(fixedContent);
-              });
+                          setExtHTML(fixedContent);
+                        });
                       } else {
                         setExtHTML('<h1>There has been an error processing the page</h1>');
                       }
@@ -194,6 +203,7 @@ export default function URLLink({ link, toggleSelected }) {
       expandButton.textContent = '∧';
     } else {
       divLink.classList.add('link-hide');
+
       expandButton.textContent = '∨';
 
       setExtHTML('<h1>Oops, you\'re not supposed to here</h1>');
@@ -220,8 +230,11 @@ export default function URLLink({ link, toggleSelected }) {
           </button>
         </div>
         <div id={`link-${link.id}`} class="link url-elements link-hide">
-          <div>
-            <iframe id={`html-render-${link.id}`} class="html-render" sandbox="allow-same-origin allow-scripts" srcdoc={extHTML}>
+          <div class="iframe-div">
+            <div id={`spinner-${link.id}`} class="spinner">
+              <Spinner animation="border" variant="dark"/>
+            </div>
+            <iframe id={`html-render-${link.id}`} class="html-render iframe-hide" sandbox="allow-same-origin allow-scripts" srcdoc={extHTML} title={link.url}>
             </iframe>
           </div>
         </div>
