@@ -152,27 +152,25 @@ export default function URLLink({ link, toggleSelected }) {
     const expandButton = document.querySelector(`#expand-button-${link.id}`);
 
     const iframe = document.querySelector(`#html-render-${link.id}`);
-    iframe.onload = frameInteraction;
     
+    iframe.onload = null;
+
     if (divLink.classList.contains('link-hide')) {
       fetch(`${process.env.REACT_APP_BACKEND_HOST}/captures/byPageId/${link.id}`)
         .then(response => {
           if (response.status === 200) {
-            return response.json();
-          } else {
-            // TODO: handle this error somehow
-          }
-        })
+            response.json()
         .then(content => {
           if (content.length === 0) {
-            // TODO: handle this error somehow
+                  setExtHTML('<h1>There has been an error processing the page</h1>');
           } else {
-            // TODO: change file
             fetch(`${process.env.REACT_APP_BACKEND_HOST}${content[content.length - 1].text_location}`)
-              .then(res => res.text(), err => {
-                // TODO: handle this error somehow
-              }
-              ).then(htmlContent => {
+                    .then(res => {
+                      if (res.status === 200) {
+                        res.text()
+                        .then(htmlContent => {
+                          iframe.onload = frameInteraction;
+
                 // The following code will identify every link that starts with a single "/",
                 // which refers to the root of the website,
                 // And add the url before it (so it can actually get the content)
@@ -181,6 +179,14 @@ export default function URLLink({ link, toggleSelected }) {
 
                 setExtHTML(fixedContent);
               });
+                      } else {
+                        setExtHTML('<h1>There has been an error processing the page</h1>');
+                      }
+                    });
+                }
+              });
+          } else {
+            setExtHTML('<h1>There has been an error processing the page</h1>');
           }
         });
 
@@ -189,6 +195,8 @@ export default function URLLink({ link, toggleSelected }) {
     } else {
       divLink.classList.add('link-hide');
       expandButton.textContent = '∨';
+
+      setExtHTML('<h1>Oops, you\'re not supposed to here</h1>');
     }
   }
 
