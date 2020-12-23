@@ -11,18 +11,13 @@ export default function URLLink({ link, toggleSelected }) {
   const [showFull, setShowFull] = useState(false);
   const [extHTML, setExtHTML] = useState('<h1>Oops, you\'re not supposed to here</h1>');
 
-  function frameInteraction() {
-    const iframe = document.querySelector(`#html-render-${link.id}`);
-
-    console.log("Adding events");
-    const iframeBody = iframe.contentWindow.document.querySelector("body");
-    iframeBody.addEventListener('mouseover', event => {
+  function mouseOver(event) {
       console.log("Entered " + event.target);
 
       const overlayDiv = document.createElement('div');
 
       const elemDomRect = event.target.getBoundingClientRect();
-      const bodyDomRect = iframeBody.getBoundingClientRect();
+    const bodyDomRect = this.getBoundingClientRect();
 
       overlayDiv.style.height = `${Math.round(elemDomRect.height)}px`;
       overlayDiv.style.width = `${Math.round(elemDomRect.width)}px`;
@@ -37,16 +32,18 @@ export default function URLLink({ link, toggleSelected }) {
 
       overlayDiv.className = 'overlayDiv';
 
-      iframeBody.appendChild(overlayDiv);
-    });
-    iframeBody.addEventListener('mouseout', event => {
+    this.appendChild(overlayDiv);
+  }
+
+  function mouseOut(event) {
       console.log("Exited " + event.target);
 
-      const overlayDivs = iframeBody.querySelectorAll(".overlayDiv");
+    const overlayDivs = this.querySelectorAll(".overlayDiv");
       console.log(overlayDivs);
       overlayDivs.forEach(element => element.remove());
-    });
-    iframeBody.addEventListener('click', event => {
+  }
+
+  function mouseClick(event) {
       console.log("Clicked " + event.target);
 
       event.stopPropagation();
@@ -56,14 +53,57 @@ export default function URLLink({ link, toggleSelected }) {
 
       const hash = CryptoJS.MD5(cssSelector).toString(CryptoJS.enc.Base64);
 
-      let selectedDiv = iframeBody.querySelector(`[id='selectedDiv-${hash}']`);
+    let selectedDiv = this.querySelector(`[id='selectedDiv-${hash}']`);
 
       if (selectedDiv !== null) {
         selectedDiv.remove();
+
+      //TODO request to delete css selector path from the backend
       } else {
         selectedDiv = document.createElement('div');
 
         const elemDomRect = event.target.getBoundingClientRect();
+      const bodyDomRect = this.getBoundingClientRect();
+
+      selectedDiv.style.height = `${Math.round(elemDomRect.height)}px`;
+      selectedDiv.style.width = `${Math.round(elemDomRect.width)}px`;
+      selectedDiv.style.position = 'absolute';
+      selectedDiv.style.zIndex = Number.MAX_SAFE_INTEGER;
+      selectedDiv.style.top = `${Math.round(elemDomRect.top - bodyDomRect.top)}px`;
+      selectedDiv.style.left = `${Math.round(elemDomRect.left - bodyDomRect.left)}px`;
+
+      selectedDiv.style.backgroundColor = 'rgba(148, 148, 148, 0.5)';
+
+      selectedDiv.style.pointerEvents = 'none';
+
+      selectedDiv.id = `selectedDiv-${hash}`;
+
+      this.appendChild(selectedDiv);
+
+      //TODO request to save css selector in the backend
+    }
+  }
+
+
+  function frameInteraction() {
+    console.log("Adding events");
+
+    const iframeBody = this.contentWindow.document.querySelector("body");
+
+    //TODO request gray zones from database and create them
+
+    const elementList = [{id: 1, page_id: 1, element_selector: '#main_news'}, {id: 2, page_id: 2, element_selector: '#page_main > div > div:nth-child(6)'}];
+
+    setTimeout(() =>  {
+      for(let i = 0; i < elementList.length; i++){
+        const element = this.contentWindow.document.querySelector(elementList[i].element_selector);
+        const cssSelector = getCssSelector(element, { selectors: ['class', 'id', 'tag', 'nthchild'] });
+  
+        const hash = CryptoJS.MD5(cssSelector).toString(CryptoJS.enc.Base64);
+  
+        const selectedDiv = document.createElement('div');
+  
+        const elemDomRect = element.getBoundingClientRect();
         const bodyDomRect = iframeBody.getBoundingClientRect();
 
         selectedDiv.style.height = `${Math.round(elemDomRect.height)}px`;
@@ -81,7 +121,12 @@ export default function URLLink({ link, toggleSelected }) {
 
         iframeBody.appendChild(selectedDiv);
       }
-    }, true);
+      iframeBody.addEventListener('mouseover', mouseOver);
+      iframeBody.addEventListener('mouseout', mouseOut);
+      iframeBody.addEventListener('click', mouseClick, true);
+
+    }, 3000);
+
   }
 
   function handleUrlSelect() {
