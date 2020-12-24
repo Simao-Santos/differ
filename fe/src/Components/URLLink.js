@@ -239,6 +239,26 @@ export default function URLLink({ link, toggleSelected }) {
             </div>
             <iframe id={`html-render-${link.id}`} className="html-render iframe-hide" sandbox="allow-same-origin allow-scripts" srcDoc={extHTML} title={link.url} />
           </div>
+          <div className="element-manager">
+            <div className="input-holder">
+              <input type="text" placeholder="Type css selector of element"></input>
+              <button>+</button>
+            </div>
+            <div className="element-list">
+              <div className="element-selector-holder">
+                <p>#container</p>
+                <img src="../trash-icon.png" alt="Remove"/>
+              </div>
+              <div className="element-selector-holder">
+                <p>#container</p>
+                <img src="../trash-icon.png" alt="Remove"/>
+              </div>
+              <div className="element-selector-holder">
+                <p>#container</p>
+                <img src="../trash-icon.png" alt="Remove"/>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       {
