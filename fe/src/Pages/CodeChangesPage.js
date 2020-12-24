@@ -44,8 +44,11 @@ class CodeChangesPage extends Component {
     const requestOptions = {
       method: 'GET',
     };
+
     console.log(data);
-    fetch(`${process.env.REACT_APP_BACKEND_HOST}/urls/count`, requestOptions)
+
+    const endpointCount = new URL('/urls/count', process.env.REACT_APP_BACKEND_HOST);
+    fetch(endpointCount.toString(), requestOptions)
       .then((res) => {
         if (res.status === 200) {
           res.clone().text().then((content) => (
@@ -57,7 +60,9 @@ class CodeChangesPage extends Component {
           this.setState(() => ({ error: true, isLoading: false }));
         }
       });
-    fetch(`${process.env.REACT_APP_BACKEND_HOST}/comparisons/range/${u}/${v}`, requestOptions)
+
+    const endpointRange = new URL(`/comparisons/range/${u}/${v}`, process.env.REACT_APP_BACKEND_HOST);
+    fetch(endpointRange.toString(), requestOptions)
       .then((res) => {
         if (res.status === 200) {
           res.clone().text().then((content) => (
