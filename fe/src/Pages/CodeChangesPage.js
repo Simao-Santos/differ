@@ -39,13 +39,16 @@ class CodeChangesPage extends Component {
   componentDidMount() {
     const { page, data } = this.state;
     console.log(page);
-    const u = (page - 1) * 20;
-    const v = page * 20;
+    const offset = (page - 1) * 20;
+    const amount = page * 20;
     const requestOptions = {
       method: 'GET',
     };
+
     console.log(data);
-    fetch(`${process.env.REACT_APP_BACKEND_HOST}/urls/count`, requestOptions)
+
+    const endpointCount = new URL('/urls/count', process.env.REACT_APP_BACKEND_HOST);
+    fetch(endpointCount.toString(), requestOptions)
       .then((res) => {
         if (res.status === 200) {
           res.clone().text().then((content) => (
@@ -57,7 +60,9 @@ class CodeChangesPage extends Component {
           this.setState(() => ({ error: true, isLoading: false }));
         }
       });
-    fetch(`${process.env.REACT_APP_BACKEND_HOST}/comparisons/range/${u}/${v}`, requestOptions)
+
+    const endpointRange = new URL(`/comparisons/range/${offset}/${amount}`, process.env.REACT_APP_BACKEND_HOST);
+    fetch(endpointRange.toString(), requestOptions)
       .then((res) => {
         if (res.status === 200) {
           res.clone().text().then((content) => (

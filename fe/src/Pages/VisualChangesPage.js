@@ -48,8 +48,11 @@ class VisualChangesPage extends Component {
     const requestOptions = {
       method: 'GET',
     };
+
     console.log(data);
-    fetch(`${process.env.REACT_APP_BACKEND_HOST}/urls/count`, requestOptions)
+
+    const endpointCount = new URL('/urls/count', process.env.REACT_APP_BACKEND_HOST);
+    fetch(endpointCount.toString(), requestOptions)
       .then((res) => {
         if (res.status === 200) {
           res.clone().text().then((content) => (
@@ -61,7 +64,9 @@ class VisualChangesPage extends Component {
           this.setState(() => ({ error: true, isLoading: false }));
         }
       });
-    fetch(`${process.env.REACT_APP_BACKEND_HOST}/comparisons/range/${u}/${v}`, requestOptions).then((res) => {
+
+    const endpointRange = new URL(`/comparisons/range/${u}/${v}`, process.env.REACT_APP_BACKEND_HOST);
+    fetch(endpointRange.toString(), requestOptions).then((res) => {
       if (res.status === 200) {
         res.clone().text().then((content) => (
           this.setState((prevState) => ({
@@ -123,9 +128,23 @@ class VisualChangesPage extends Component {
       <>
         <div className="Comparison-Cards">
           {
-            data[0].map((ub) => (
-              <VisualComparison pageName={`Page ${ub[0].page_id}`} link={ub[0].url} timeStamp1={ub[0].date} timeStamp2={ub[1].date} image1={`${process.env.REACT_APP_BACKEND_HOST}${ub[0].capt_image_location}`} image2={`${process.env.REACT_APP_BACKEND_HOST}${ub[1].capt_image_location}`} comparison={`${process.env.REACT_APP_BACKEND_HOST}${ub[0].comp_image_location}`} />
-            ))
+            data[0].map((ub) => {
+              const capt1 = new URL(ub[0].capt_image_location, process.env.REACT_APP_BACKEND_HOST);
+              const capt2 = new URL(ub[1].capt_image_location, process.env.REACT_APP_BACKEND_HOST);
+              const comp = new URL(ub[0].comp_image_location, process.env.REACT_APP_BACKEND_HOST);
+
+              return (
+                <VisualComparison
+                  pageName={`Page ${ub[0].page_id}`}
+                  link={ub[0].url}
+                  timeStamp1={ub[0].date}
+                  timeStamp2={ub[1].date}
+                  image1={capt1.toString()}
+                  image2={capt2.toString()}
+                  comparison={comp.toString()}
+                />
+              );
+            })
           }
           <Pagination
             total={count}
