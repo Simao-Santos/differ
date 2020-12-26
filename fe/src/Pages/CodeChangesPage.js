@@ -39,8 +39,8 @@ class CodeChangesPage extends Component {
   componentDidMount() {
     const { page, data } = this.state;
     console.log(page);
-    const u = (page - 1) * 20;
-    const v = page * 20;
+    const offset = (page - 1) * 20;
+    const amount = page * 20;
     const requestOptions = {
       method: 'GET',
     };
@@ -61,7 +61,7 @@ class CodeChangesPage extends Component {
         }
       });
 
-    const endpointRange = new URL(`/comparisons/range/${u}/${v}`, process.env.REACT_APP_BACKEND_HOST);
+    const endpointRange = new URL(`/comparisons/range/${offset}/${amount}`, process.env.REACT_APP_BACKEND_HOST);
     fetch(endpointRange.toString(), requestOptions)
       .then((res) => {
         if (res.status === 200) {
