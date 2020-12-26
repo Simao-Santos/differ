@@ -167,7 +167,8 @@ export default function URLLink({ link, toggleSelected }) {
     spinner.classList.remove('link-hide');
 
     if (divLink.classList.contains('link-hide')) {
-      fetch(`${process.env.REACT_APP_BACKEND_HOST}/captures/byPageId/${link.id}`)
+      const endpointFile = new URL(`/captures/byPageId/${link.id}`, process.env.REACT_APP_BACKEND_HOST);
+      fetch(endpointFile.toString())
         .then((response) => {
           if (response.status === 200) {
             response.json()
@@ -175,7 +176,9 @@ export default function URLLink({ link, toggleSelected }) {
                 if (content.length === 0) {
                   setExtHTML('<h1>There has been an error processing the page</h1>');
                 } else {
-                  fetch(`${process.env.REACT_APP_BACKEND_HOST}${content[content.length - 1].text_location}`)
+                  const endpointContent = new URL(content[content.length - 1].text_location,
+                    process.env.REACT_APP_BACKEND_HOST);
+                  fetch(endpointContent)
                     .then((res) => {
                       if (res.status === 200) {
                         res.text()
