@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import '../CSS/URLEdition.css';
 import '../CSS/PrettyChecks.scss';
@@ -12,7 +12,8 @@ export default function URLLink({ link, toggleSelected }) {
 
   const [showFull, setShowFull] = useState(false);
   const [extHTML, setExtHTML] = useState('<h1>Oops, you\'re not supposed to here</h1>');
-  const [elementIdentifiers, setElementIdentifiers] = useState([{ id: 1, pageId: 1, elementSelector: '#main_news' }, { id: 2, pageId: 2, elementSelector: '#page_main > div > div:nth-child(6)' }]);
+  const [elementIdentifiers, setElementIdentifiers] = useState([]);
+  const newSelectorRef = useRef();
 
   function getElementIdentifiers() {
     console.log('getting identifiers from db');
@@ -27,6 +28,24 @@ export default function URLLink({ link, toggleSelected }) {
         res.text()
           .then((content) => setElementIdentifiers(JSON.parse(content)));
       });
+  }
+
+  function handleAddSelector() {
+    const newSelector = newSelectorRef.current.value;
+
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+      },
+      body: JSON.stringify({ pageId: link.id, elementSelector: newSelector }),
+    };
+
+    const endpoint = new URL(`/grayzones/${link.id}`, process.env.REACT_APP_BACKEND_HOST);
+    fetch(endpoint.toString(), requestOptions);
+
+
+    newSelectorRef.current.value = null;
   }
 
   function mouseOver(event) {
@@ -258,8 +277,8 @@ export default function URLLink({ link, toggleSelected }) {
           </div>
           <div className="element-manager">
             <div className="input-holder">
-              <input type="text" placeholder="Type css selector of element"></input>
-              <button>+</button>
+              <input type="text" ref={newSelectorRef} placeholder="Type css selector of element"></input>
+              <button onClick={handleAddSelector}>+</button>
             </div>
             <div className="element-list">
               <ElementSelectorList elementIdentifiers={elementIdentifiers} />
