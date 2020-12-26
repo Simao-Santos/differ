@@ -12,9 +12,22 @@ export default function URLLink({ link, toggleSelected }) {
 
   const [showFull, setShowFull] = useState(false);
   const [extHTML, setExtHTML] = useState('<h1>Oops, you\'re not supposed to here</h1>');
-
-  // variable that holds selected IDs
   const [elementIdentifiers, setElementIdentifiers] = useState([{ id: 1, pageId: 1, elementSelector: '#main_news' }, { id: 2, pageId: 2, elementSelector: '#page_main > div > div:nth-child(6)' }]);
+
+  function getElementIdentifiers() {
+    console.log('getting identifiers from db');
+
+    const requestOptions = {
+      method: 'GET',
+    };
+
+    const endpoint = new URL('/grayzones', process.env.REACT_APP_BACKEND_HOST);
+    fetch(endpoint.toString(), requestOptions)
+      .then((res) => {
+        res.text()
+          .then((content) => setElementIdentifiers(JSON.parse(content)));
+      });
+  }
 
   function mouseOver(event) {
     console.log(`Entered ${event.target}`);

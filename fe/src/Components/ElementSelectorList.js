@@ -5,11 +5,11 @@ import ElementSelector from './ElementSelector';
 class ElementSelectorList extends Component {
 
     render() {
-        console.log('oh pls just log something')
         const { elementIdentifiers } = this.props;
+        
         return (
             elementIdentifiers.map((elementIdentifier) => <ElementSelector key={elementIdentifier.id}
-                selector={elementIdentifier.elementSelector} />)
+                identifier={elementIdentifier} />)
         );
     }
 }
