@@ -176,7 +176,9 @@ export default function URLLink({ link, toggleSelected }) {
             response.json()
               .then((content) => {
                 if (content.length === 0) {
+                  spinner.classList.add('link-hide');
                   setExtHTML(errorHtml);
+                  iframe.classList.remove('iframe-hide');
                 } else {
                   const endpointContent = new URL(content[content.length - 1].text_location,
                     process.env.REACT_APP_BACKEND_HOST);
@@ -197,13 +199,17 @@ export default function URLLink({ link, toggleSelected }) {
                             setExtHTML(fixedContent);
                           });
                       } else {
+                        spinner.classList.add('link-hide');
                         setExtHTML(errorHtml);
+                        iframe.classList.remove('iframe-hide');
                       }
                     });
                 }
               });
           } else {
+            spinner.classList.add('link-hide');
             setExtHTML(errorHtml);
+            iframe.classList.remove('iframe-hide');
           }
         });
 
