@@ -5,12 +5,16 @@ import '../CSS/PrettyChecks.scss';
 import CryptoJS from 'crypto-js';
 import getCssSelector from 'css-selector-generator';
 import Spinner from 'react-bootstrap/Spinner';
+import ElementSelectorList from './ElementSelectorList';
 
 export default function URLLink({ link, toggleSelected }) {
   const backgroundOn = link.selected;
 
   const [showFull, setShowFull] = useState(false);
   const [extHTML, setExtHTML] = useState('<h1>Oops, you\'re not supposed to here</h1>');
+
+  // variable that holds selected IDs
+  const [elementIdentifiers, setElementIdentifiers] = useState([{ id: 1, pageId: 1, elementSelector: '#main_news' }, { id: 2, pageId: 2, elementSelector: '#page_main > div > div:nth-child(6)' }]);
 
   function mouseOver(event) {
     console.log(`Entered ${event.target}`);
@@ -245,18 +249,7 @@ export default function URLLink({ link, toggleSelected }) {
               <button>+</button>
             </div>
             <div className="element-list">
-              <div className="element-selector-holder">
-                <p>#container</p>
-                <img src="../trash-icon.png" alt="Remove"/>
-              </div>
-              <div className="element-selector-holder">
-                <p>#container</p>
-                <img src="../trash-icon.png" alt="Remove"/>
-              </div>
-              <div className="element-selector-holder">
-                <p>#container</p>
-                <img src="../trash-icon.png" alt="Remove"/>
-              </div>
+              <ElementSelectorList elementIdentifiers={elementIdentifiers} />
             </div>
           </div>
         </div>
