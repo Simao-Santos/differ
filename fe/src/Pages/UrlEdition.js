@@ -60,6 +60,8 @@ function UrlEdition() {
 
   useEffect(() => {
     console.log('saved urls');
+    let newMinHeight = urls.length * 100 + 100;
+    document.getElementsByTagName('body')[0].style.minHeight = newMinHeight + 'vh';
   }, [urls]);
 
   useEffect(() => {
