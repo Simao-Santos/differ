@@ -155,6 +155,8 @@ export default function URLLink({ link, toggleSelected }) {
   }
 
   function toggleExpand() {
+    const errorHtml = '<h1>There has been an error processing the page</h1>';
+
     const divLink = document.querySelector(`#link-${link.id}`);
     const spinner = document.querySelector(`#spinner-${link.id}`);
 
@@ -174,7 +176,7 @@ export default function URLLink({ link, toggleSelected }) {
             response.json()
               .then((content) => {
                 if (content.length === 0) {
-                  setExtHTML('<h1>There has been an error processing the page</h1>');
+                  setExtHTML(errorHtml);
                 } else {
                   const endpointContent = new URL(content[content.length - 1].text_location,
                     process.env.REACT_APP_BACKEND_HOST);
@@ -195,13 +197,13 @@ export default function URLLink({ link, toggleSelected }) {
                             setExtHTML(fixedContent);
                           });
                       } else {
-                        setExtHTML('<h1>There has been an error processing the page</h1>');
+                        setExtHTML(errorHtml);
                       }
                     });
                 }
               });
           } else {
-            setExtHTML('<h1>There has been an error processing the page</h1>');
+            setExtHTML(errorHtml);
           }
         });
 
