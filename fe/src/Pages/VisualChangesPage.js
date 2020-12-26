@@ -73,6 +73,14 @@ class VisualChangesPage extends Component {
         this.setState(() => ({ error: true, isLoading: false }));
       }
     });
+    const requestOptions1 = {
+      method: 'GET'
+    };
+    fetch(`${process.env.REACT_APP_BACKEND_HOST}/urls/gray_zones/1`, requestOptions1)
+      .then((res) => {
+        res.text()
+          .then((content) => (console.log(content)));
+      });
   }
 
   onChange(page) {

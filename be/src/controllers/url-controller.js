@@ -127,3 +127,53 @@ exports.get_count = function getCount(req, res, next) {
     }
   });
 };
+
+// Insert grey zones
+exports.insert_grey_zone = function insert_grey_zone(req, res, next){
+  console.log('Starting insertion of grey zones in database...')
+
+  console.log(req.body);
+
+  if(req.body.grey_zones.length == 0)
+  res.status(400);
+
+  let query_text ='INSERT INTO gray_zone ( page_id, element_selector ) VALUES';
+
+  //building the query
+  for(let i = 0 ; i < (req.body.grey_zones.length -1) ; i++) {
+   query_text += ` (${req.body.page_id} , '${ req.body.grey_zones[i].element_selector }'),`;
+  };
+
+  query_text += ` (${req.body.page_id} , '${ req.body.grey_zones[req.body.grey_zones.length -1].element_selector }');`;
+  
+
+  console.log("Query text : " + query_text);
+  const query = {
+    text: query_text
+  };
+
+  database.query(query, (err, result) => {
+    if (err) {
+      res.sendStatus(500);
+    } else {
+      console.log("Data has been successfully inserted into database")
+      res.sendStatus(200);
+    }
+  });
+};
+
+// Get Gray Zones
+exports.get_gray_zones = function get_gray_zones(req, res, next) {
+  const query = {
+    text: `SELECT element_selector FROM gray_zone WHERE page_id=${req.params.id} AND deleted=$1`,
+    values: [false],
+  };
+
+  database.query(query, (err, result) => {
+    if (err) {
+      res.sendStatus(500);
+    } else {
+      res.status(200).send(result.rows );
+    }
+  });
+};

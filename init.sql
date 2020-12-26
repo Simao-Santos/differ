@@ -61,6 +61,20 @@ CREATE TABLE comparison
 
 TABLESPACE pg_default;
 
+-- Table: gray_zone
+CREATE TABLE gray_zone
+(
+    id integer GENERATED ALWAYS AS IDENTITY NOT NULL,
+    page_id integer,
+    element_selector text,
+    deleted boolean NOT NULL DEFAULT FALSE,
+    PRIMARY KEY (id),
+    FOREIGN KEY (page_id)
+        REFERENCES page (id)
+)
+
+TABLESPACE pg_default;
+
 -- FUNCTIONS
 CREATE OR REPLACE FUNCTION delete_page_connections()
   RETURNS TRIGGER 
