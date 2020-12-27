@@ -114,6 +114,8 @@ async function compareUrlAsync(id) {
   database.query(querySelect, (err, resultSelect) => {
     if (err || resultSelect.rowCount !== 2) console.log('Couldn\'t get captures to compare');
     else {
+      console.log(resultSelect.rows);
+  
       const oldCaptureId = resultSelect.rows[0].id;
       const oldCaptureImgLoc = resultSelect.rows[0].image_location;
       const oldCaptureTextLoc = resultSelect.rows[0].text_location;
@@ -132,20 +134,55 @@ async function compareUrlAsync(id) {
 async function saveUrlScreenshot(url, filename, saveFolder) {
   console.log('Generating page screenshot...');
 
+  //Get grey zones from database
   // A rare bug can occur when launching Chrome.
   // From what I understand it's related to the GNU C library, don't know what we can do about it.
   // It is very rare though. As of now, it has only happened once.
   // https://github.com/puppeteer/puppeteer/issues/2207
   //
   // There are still problems with some characters and some images that aren't displayed correctly
-  await new Pageres({ delay: 2 })
-    .src(url, ['1920x1080'], { filename })
-    .dest(`./src/public${saveFolder}`)
-    .run();
 
-  console.log('Finished generating screenshot!');
+  const query = {
+    text: `SELECT element_selector FROM gray_zone, page WHERE page_id=page.id and page.url='${url}' AND gray_zone.deleted=$1`,
+    values: [false],
+  };
 
-  return `${saveFolder + ((saveFolder.endsWith('/')) ? '' : '/') + filename}.png`;
+  return  result = await dbQuery(query, url, filename , saveFolder);
+}
+
+function dbQuery(databaseQuery, url, filename , saveFolder) {
+  return new Promise(data => {
+      database.query(databaseQuery, async function (error, result){
+        if (error) {
+          console.log("there was an error");
+          throw error;
+        } else {
+
+          //Process the response from db and make it appropriate for the Pageres
+          let element_selectors = [];
+          result.rows.forEach((element) => {
+            element_selectors.push(element.element_selector);
+          })
+
+          //this is needed because Pageres does not accept empty data
+          let params = {filename};
+          if(element_selectors.length !== 0){
+            params =  { filename , hide : element_selectors}
+          }
+
+          await new Pageres({ delay: 2 })
+          .src(url, ['1920x1080'], params)
+          .dest(`./src/public${saveFolder}`)
+          .run();
+          
+          console.log('Finished generating screenshot!');
+
+          //set the promise to the correct path
+          data(`${saveFolder + ((saveFolder.endsWith('/')) ? '' : '/') + filename}.png`);
+        }
+      });
+  });
+
 }
 
 // Asynchronous function that will capture the url content and screenshot

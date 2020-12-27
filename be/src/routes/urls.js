@@ -106,33 +106,6 @@ router.get('/:id', urlController.get_urls);
 
 /**
  * @swagger
- * /urls/gray_zones/{id}:
- *  get:
- *   summary: Gets all gray zones of a page by its id
- *   tags: [URLs]
- *   parameters:
- *    - in: path
- *      name: id
- *      schema:
- *       type: integer
- *      required: true
- *      description: The URL id
- *   responses:
- *    "200":
- *     description: Operation successful, return the grayzones.
- *     content:
- *      application/json:
- *       schema:
- *        $ref: '#/components/schemas/URL'
- *    "400":
- *     description: Invalid id supplied
- *    "500":
- *     description: Server could not handle request
- */
-router.get('/gray_zones/:id', urlController.get_gray_zones);
-
-/**
- * @swagger
  * /urls/:
  *  post:
  *   summary: Adds a new URL
@@ -173,44 +146,6 @@ router.get('/gray_zones/:id', urlController.get_gray_zones);
  *     description: Server could not handle request
  */
 router.post('/', urlController.add_url);
-
-/**
-* @swagger
-* /urls/gray_zones/:
-*  post:
-*   summary: Adds grey zones
-*   tags: [URLs]
-*   requestBody:
-*    required: true
-*    content:
-*     application/json:
-*      schema:
-*       type: object
-*       required:
-*        - zones
-*       properties:
-*        zones:
-*         type: JSON
-*         description: grey zones to be added
-*         example: {page_id: 1 , grey_zones: [{element_selector: x},{element_selector: x}]}
-*   responses:
-*    "200":
-*     description: Operation successful.
-*     content:
-*      application/json:
-*       schema:
-*        type: object
-*        properties:
-*         id:
-*          type: JSON
-*          description: Ids of addeds URL.
-*          example: {[1,2]}
-*    "400":
-*     description: Invalid request
-*    "500":
-*     description: Server could not handle request
-*/
-router.post('/gray_zones', urlController.insert_grey_zone);
 
 /**
  * @swagger
