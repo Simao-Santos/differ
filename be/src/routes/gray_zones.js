@@ -27,10 +27,6 @@
  *        type: string
  *        description: The css selector to be ignored.
  *        example: div#content
- *       deleted:
- *        type: boolean
- *        description: This boolean indicated if the element has been deleted.
- *        example: false
  *      example:
  *       id: 4
  *       page_id: 1
@@ -94,6 +90,8 @@ const grayZoneController = require('../controllers/grayzone-controller');
  *        $ref: '#/components/schemas/Object'
  *    "400":
  *     description: Invalid id supplied, the page is not in the database
+ *    "404":
+ *     description: Page id not found
  *    "500":
  *     description: Server could not handle request
  */
@@ -143,6 +141,8 @@ router.post('/', grayZoneController.insert_gray_zone);
  *        $ref: '#/components/schemas/Deleted'
  *    "400":
  *     description: Invalid id supplied
+ *    "404":
+ *     description: Gray zone id not found
  *    "500":
  *     description: Server could not handle request
  */
