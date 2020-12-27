@@ -89,7 +89,7 @@ const grayZoneController = require('../controllers/grayzone-controller');
  *       schema:
  *        $ref: '#/components/schemas/Object'
  *    "400":
- *     description: Invalid id supplied, the page is not in the database
+ *     description: Invalid id format
  *    "404":
  *     description: Page id not found
  *    "500":
