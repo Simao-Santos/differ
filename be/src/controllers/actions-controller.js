@@ -162,7 +162,7 @@ function dbQuery(databaseQuery, url, filename, saveFolder) {
 }
 
 // Function that will screenshot the url page
-async function saveUrlScreenshot(url, filename, saveFolder) {
+async function saveUrlScreenshot(url, filename, saveFolder, id) {
   console.log('Generating page screenshot...');
 
   // Get grey zones from database
@@ -173,8 +173,8 @@ async function saveUrlScreenshot(url, filename, saveFolder) {
   //
   // There are still problems with some characters and some images that aren't displayed correctly
   const query = {
-    text: `SELECT element_selector FROM gray_zone, page WHERE page_id=page.id and page.url='${url}' AND gray_zone.deleted=$1`,
-    values: [false],
+    text: 'SELECT element_selector FROM gray_zone WHERE page_id=$2 AND deleted=$1',
+    values: [false, id],
   };
 
   return dbQuery(query, url, filename, saveFolder);
@@ -213,7 +213,7 @@ async function captureUrlAsync(id, url, compareNext) {
       fs.writeFileSync(`./src/public${contentPath}`, body);
       console.log('Page content saved!');
 
-      const screenshotPath = await saveUrlScreenshot(url, filename, folder);
+      const screenshotPath = await saveUrlScreenshot(url, filename, folder, id);
 
       const query = {
         text: 'INSERT INTO capture (page_id, image_location, text_location, date) VALUES ($1, $2, $3, $4) RETURNING id',

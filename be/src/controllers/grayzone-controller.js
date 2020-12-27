@@ -37,9 +37,6 @@ exports.get_gray_zones = function getGrayZones(req, res, next) {
     database.query(query, (err, result) => {
       if (err) {
         res.sendStatus(500);
-      } else if (result.rows.length === 0) {
-        console.log('Error: There is no gray zone with such ID');
-        res.sendStatus(404);
       } else {
         res.status(200).send(result.rows);
       }

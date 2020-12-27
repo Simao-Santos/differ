@@ -12,6 +12,7 @@
  *     Object:
  *      type: object
  *      required:
+ *       - id
  *       - page_id
  *       - element_selector
  *      properties:
@@ -31,7 +32,6 @@
  *       id: 4
  *       page_id: 1
  *       element_selector: div#content
- *       deleted: false
  *     Deleted:
  *      type: object
  *      required:
@@ -90,8 +90,6 @@ const grayZoneController = require('../controllers/grayzone-controller');
  *        $ref: '#/components/schemas/Object'
  *    "400":
  *     description: Invalid id format
- *    "404":
- *     description: Page id not found
  *    "500":
  *     description: Server could not handle request
  */
