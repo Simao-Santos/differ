@@ -114,7 +114,6 @@ async function compareUrlAsync(id) {
   database.query(querySelect, (err, resultSelect) => {
     if (err || resultSelect.rowCount !== 2) console.log('Couldn\'t get captures to compare');
     else {
-
       const oldCaptureId = resultSelect.rows[0].id;
       const oldCaptureImgLoc = resultSelect.rows[0].image_location;
       const oldCaptureTextLoc = resultSelect.rows[0].text_location;
