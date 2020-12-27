@@ -42,14 +42,12 @@ class VisualChangesPage extends Component {
   }
 
   componentDidMount() {
-    const { page, data } = this.state;
+    const { page } = this.state;
     const u = (page - 1) * 20;
     const v = page * 20;
     const requestOptions = {
       method: 'GET',
     };
-
-    console.log(data);
 
     const endpointCount = new URL('/urls/count', process.env.REACT_APP_BACKEND_HOST);
     fetch(endpointCount.toString(), requestOptions)
@@ -78,17 +76,14 @@ class VisualChangesPage extends Component {
         this.setState(() => ({ error: true, isLoading: false }));
       }
     });
-    
   }
 
   onChange(page) {
-    console.log(page);
     this.setState({
       page,
       data: [],
       isLoading: true,
-    }, function () {
-      console.log('set state completed', this.state);
+    }, function resetComponent() {
       this.componentDidMount();
     });
   }
