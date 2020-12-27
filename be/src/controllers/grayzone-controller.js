@@ -47,7 +47,7 @@ exports.get_gray_zones = function getGrayZones(req, res, next) {
 // Delete Gray Zone
 exports.delete_gray_zone = function deleteGrayZone(req, res, next) {
   if (!(req.params.id && utils.isInteger(req.params.id))) {
-    res.status(400);
+    res.sendStatus(400);
   }
 
   const query = {
