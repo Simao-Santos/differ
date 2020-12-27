@@ -56,7 +56,8 @@ const options = {
     './src/routes/urls.js',
     './src/routes/captures.js',
     './src/routes/comparisons.js',
-    './src/routes/actions.js'],
+    './src/routes/actions.js',
+    './src/routes/gray_zones.js'],
 };
 
 const specs = swaggerJsDoc(options);
