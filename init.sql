@@ -83,9 +83,12 @@ CREATE OR REPLACE FUNCTION delete_page_connections()
 $$
 BEGIN
     IF OLD.deleted = FALSE AND NEW.deleted = TRUE THEN
-        UPDATE capture, gray_zone
+        UPDATE capture
         SET deleted = TRUE
-        WHERE page_id = NEW.id AND page_id = gray_zone.page_id AND capture.deleted = FALSE AND gray_zone.deleted = FALSE;
+        WHERE page_id = NEW.id AND deleted = FALSE;
+        UPDATE gray_zone
+        SET deleted = TRUE
+        WHERE page_id = NEW.id AND deleted = FALSE;
 	END IF;
 
 	RETURN NEW;

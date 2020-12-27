@@ -78,39 +78,7 @@ class VisualChangesPage extends Component {
         this.setState(() => ({ error: true, isLoading: false }));
       }
     });
-    const requestOptions1 = {
-      method: 'GET'
-    };
-    fetch(`${process.env.REACT_APP_BACKEND_HOST}/gray_zones/3`, requestOptions1)
-      .then((res) => {
-        res.text()
-          .then((content) => (console.log(content)));
-      });
-
-      /*const requestOptions3 = {
-      method: 'DELETE'
-    };
-    fetch(`${process.env.REACT_APP_BACKEND_HOST}/gray_zones/1`, requestOptions3)
-      .then((res) => {
-        res.text()
-          .then((content) => (console.log(content)));
-      });*/
-
-      /*const requestOptions2 = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json; charset=utf-8',
-        },
-        body: JSON.stringify({page_id: 3 , gray_zone: "img#hplogo"}),
-      };
-  
-      const endpoint = new URL('gray_zones/', process.env.REACT_APP_BACKEND_HOST);
-      fetch(endpoint.toString(), requestOptions2)
-        .then((res) => {
-          res.text()
-            .then((content) => console.log(content));
-        });*/
-      //{page_id: 1 , grey_zones: [{element_selector: x},{element_selector: x}]}
+    
   }
 
   onChange(page) {

@@ -51,7 +51,7 @@ exports.insert_gray_zone = function insert_gray_zone(req, res, next){
       text: `SELECT * FROM gray_zone WHERE page_id=${req.params.id} AND deleted=$1`,
       values: [false],
     };
-  
+    
     database.query(query, (err, result) => {
       if (err) {
         res.sendStatus(500);
