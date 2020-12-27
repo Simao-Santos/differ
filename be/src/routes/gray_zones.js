@@ -29,7 +29,7 @@
  *        example: div#content
  *       deleted:
  *        type: boolean
- *        description: This boolean indicated if the element has been deleted. The default value is 'false'.
+ *        description: This boolean indicated if the element has been deleted.
  *        example: false
  *      example:
  *       id: 4
