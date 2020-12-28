@@ -52,22 +52,22 @@ exports.get_gray_zones = function getGrayZones(req, res, next) {
 exports.delete_gray_zone = function deleteGrayZone(req, res, next) {
   if (!(req.params.id && utils.isInteger(req.params.id))) {
     res.sendStatus(400);
-  }
+  } else {
+    const query = {
+      text: 'UPDATE gray_zone SET deleted=$1 WHERE id=$2 AND deleted=$3 RETURNING id',
+      values: [true, req.params.id, false],
+    };
 
-  const query = {
-    text: 'UPDATE gray_zone SET deleted=$1 WHERE id=$2 AND deleted=$3 RETURNING id',
-    values: [true, req.params.id, false],
-  };
-
-  database.query(query, (err, result) => {
-    if (err) {
-      res.sendStatus(500);
-    } else if (result.rows.length === 0) {
-      console.log('Error: There is no gray zone with such ID');
-      res.sendStatus(404);
-    } else {
-      console.log('Gray zone was successfully deleted');
-      res.status(200).send(result.rows);
-    }
-  });
+    database.query(query, (err, result) => {
+      if (err) {
+        res.sendStatus(500);
+      } else if (result.rows.length === 0) {
+        console.log('Error: There is no gray zone with such ID');
+        res.sendStatus(404);
+      } else {
+        console.log('Gray zone was successfully deleted');
+        res.status(200).send(result.rows);
+      }
+    });
+  }  
 };
