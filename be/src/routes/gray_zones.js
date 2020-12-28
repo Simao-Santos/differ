@@ -109,9 +109,11 @@ router.get('/:id', grayZoneController.get_gray_zones);
 *       $ref: '#/components/schemas/Insert'
 *   responses:
 *    "200":
-*     description: Operation successful.
+*     description: Operation successful
 *    "400":
 *     description: Invalid request
+*    "404":
+*     description: Page id is not valid
 *    "500":
 *     description: Server could not handle request
 */

@@ -111,6 +111,22 @@ BEGIN
 END;
 $$;
 
+CREATE FUNCTION insert_gray_zone()
+  RETURNS TRIGGER 
+  LANGUAGE PLPGSQL
+  AS
+$$
+BEGIN
+    IF (SELECT deleted FROM page WHERE NEW.page_id = page.id) = TRUE OR NOT EXISTS (SELECT 1 FROM page where page.id = NEW.page_id) THEN
+
+    RAISE EXCEPTION 'INVALID_PAGE_ID';
+
+	END IF;
+
+    RETURN NEW;
+END;
+$$;
+
 -- TRIGGERS
 CREATE TRIGGER delete_page_trigger
     BEFORE UPDATE
@@ -123,3 +139,9 @@ CREATE TRIGGER delete_capture_trigger
     ON capture
     FOR EACH ROW
     EXECUTE PROCEDURE delete_capture_connections();
+
+CREATE TRIGGER insert_gray_zone_trigger
+    BEFORE INSERT
+    ON gray_zone
+    FOR EACH ROW
+    EXECUTE PROCEDURE insert_gray_zone();    

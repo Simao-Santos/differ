@@ -15,7 +15,11 @@ exports.insert_gray_zone = function insertGrayZone(req, res, next) {
 
     database.query(query, (err) => {
       if (err) {
-        res.sendStatus(500);
+        if (err.message === 'INVALID_PAGE_ID') {
+          res.sendStatus(404);
+        } else {
+          res.sendStatus(500);
+        }
       } else {
         console.log('Data has been successfully inserted into database');
         res.sendStatus(200);

@@ -345,3 +345,18 @@ describe('/actions/ Route', () => {
     expect(res.statusCode).toEqual(412);
   });
 });
+
+describe('/gray_zones/ Route', () => {
+  it('should fail get the gray zones of the page (invalid page id)', async () => {
+    const res = await request(app)
+      .get('/gray_zones/1foo').send();
+    expect(res.statusCode).toEqual(400);
+  });
+
+  it('should succeed and send and empty array (non-existent page id)', async () => {
+    const res = await request(app)
+      .get('/gray_zones/10').send();
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toEqual([]);
+  });
+});
