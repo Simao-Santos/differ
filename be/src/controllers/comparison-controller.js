@@ -71,7 +71,7 @@ exports.get_comparison_range = function getComparisonRange(req, res, next) {
             + 'comparison.image_location AS comp_image_location, capture.image_location AS capt_image_location, '
             + 'comparison.capture_1_id as comp_capt_id_1 , comparison.capture_2_id as comp_capt_id_2 '
               + 'FROM capture, page, comparison '
-              + 'WHERE capture.page_id = page.id AND capture.deleted = $3 '
+              + 'WHERE capture.page_id = page.id AND capture.deleted = $3 AND page.deleted = $3'
                     + 'AND (comparison.capture_1_id = capture.id OR comparison.capture_2_id = capture.id) '
                     + 'AND capture.id IN (SELECT id FROM capture WHERE page_id = page.id ORDER BY id DESC LIMIT 2) '
                     + 'AND comparison.id IN (SELECT id '

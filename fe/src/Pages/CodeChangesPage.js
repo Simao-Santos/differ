@@ -37,15 +37,12 @@ class CodeChangesPage extends Component {
   }
 
   componentDidMount() {
-    const { page, data } = this.state;
-    console.log(page);
+    const { page } = this.state;
     const offset = (page - 1) * 20;
     const amount = page * 20;
     const requestOptions = {
       method: 'GET',
     };
-
-    console.log(data);
 
     const endpointCount = new URL('/urls/count', process.env.REACT_APP_BACKEND_HOST);
     fetch(endpointCount.toString(), requestOptions)
@@ -82,8 +79,7 @@ class CodeChangesPage extends Component {
       page,
       data: [],
       isLoading: true,
-    }, function () {
-      console.log('set state completed', this.state);
+    }, function resetComponent() {
       this.componentDidMount();
     });
   }
@@ -92,7 +88,7 @@ class CodeChangesPage extends Component {
     const {
       isLoading, data, count, page, error,
     } = this.state;
-    console.log(data);
+
     if (isLoading) {
       return (
         <>
