@@ -34,12 +34,9 @@ function UrlEdition() {
   const [doAnimation, setAnimationState] = useState(true);
   const [notificationMsg, setNotificationMsg] = useState('');
   const urlAddressRef = useRef();
+  const updateURLStyles = useRef(() => {});
 
-  // useEffects 1. load urls from local storage
-  // 2. save new url on local storage
-  useEffect(() => {
-    getListOfUrls(setBeReply);
-
+  updateURLStyles.current = () => {
     const selectedUrls = urls.filter((url) => url.selected);
 
     if (urls.length > 0) {
@@ -57,6 +54,31 @@ function UrlEdition() {
     } else {
       setStyle(['grey', 'none', '0.25']);
     }
+  }
+
+  // useEffects 1. load urls from local storage
+  // 2. save new url on local storage
+  useEffect(() => {
+    getListOfUrls(setBeReply);
+    updateURLStyles.current();
+
+    // const selectedUrls = urls.filter((url) => url.selected);
+
+    // if (urls.length > 0) {
+    //   if (urls.length === selectedUrls.length) {
+    //     setSelectAll([false, false]);
+    //   } else {
+    //     setSelectAll([true, false]);
+    //   }
+    // } else {
+    //   setSelectAll([false, true]);
+    // }
+
+    // if (selectedUrls.length > 0) {
+    //   setStyle([' ', ' ', ' ']);
+    // } else {
+    //   setStyle(['grey', 'none', '0.25']);
+    // }
   }, []);
 
   useEffect(() => {

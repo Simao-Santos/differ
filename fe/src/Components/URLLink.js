@@ -14,8 +14,9 @@ export default function URLLink({ link, toggleSelected }) {
   const [extHTML, setExtHTML] = useState('<h1>Oops, you\'re not supposed to here</h1>');
   const [elementIdentifiers, setElementIdentifiers] = useState([]);
   const newSelectorRef = useRef();
+  const getElementIdentifiers = useRef(() => {});
 
-  function getElementIdentifiers() {
+  getElementIdentifiers.current = () => {
     console.log('getting identifiers from db');
 
     const requestOptions = {
@@ -43,7 +44,7 @@ export default function URLLink({ link, toggleSelected }) {
 
     const endpoint = new URL('/gray_zones/', process.env.REACT_APP_BACKEND_HOST);
     fetch(endpoint.toString(), requestOptions)
-      .then(() => getElementIdentifiers());
+      .then(() => getElementIdentifiers.current());
 
 
     newSelectorRef.current.value = null;
@@ -56,11 +57,11 @@ export default function URLLink({ link, toggleSelected }) {
 
     const endpoint = new URL(`/gray_zones/${grayZoneId}`, process.env.REACT_APP_BACKEND_HOST);
     fetch(endpoint.toString(), requestOptions)
-      .then(() => getElementIdentifiers());
+      .then(() => getElementIdentifiers.current());
   }
 
   useEffect(() => {
-    getElementIdentifiers();
+    getElementIdentifiers.current();
   }, []);
 
   function mouseOver(event) {
