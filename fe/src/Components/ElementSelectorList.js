@@ -6,10 +6,11 @@ class ElementSelectorList extends Component {
 
     render() {
         const { elementIdentifiers } = this.props;
+        const { deleteSelector } = this.props;
         
         return (
             elementIdentifiers.map((elementIdentifier) => <ElementSelector key={elementIdentifier.id}
-                identifier={elementIdentifier} />)
+                identifier={elementIdentifier} deleteSelector={deleteSelector} />)
         );
     }
 }

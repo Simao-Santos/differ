@@ -22,7 +22,7 @@ export default function URLLink({ link, toggleSelected }) {
       method: 'GET',
     };
 
-    const endpoint = new URL('/grayzones', process.env.REACT_APP_BACKEND_HOST);
+    const endpoint = new URL('/gray_zones', process.env.REACT_APP_BACKEND_HOST);
     fetch(endpoint.toString(), requestOptions)
       .then((res) => {
         res.text()
@@ -41,12 +41,21 @@ export default function URLLink({ link, toggleSelected }) {
       body: JSON.stringify({ pageId: link.id, elementSelector: newSelector }),
     };
 
-    const endpoint = new URL(`/grayzones/${link.id}`, process.env.REACT_APP_BACKEND_HOST);
+    const endpoint = new URL(`/gray_zones/${link.id}`, process.env.REACT_APP_BACKEND_HOST);
     fetch(endpoint.toString(), requestOptions);
 
 
     newSelectorRef.current.value = null;
   }
+
+  function deleteSelector() {
+    const requestOptions = {
+        method: 'DELETE',
+    };
+
+    const endpoint = new URL(`/gray_zones/${ identifier.id }`, process.env.REACT_APP_BACKEND_HOST);
+    fetch(endpoint.toString(), requestOptions);
+}
 
   function mouseOver(event) {
     console.log(`Entered ${event.target}`);
@@ -281,7 +290,7 @@ export default function URLLink({ link, toggleSelected }) {
               <button onClick={handleAddSelector}>+</button>
             </div>
             <div className="element-list">
-              <ElementSelectorList elementIdentifiers={elementIdentifiers} />
+              <ElementSelectorList elementIdentifiers={elementIdentifiers, deleteSelector} />
             </div>
           </div>
         </div>

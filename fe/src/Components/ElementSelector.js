@@ -1,16 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-export default function ElementSelector({ identifier }) {
-
-    function deleteSelector() {
-        const requestOptions = {
-            method: 'DELETE',
-        };
-
-        const endpoint = new URL(`/grayzones/${ identifier.id }`, process.env.REACT_APP_BACKEND_HOST);
-        fetch(endpoint.toString(), requestOptions);
-    }
+export default function ElementSelector({ identifier, deleteSelector }) {
 
     return (
         <>
