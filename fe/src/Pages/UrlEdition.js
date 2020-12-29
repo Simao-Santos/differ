@@ -11,7 +11,8 @@ function getListOfUrls(setBeReply) {
     method: 'GET',
   };
 
-  fetch(`${process.env.REACT_APP_BACKEND_HOST}/urls/`, requestOptions)
+  const endpoint = new URL('/urls/', process.env.REACT_APP_BACKEND_HOST);
+  fetch(endpoint.toString(), requestOptions)
     .then((res) => {
       res.text()
         .then((content) => setBeReply({ type: 'get_urls', status: res.status, content: JSON.parse(content) }));
@@ -151,7 +152,9 @@ function UrlEdition() {
       },
       body: JSON.stringify({ url: address }),
     };
-    fetch(`${process.env.REACT_APP_BACKEND_HOST}/urls`, requestOptions)
+
+    const endpoint = new URL('/urls/', process.env.REACT_APP_BACKEND_HOST);
+    fetch(endpoint.toString(), requestOptions)
       .then((res) => {
         res.text()
           .then((content) => setBeReply({ type: 'post_url', status: res.status, content: JSON.parse(content) }));
@@ -186,7 +189,9 @@ function UrlEdition() {
       },
       body: JSON.stringify({ url: address }),
     };
-    fetch(`${process.env.REACT_APP_BACKEND_HOST}/urls`, requestOptions)
+
+    const endpoint = new URL('/urls/', process.env.REACT_APP_BACKEND_HOST);
+    fetch(endpoint.toString(), requestOptions)
       .then((res) => {
         res.text()
           .then((content) => setBeReply({ type: 'post_url', status: res.status, content: JSON.parse(content) }));
@@ -217,11 +222,14 @@ function UrlEdition() {
         method: 'DELETE',
       };
 
-      myUrlIds.forEach((id) => fetch(`${process.env.REACT_APP_BACKEND_HOST}/urls/${id}`, requestOptions)
-        .then((res) => {
-          res.text()
-            .then((content) => setBeReply({ type: 'delete_url', status: res.status, content: JSON.parse(content) }));
-        }));
+      myUrlIds.forEach((id) => {
+        const endpoint = new URL(`/urls/${id}`, process.env.REACT_APP_BACKEND_HOST);
+        fetch(endpoint.toString(), requestOptions)
+          .then((res) => {
+            res.text()
+              .then((content) => setBeReply({ type: 'delete_url', status: res.status, content: JSON.parse(content) }));
+          });
+      });
 
       setAnimationState(false);
     }
@@ -242,14 +250,17 @@ function UrlEdition() {
 
       };
 
-      myUrlIds.forEach((id) => fetch(`${process.env.REACT_APP_BACKEND_HOST}/actions/capture/${id}`, requestOptions)
-        .then((res) => {
-          if (res.status === 200) {
-            console.log(`Capture for id ${id} has started`);
-          } else if (res.status === 400 || res.status === 404 || res.status === 500) {
-            setNotificationMsg('Could not capture URL');
-          }
-        }));
+      myUrlIds.forEach((id) => {
+        const endpoint = new URL(`/actions/capture/${id}`, process.env.REACT_APP_BACKEND_HOST);
+        fetch(endpoint.toString(), requestOptions)
+          .then((res) => {
+            if (res.status === 200) {
+              console.log(`Capture for id ${id} has started`);
+            } else if (res.status === 400 || res.status === 404 || res.status === 500) {
+              setNotificationMsg('Could not capture URL');
+            }
+          });
+      });
 
       setAnimationState(false);
     }
@@ -281,17 +292,20 @@ function UrlEdition() {
       method: 'GET',
     };
 
-    myUrlIds.forEach((id) => fetch(`${process.env.REACT_APP_BACKEND_HOST}/actions/compare/${id}`, requestOptions)
-      .then((res) => {
-        if (res.status === 200) {
-          console.log(`Comparison for id ${id} has started`);
-        } else if (res.status === 412) {
-          console.log(`Comparison for id ${id} has not started because there is no older capture for this URL`);
-          setNotificationMsg('Comparison has not started because there is no older capture for this URL');
-        } else if (res.status === 400 || res.status === 404 || res.status === 500) {
-          setNotificationMsg('Could not compare URL');
-        }
-      }));
+    myUrlIds.forEach((id) => {
+      const endpoint = new URL(`/actions/compare/${id}`, process.env.REACT_APP_BACKEND_HOST);
+      fetch(endpoint.toString(), requestOptions)
+        .then((res) => {
+          if (res.status === 200) {
+            console.log(`Comparison for id ${id} has started`);
+          } else if (res.status === 412) {
+            console.log(`Comparison for id ${id} has not started because there is no older capture for this URL`);
+            setNotificationMsg('Comparison has not started because there is no older capture for this URL');
+          } else if (res.status === 400 || res.status === 404 || res.status === 500) {
+            setNotificationMsg('Could not compare URL');
+          }
+        });
+    });
 
     setAnimationState(false);
   }
