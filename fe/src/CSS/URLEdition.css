@@ -183,6 +183,11 @@ input[type="text"] {
     flex-direction: row;
     justify-content: space-between;
     height: 5em;
+    align-items: center;
+}
+
+.element-selector-holder button {
+    background-color: white;
 }
 
 .element-selector-holder img {
@@ -195,5 +200,6 @@ input[type="text"] {
 }
 
 .element-selector-holder p {
+    margin: 0;
     font-size: 1.5em;
 }

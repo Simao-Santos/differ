@@ -2,21 +2,22 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 export default function ElementSelector({ identifier, deleteSelector }) {
-
-    return (
-        <>
-            <div className="element-selector-holder">
-                <p>{identifier.element_selector}</p>
-                <img src="../trash-icon.png" alt="Remove" onClick={() => deleteSelector(identifier.id)}/>
-            </div>
-        </>
-    );
+  return (
+    <>
+      <div className="element-selector-holder">
+        <p>{identifier.element_selector}</p>
+        <button type="button" onClick={() => deleteSelector(identifier.id)} className="trash-button">
+          <img src="../trash-icon.png" alt="Remove" />
+        </button>
+      </div>
+    </>
+  );
 }
 
 ElementSelector.propTypes = {
-    identifier: PropTypes.exact({
-      pageId: PropTypes.number.isRequired,
-      id: PropTypes.number.isRequired,
-      elementSelector: PropTypes.string.isRequired,
-    }).isRequired,
-  };
+  deleteSelector: PropTypes.func.isRequired,
+  identifier: PropTypes.exact({
+    id: PropTypes.number.isRequired,
+    element_selector: PropTypes.string.isRequired,
+  }).isRequired,
+};

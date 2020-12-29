@@ -14,7 +14,7 @@ export default function URLLink({ link, toggleSelected }) {
   const [extHTML, setExtHTML] = useState('<h1>Oops, you\'re not supposed to here</h1>');
   const [elementIdentifiers, setElementIdentifiers] = useState([]);
   const newSelectorRef = useRef();
-  const getElementIdentifiers = useRef(() => {});
+  const getElementIdentifiers = useRef(() => { });
 
   getElementIdentifiers.current = () => {
     console.log('getting identifiers from db');
@@ -29,7 +29,7 @@ export default function URLLink({ link, toggleSelected }) {
         res.text()
           .then((content) => setElementIdentifiers(JSON.parse(content)));
       });
-  }
+  };
 
   function handleAddSelector() {
     const newSelector = newSelectorRef.current.value;
@@ -45,7 +45,6 @@ export default function URLLink({ link, toggleSelected }) {
     const endpoint = new URL('/gray_zones/', process.env.REACT_APP_BACKEND_HOST);
     fetch(endpoint.toString(), requestOptions)
       .then(() => getElementIdentifiers.current());
-
 
     newSelectorRef.current.value = null;
   }
@@ -113,8 +112,6 @@ export default function URLLink({ link, toggleSelected }) {
 
     if (selectedDiv !== null) {
       selectedDiv.remove();
-
-      // TODO request to delete css selector path from the backend
     } else {
       selectedDiv = document.createElement('div');
 
@@ -135,8 +132,6 @@ export default function URLLink({ link, toggleSelected }) {
       selectedDiv.id = `selectedDiv-${hash}`;
 
       iframeBody.appendChild(selectedDiv);
-
-      // TODO request to save css selector in the backend
     }
   }
 
@@ -145,8 +140,6 @@ export default function URLLink({ link, toggleSelected }) {
 
     const iframe = this;
     const iframeBody = iframe.contentWindow.document.querySelector('body');
-
-    // TODO request gray zones from database and create them
 
     const elementList = [{ id: 1, page_id: 1, element_selector: '#main_news' }, { id: 2, page_id: 2, element_selector: '#page_main > div > div:nth-child(6)' }];
 
@@ -293,11 +286,14 @@ export default function URLLink({ link, toggleSelected }) {
           </div>
           <div className="element-manager">
             <div className="input-holder">
-              <input type="text" ref={newSelectorRef} placeholder="Type css selector of element"></input>
-              <button onClick={handleAddSelector}>+</button>
+              <input type="text" ref={newSelectorRef} placeholder="Type css selector of element" />
+              <button type="button" onClick={handleAddSelector}>+</button>
             </div>
             <div className="element-list">
-              <ElementSelectorList elementIdentifiers={elementIdentifiers} deleteSelector={deleteSelector} />
+              <ElementSelectorList
+                elementIdentifiers={elementIdentifiers}
+                deleteSelector={deleteSelector}
+              />
             </div>
           </div>
         </div>

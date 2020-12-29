@@ -54,7 +54,7 @@ function UrlEdition() {
     } else {
       setStyle(['grey', 'none', '0.25']);
     }
-  }
+  };
 
   // useEffects 1. load urls from local storage
   // 2. save new url on local storage
@@ -83,8 +83,8 @@ function UrlEdition() {
 
   useEffect(() => {
     console.log('saved urls');
-    let newMinHeight = urls.length * 100 + 100;
-    document.getElementsByTagName('body')[0].style.minHeight = newMinHeight + 'vh';
+    const newMinHeight = urls.length * 100 + 100;
+    document.getElementsByTagName('body')[0].style.minHeight = `${newMinHeight}vh`;
   }, [urls]);
 
   useEffect(() => {
@@ -379,7 +379,9 @@ function UrlEdition() {
 
             <div className="row">
               <label className="under-input-text" htmlFor="file">
-                or {' '}
+                or
+                {' '}
+                {' '}
                 <span className="orange-text">submit</span>
                 {' '}
                 a file.
