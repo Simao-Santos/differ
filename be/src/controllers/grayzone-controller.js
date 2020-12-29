@@ -66,7 +66,7 @@ exports.delete_gray_zone = function deleteGrayZone(req, res, next) {
         res.sendStatus(404);
       } else {
         console.log('Gray zone was successfully deleted');
-        res.status(200).send(result.rows);
+        res.status(200).send(result.rows[0]);
       }
     });
   }

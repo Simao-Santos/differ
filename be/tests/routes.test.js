@@ -455,7 +455,7 @@ describe('/gray_zones/ Route', () => {
       .delete('/gray_zones/4').send();
 
     expect(res.statusCode).toEqual(200);
-    expect(res.body[0].id).toEqual(4);
+    expect(res.body.id).toEqual(4);
 
     res = await request(app)
       .get('/gray_zones/6').send();
