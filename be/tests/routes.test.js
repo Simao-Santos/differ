@@ -345,3 +345,156 @@ describe('/actions/ Route', () => {
     expect(res.statusCode).toEqual(412);
   });
 });
+
+describe('/gray_zones/ Route', () => {
+  it('should fail get the gray zones of the page (invalid page id)', async () => {
+    const res = await request(app)
+      .get('/gray_zones/1foo').send();
+    expect(res.statusCode).toEqual(400);
+  });
+
+  it('should succeed and send an empty array (non-existent page id)', async () => {
+    const res = await request(app)
+      .get('/gray_zones/10').send();
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toEqual([]);
+  });
+
+  it('should fail due to the invalid params', async () => {
+    const res = await request(app)
+      .post('/gray_zones')
+      .send({
+        url: 'https://www.google.pt/',
+        page_id: 1,
+      });
+    expect(res.statusCode).toEqual(400);
+  });
+
+  it('should fail due to the invalid params (page id should be integer)', async () => {
+    const res = await request(app)
+      .post('/gray_zones')
+      .send({
+        page_id: 'a',
+        gray_zone: 'body',
+      });
+    expect(res.statusCode).toEqual(400);
+  });
+
+  it('should fail because the page id does not exist', async () => {
+    const res = await request(app)
+      .post('/gray_zones')
+      .send({
+        page_id: 96,
+        gray_zone: 'body',
+      });
+    expect(res.statusCode).toEqual(404);
+  });
+
+  it('should fail because of the invalid gray zone param', async () => {
+    const res = await request(app)
+      .post('/gray_zones')
+      .send({
+        page_id: 96,
+        gray_zone: 4,
+      });
+    expect(res.statusCode).toEqual(400);
+  });
+
+  it('should succeed and add gray zone', async () => {
+    let res = await request(app)
+      .post('/urls')
+      .send({
+        url: 'https://www.google.com/',
+        doNotCapture: true,
+      });
+
+    res = await request(app)
+      .post('/gray_zones')
+      .send({
+        page_id: 6,
+        gray_zone: 'body',
+      });
+    expect(res.statusCode).toEqual(200);
+  });
+
+  it('should succeed to get the only gray zone of the page', async () => {
+    const res = await request(app)
+      .get('/gray_zones/6').send();
+    expect(res.statusCode).toEqual(200);
+    expect(res.body.length).toEqual(1);
+    expect(res.body[0].page_id).toEqual(6);
+    expect(res.body[0].element_selector).toEqual('body');
+  });
+
+  it('should succeed to add a new gray zone and get the 2 existing gray zones of the page', async () => {
+    let res = await request(app)
+      .post('/gray_zones')
+      .send({
+        page_id: 6,
+        gray_zone: 'header',
+      });
+
+    res = await request(app)
+      .get('/gray_zones/6').send();
+    expect(res.statusCode).toEqual(200);
+    expect(res.body.length).toEqual(2);
+    expect(res.body[0].page_id).toEqual(6);
+    expect(res.body[0].element_selector).toEqual('body');
+    expect(res.body[1].page_id).toEqual(6);
+    expect(res.body[1].element_selector).toEqual('header');
+  });
+
+  it('should succeed to add a new gray zone and delete it', async () => {
+    let res = await request(app)
+      .post('/gray_zones')
+      .send({
+        page_id: 6,
+        gray_zone: 'header',
+      });
+    res = await request(app)
+      .delete('/gray_zones/4').send();
+
+    expect(res.statusCode).toEqual(200);
+    expect(res.body.id).toEqual(4);
+
+    res = await request(app)
+      .get('/gray_zones/6').send();
+    expect(res.body.length).toEqual(2);
+    expect(res.body[0].id).toEqual(2);
+    expect(res.body[1].id).toEqual(3);
+  });
+
+  it('should fail to delete the gray zone (invalid id)', async () => {
+    const res = await request(app)
+      .delete('/gray_zones/a').send();
+
+    expect(res.statusCode).toEqual(400);
+  });
+
+  it('should fail to delete the gray zone (id does not exist)', async () => {
+    const res = await request(app)
+      .delete('/gray_zones/8').send();
+
+    expect(res.statusCode).toEqual(404);
+  });
+
+  it('should succeed to delete the page from the database and delete all associated gray zones', async () => {
+    let res = await request(app)
+      .delete('/urls/6').send();
+
+    res = await request(app)
+      .get('/gray_zones/6').send();
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toEqual([]);
+  });
+
+  it('should fail because the page in question has been deleted', async () => {
+    const res = await request(app)
+      .post('/gray_zones')
+      .send({
+        page_id: 6,
+        gray_zone: 'body',
+      });
+    expect(res.statusCode).toEqual(404);
+  });
+});

@@ -128,24 +128,56 @@ async function compareUrlAsync(id) {
   });
 }
 
+function dbQuery(databaseQuery, url, filename, saveFolder) {
+  return new Promise((data) => {
+    database.query(databaseQuery, async (error, result) => {
+      if (error) {
+        console.log('There was an error...');
+        throw error;
+      } else {
+        // Process the response from db and make it appropriate for the Pageres
+        const elementSelectors = [];
+        result.rows.forEach((element) => {
+          elementSelectors.push(element.element_selector);
+        });
+
+        // This is needed because Pageres does not accept empty data
+        let params = { filename };
+        if (elementSelectors.length !== 0) {
+          params = { filename, hide: elementSelectors };
+        }
+
+        await new Pageres({ delay: 2 })
+          .src(url, ['1920x1080'], params)
+          .dest(`./src/public${saveFolder}`)
+          .run();
+
+        console.log('Finished generating screenshot!');
+
+        // Set the promise to the correct path
+        data(`${saveFolder + ((saveFolder.endsWith('/')) ? '' : '/') + filename}.png`);
+      }
+    });
+  });
+}
+
 // Function that will screenshot the url page
-async function saveUrlScreenshot(url, filename, saveFolder) {
+async function saveUrlScreenshot(url, filename, saveFolder, id) {
   console.log('Generating page screenshot...');
 
+  // Get grey zones from database
   // A rare bug can occur when launching Chrome.
   // From what I understand it's related to the GNU C library, don't know what we can do about it.
   // It is very rare though. As of now, it has only happened once.
   // https://github.com/puppeteer/puppeteer/issues/2207
   //
   // There are still problems with some characters and some images that aren't displayed correctly
-  await new Pageres({ delay: 2 })
-    .src(url, ['1920x1080'], { filename })
-    .dest(`./src/public${saveFolder}`)
-    .run();
+  const query = {
+    text: 'SELECT element_selector FROM gray_zone WHERE page_id=$2 AND deleted=$1',
+    values: [false, id],
+  };
 
-  console.log('Finished generating screenshot!');
-
-  return `${saveFolder + ((saveFolder.endsWith('/')) ? '' : '/') + filename}.png`;
+  return dbQuery(query, url, filename, saveFolder);
 }
 
 // Asynchronous function that will capture the url content and screenshot
@@ -181,7 +213,7 @@ async function captureUrlAsync(id, url, compareNext) {
       fs.writeFileSync(`./src/public${contentPath}`, body);
       console.log('Page content saved!');
 
-      const screenshotPath = await saveUrlScreenshot(url, filename, folder);
+      const screenshotPath = await saveUrlScreenshot(url, filename, folder, id);
 
       const query = {
         text: 'INSERT INTO capture (page_id, image_location, text_location, date) VALUES ($1, $2, $3, $4) RETURNING id',
