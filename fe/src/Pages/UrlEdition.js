@@ -34,7 +34,7 @@ function UrlEdition() {
   const [doAnimation, setAnimationState] = useState(true);
   const [notificationMsg, setNotificationMsg] = useState('');
   const urlAddressRef = useRef();
-  const updateURLStyles = useRef(() => {});
+  const updateURLStyles = useRef(() => { });
 
   updateURLStyles.current = () => {
     const selectedUrls = urls.filter((url) => url.selected);
@@ -108,7 +108,6 @@ function UrlEdition() {
 
     // once a URL is checked/unchecked update delete button style
     const selectedUrls = newUrls.filter((urlAux) => urlAux.selected);
-    console.log(`there are these many selected => ${selectedUrls.length}`);
 
     if (newUrls.length > 0) {
       if (newUrls.length === selectedUrls.length) {
@@ -213,8 +212,6 @@ function UrlEdition() {
       for (let i = 0; i < selectedUrls.length; i += 1) {
         myUrlIds[i] = selectedUrls[i].id;
       }
-
-      console.log(`so in delete there are these many => ${selectedUrls}`);
 
       setStyle(['grey', 'none', '0.25']);
 
@@ -356,11 +353,11 @@ function UrlEdition() {
           <div className="left-side col-9">
             <input type="text" ref={urlAddressRef} placeholder="Insert your URL here" />
             <button type="button" onClick={handleAddURL} className="next-to-input-button">+</button>
-            <input type="file" name="file" id="file" accept=".txt" onChange={(e) => setFile({ file: e.target.files[0] })} hidden />
             <br />
 
             <div className="row">
               <label className="under-input-text" htmlFor="file">
+                <input type="file" name="file" id="file" accept=".txt" onChange={(e) => setFile({ file: e.target.files[0] })} hidden />
                 or&nbsp;
                 <span className="orange-text">submit</span>
                 &nbsp;a file.
@@ -393,7 +390,12 @@ function UrlEdition() {
             </div>
 
             <button onClick={handleToggleSelectAll} type="button" hidden={selectAllButton[1]}>{selectAllButton[0] ? 'Select all' : 'Unselect all'}</button>
-            <URLList urls={urls} toggleSelected={toggleSelected} />
+            <URLList
+              urls={urls}
+              toggleSelected={toggleSelected}
+              setNotificationMsg={setNotificationMsg}
+              setAnimationState={setAnimationState}
+            />
           </div>
           <div className="right-side col-3">
             <p>

@@ -7,7 +7,9 @@ import getCssSelector from 'css-selector-generator';
 import Spinner from 'react-bootstrap/Spinner';
 import ElementSelectorList from './ElementSelectorList';
 
-export default function URLLink({ link, toggleSelected }) {
+export default function URLLink({
+  link, toggleSelected, setNotificationMsg, setAnimationState,
+}) {
   const backgroundOn = link.selected;
 
   const [showFull, setShowFull] = useState(false);
@@ -15,6 +17,48 @@ export default function URLLink({ link, toggleSelected }) {
   const [elementIdentifiers, setElementIdentifiers] = useState([]);
   const newSelectorRef = useRef();
   const getElementIdentifiers = useRef(() => { });
+
+  function statusToString(operation, status) {
+    switch (operation) {
+      case 'get':
+        if (status === 500) {
+          setNotificationMsg('There was a problem with the server.');
+        }
+        break;
+      case 'delete':
+        switch (status) {
+          case 200:
+            setNotificationMsg('Gray zone removed.');
+            break;
+          case 404:
+            setNotificationMsg('Gray zone was not found. Try reloading the page.');
+            break;
+          case 500:
+            setNotificationMsg('There was a problem with the server.');
+            break;
+          default:
+            break;
+        }
+        break;
+      case 'post':
+        switch (status) {
+          case 200:
+            setNotificationMsg('Gray zone added.');
+            break;
+          case 404:
+            setNotificationMsg('Associated page was not found.');
+            break;
+          case 500:
+            setNotificationMsg('There was a problem with the server.');
+            break;
+          default:
+            break;
+        }
+        break;
+      default:
+        break;
+    }
+  }
 
   getElementIdentifiers.current = () => {
     console.log('getting identifiers from db');
@@ -27,8 +71,11 @@ export default function URLLink({ link, toggleSelected }) {
     fetch(endpoint.toString(), requestOptions)
       .then((res) => {
         res.text()
-          .then((content) => setElementIdentifiers(JSON.parse(content)));
+          .then((content) => setElementIdentifiers(JSON.parse(content)))
+          .then(() => statusToString('get', res.status));
       });
+
+    setAnimationState(false);
   };
 
   function handleAddSelector() {
@@ -44,8 +91,13 @@ export default function URLLink({ link, toggleSelected }) {
 
     const endpoint = new URL('/gray_zones/', process.env.REACT_APP_BACKEND_HOST);
     fetch(endpoint.toString(), requestOptions)
-      .then(() => getElementIdentifiers.current());
+      .then((res) => {
+        res.text()
+          .then(() => getElementIdentifiers.current())
+          .then(() => statusToString('post', res.status));
+      });
 
+    setAnimationState(false);
     newSelectorRef.current.value = null;
   }
 
@@ -56,7 +108,13 @@ export default function URLLink({ link, toggleSelected }) {
 
     const endpoint = new URL(`/gray_zones/${grayZoneId}`, process.env.REACT_APP_BACKEND_HOST);
     fetch(endpoint.toString(), requestOptions)
-      .then(() => getElementIdentifiers.current());
+      .then((res) => {
+        res.text()
+          .then(() => getElementIdentifiers.current())
+          .then(() => statusToString('delete', res.status));
+      });
+
+    setAnimationState(false);
   }
 
   useEffect(() => {
@@ -293,6 +351,7 @@ export default function URLLink({ link, toggleSelected }) {
               <ElementSelectorList
                 elementIdentifiers={elementIdentifiers}
                 deleteSelector={deleteSelector}
+                setNotificationMsg={setNotificationMsg}
               />
             </div>
           </div>
@@ -310,6 +369,8 @@ export default function URLLink({ link, toggleSelected }) {
 }
 
 URLLink.propTypes = {
+  setNotificationMsg: PropTypes.func.isRequired,
+  setAnimationState: PropTypes.func.isRequired,
   toggleSelected: PropTypes.func.isRequired,
   link: PropTypes.exact({
     selected: PropTypes.bool.isRequired,
