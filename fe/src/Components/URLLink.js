@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import '../CSS/URLEdition.css';
 import '../CSS/PrettyChecks.scss';
@@ -22,7 +22,7 @@ export default function URLLink({ link, toggleSelected }) {
       method: 'GET',
     };
 
-    const endpoint = new URL('/gray_zones', process.env.REACT_APP_BACKEND_HOST);
+    const endpoint = new URL(`/gray_zones/${link.id}`, process.env.REACT_APP_BACKEND_HOST);
     fetch(endpoint.toString(), requestOptions)
       .then((res) => {
         res.text()
@@ -38,24 +38,30 @@ export default function URLLink({ link, toggleSelected }) {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
       },
-      body: JSON.stringify({ pageId: link.id, elementSelector: newSelector }),
+      body: JSON.stringify({ page_id: link.id, gray_zone: newSelector }),
     };
 
-    const endpoint = new URL(`/gray_zones/${link.id}`, process.env.REACT_APP_BACKEND_HOST);
-    fetch(endpoint.toString(), requestOptions);
+    const endpoint = new URL('/gray_zones/', process.env.REACT_APP_BACKEND_HOST);
+    fetch(endpoint.toString(), requestOptions)
+      .then(() => getElementIdentifiers());
 
 
     newSelectorRef.current.value = null;
   }
 
-  function deleteSelector() {
+  function deleteSelector(grayZoneId) {
     const requestOptions = {
-        method: 'DELETE',
+      method: 'DELETE',
     };
 
-    const endpoint = new URL(`/gray_zones/${ identifier.id }`, process.env.REACT_APP_BACKEND_HOST);
-    fetch(endpoint.toString(), requestOptions);
-}
+    const endpoint = new URL(`/gray_zones/${grayZoneId}`, process.env.REACT_APP_BACKEND_HOST);
+    fetch(endpoint.toString(), requestOptions)
+      .then(() => getElementIdentifiers());
+  }
+
+  useEffect(() => {
+    getElementIdentifiers();
+  }, []);
 
   function mouseOver(event) {
     console.log(`Entered ${event.target}`);
@@ -290,7 +296,7 @@ export default function URLLink({ link, toggleSelected }) {
               <button onClick={handleAddSelector}>+</button>
             </div>
             <div className="element-list">
-              <ElementSelectorList elementIdentifiers={elementIdentifiers, deleteSelector} />
+              <ElementSelectorList elementIdentifiers={elementIdentifiers} deleteSelector={deleteSelector} />
             </div>
           </div>
         </div>

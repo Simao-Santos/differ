@@ -6,8 +6,8 @@ export default function ElementSelector({ identifier, deleteSelector }) {
     return (
         <>
             <div className="element-selector-holder">
-                <p>{identifier.elementSelector}</p>
-                <img src="../trash-icon.png" alt="Remove" onClick={deleteSelector}/>
+                <p>{identifier.element_selector}</p>
+                <img src="../trash-icon.png" alt="Remove" onClick={() => deleteSelector(identifier.id)}/>
             </div>
         </>
     );
