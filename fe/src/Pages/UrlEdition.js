@@ -123,9 +123,7 @@ function UrlEdition() {
     }
   }
 
-  // adding a new url via text input
-  function handleAddURL() {
-    const address = urlAddressRef.current.value;
+  function handleAddURL(address) {
     if (address === '') return;
     const pattern = new RegExp('^(https?:\\/\\/)?' // protocol
       + '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' // domain name
@@ -157,6 +155,14 @@ function UrlEdition() {
         res.text()
           .then((content) => setBeReply({ type: 'post_url', status: res.status, content: JSON.parse(content) }));
       });
+  }
+
+  // adding a new url via text input
+  function handleAddTextAreaURLs() {
+    const addresses = urlAddressRef.current.value;
+    const addressesArray = addresses.split("\n");
+
+    addressesArray.forEach(address => handleAddURL(address));
 
     setAnimationState(false);
   }
@@ -348,8 +354,10 @@ function UrlEdition() {
       <div className="container">
         <div className="row main-section">
           <div className="left-side col-9">
-            <input type="text" ref={urlAddressRef} placeholder="Insert your URL here" />
-            <button type="button" onClick={handleAddURL} className="next-to-input-button">+</button>
+            <div className="row">
+              <textarea ref={urlAddressRef} placeholder="Insert your URL here" />
+              <button type="button" onClick={handleAddTextAreaURLs} className="next-to-input-button">+</button>
+            </div>
             <input type="file" name="file" id="file" accept=".txt" onChange={(e) => setFile({ file: e.target.files[0] })} hidden />
             <br />
 
