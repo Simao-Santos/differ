@@ -379,12 +379,9 @@ function UrlEdition() {
 
             <div className="row">
               <label className="under-input-text" htmlFor="file">
-                or
-                {' '}
-                {' '}
+                or&nbsp;
                 <span className="orange-text">submit</span>
-                {' '}
-                a file.
+                &nbsp;a file.
               </label>
               <br />
               <br />
