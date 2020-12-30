@@ -160,9 +160,9 @@ function UrlEdition() {
   // adding a new url via text input
   function handleAddTextAreaURLs() {
     const addresses = urlAddressRef.current.value;
-    const addressesArray = addresses.split("\n");
+    const addressesArray = addresses.split('\n');
 
-    addressesArray.forEach(address => handleAddURL(address));
+    addressesArray.forEach((address) => handleAddURL(address));
 
     setAnimationState(false);
   }
