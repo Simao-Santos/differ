@@ -132,8 +132,7 @@ function UrlEdition() {
       + '(\\?[;&a-z\\d%_.~+=-]*)?' // query string
       + '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
     if (!pattern.test(address)) {
-      alert('Please insert a valid URL.');
-      return;
+      return -1;
     }
 
     urlAddressRef.current.value = null;
@@ -161,8 +160,16 @@ function UrlEdition() {
   function handleAddTextAreaURLs() {
     const addresses = urlAddressRef.current.value;
     const addressesArray = addresses.split('\n');
+    var alertaux = false;
+    addressesArray.forEach((address) => {
+      var aux= handleAddURL(address);
+      if(aux==-1){
+        alertaux=true;
+      }
+    });
+    if(alertaux==true)
+      alert('Please insert a valid URL.');
 
-    addressesArray.forEach((address) => handleAddURL(address));
 
     setAnimationState(false);
   }
