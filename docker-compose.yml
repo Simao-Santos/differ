@@ -10,6 +10,7 @@ services:
     build:
       context: ./fe
       dockerfile: Dockerfile
+    command: npm start
     tty: true
     volumes:
       - ./fe/src/:/app/fe/src/
