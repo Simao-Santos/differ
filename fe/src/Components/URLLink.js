@@ -100,30 +100,39 @@ export default function URLLink({ link, toggleSelected }) {
 
     setTimeout(() => {
       for (let i = 0; i < elementList.length; i += 1) {
-        const elem = iframe.contentWindow.document.querySelector(elementList[i].element_selector);
-        const cssSelector = getCssSelector(elem, { selectors: ['class', 'id', 'tag', 'nthchild'] });
+        // This try catch is for handling cases where the 'drawer' is closed just after
+        // the page is loaded and it starts adding the events
+        // Since the 'drawer' is collapse, there is no page anymore, causing errors
+        try {
+          const elem = iframe.contentWindow.document.querySelector(elementList[i].element_selector);
+          const cssSelector = getCssSelector(elem, { selectors: ['class', 'id', 'tag', 'nthchild'] });
 
-        const hash = CryptoJS.MD5(cssSelector).toString(CryptoJS.enc.Base64);
+          const hash = CryptoJS.MD5(cssSelector).toString(CryptoJS.enc.Base64);
 
-        const selectedDiv = document.createElement('div');
+          const selectedDiv = document.createElement('div');
 
-        const elemDomRect = elem.getBoundingClientRect();
-        const bodyDomRect = iframeBody.getBoundingClientRect();
+          const elemDomRect = elem.getBoundingClientRect();
+          const bodyDomRect = iframeBody.getBoundingClientRect();
 
-        selectedDiv.style.height = `${Math.round(elemDomRect.height)}px`;
-        selectedDiv.style.width = `${Math.round(elemDomRect.width)}px`;
-        selectedDiv.style.position = 'absolute';
-        selectedDiv.style.zIndex = Number.MAX_SAFE_INTEGER;
-        selectedDiv.style.top = `${Math.round(elemDomRect.top - bodyDomRect.top)}px`;
-        selectedDiv.style.left = `${Math.round(elemDomRect.left - bodyDomRect.left)}px`;
+          selectedDiv.style.height = `${Math.round(elemDomRect.height)}px`;
+          selectedDiv.style.width = `${Math.round(elemDomRect.width)}px`;
+          selectedDiv.style.position = 'absolute';
+          selectedDiv.style.zIndex = Number.MAX_SAFE_INTEGER;
+          selectedDiv.style.top = `${Math.round(elemDomRect.top - bodyDomRect.top)}px`;
+          selectedDiv.style.left = `${Math.round(elemDomRect.left - bodyDomRect.left)}px`;
 
-        selectedDiv.style.backgroundColor = 'rgba(148, 148, 148, 0.5)';
+          selectedDiv.style.backgroundColor = 'rgba(148, 148, 148, 0.5)';
 
-        selectedDiv.style.pointerEvents = 'none';
+          selectedDiv.style.pointerEvents = 'none';
 
-        selectedDiv.id = `selectedDiv-${hash}`;
+          selectedDiv.id = `selectedDiv-${hash}`;
 
-        iframeBody.appendChild(selectedDiv);
+          iframeBody.appendChild(selectedDiv);
+        } catch (err) {
+          console.log(err);
+          console.log('Drawer has been closed, aborting event adding');
+          return;
+        }
       }
 
       iframeBody.addEventListener('mouseover', mouseOver);
