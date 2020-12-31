@@ -119,9 +119,7 @@ eslint-backend:
   script:
     - cd be/
     - npm install eslint
-    - echo "Linting Backend..."
     - npm run lint
-    - echo "Linting found no problems"
   # lint can fail, but only when not in the develop or master branch and when not in a merge request
   allow_failure: true
   rules:
@@ -140,9 +138,7 @@ eslint-frontend:
   script:
     - cd fe/
     - npm install eslint
-    - echo "Linting Frontend..."
     - npm run lint
-    - echo "Linting found no problems"
   # lint can fail, but only when not in the develop or master branch and when not in a merge request
   allow_failure: true
   rules:
