@@ -69,7 +69,7 @@ exports.get_comparison_range = function getComparisonRange(req, res, next) {
     const query = {
       text: 'SELECT capture.date, comparison.id AS comp_id, page.id AS page_id, page.url, comparison.text_location AS comp_text_location, '
             + 'comparison.image_location AS comp_image_location, capture.image_location AS capt_image_location, comparison.diff_pixels * 1.0 / comparison.total_pixels as diff_percentage,'
-            + 'comparison.capture_1_id as comp_capt_id_1 , comparison.capture_2_id as comp_capt_id_2 '
+            + 'comparison.capture_1_id as comp_capt_id_1 , comparison.capture_2_id as comp_capt_id_2, comparison.total_pixels as total_pixels, comparison.diff_pixels as diff_pixels '
               + 'FROM capture, page, comparison '
               + 'WHERE capture.page_id = page.id AND capture.deleted = $3 AND page.deleted = $3'
                     + 'AND (comparison.capture_1_id = capture.id OR comparison.capture_2_id = capture.id) '
