@@ -161,10 +161,25 @@ function UrlEdition() {
     return true;
   }
 
+  function removeDupsURLs(addressesArray) {
+
+    let uniqueAddressesArray = [];
+
+    for(let i = 0; i < addressesArray.length; i++) {
+      if(!uniqueAddressesArray.includes(addressesArray[i])){
+        uniqueAddressesArray.push(addressesArray[i]);
+      }
+    } 
+
+    return uniqueAddressesArray;
+  }
+
   // adding a new url via text input
   function handleAddTextAreaURLs() {
     const addresses = urlAddressRef.current.value;
     const addressesArray = addresses.split('\n');
+
+    const uniqueAddressesArray = removeDupsURLs(addressesArray);
 
     for(let i = 0; i < uniqueAddressesArray.length; i++) {
       if(!validateURL(uniqueAddressesArray[i])){
@@ -172,6 +187,8 @@ function UrlEdition() {
         return;
       }
     }
+
+    uniqueAddressesArray.forEach((address) => handleAddURL(address));
 
     setAnimationState(false);
   }
