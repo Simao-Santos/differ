@@ -138,7 +138,14 @@ async function saveUrlScreenshot(url, filename, saveFolder) {
   // https://github.com/puppeteer/puppeteer/issues/2207
   //
   // There are still problems with some characters and some images that aren't displayed correctly
-  const argsArray = ['--no-sandbox', '--disable-setuid-sandbox'];
+
+  // Turns on sandbox mode if in server
+  var argsArray;
+  if (process.env.NODE_ENV === 'production')
+    argsArray = ['--no-sandbox', '--disable-setuid-sandbox'];
+  else if (process.env.NODE_ENV === 'development')
+    argsArray = [];
+
   const launchOpts = { args: argsArray };
 
   await new Pageres({ delay: 2, launchOptions: launchOpts })

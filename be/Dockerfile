@@ -81,4 +81,6 @@ USER differuser
 # Makes sure the backend is only started when the database is ready
 ENTRYPOINT ["./wait-for-pg.sh"]
 
+ENV NODE_ENV production
+
 CMD npm start
