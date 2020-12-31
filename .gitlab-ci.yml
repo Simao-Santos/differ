@@ -206,3 +206,51 @@ test_frontend:
 ########################################################################
 
 ### DEPLOY
+
+# deploy backend (staging server)
+deploy-staging-backend:
+  stage: deploy
+  image: node:latest
+  script:
+    - cd be/
+    - npm install heroku
+    - heroku container:push web -a $STAGING_BACKEND
+    - heroku container:release web -a $STAGING_BACKEND
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+
+# deploy frontend (staging server)
+deploy-staging-frontend:
+  stage: deploy
+  image: node:latest
+  script:
+    - cd fe/
+    - npm install heroku
+    - heroku container:push web -a $STAGING_FRONTEND
+    - heroku container:release web -a $STAGING_FRONTEND
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+
+# deploy backend (production server)
+deploy-production-backend:
+  stage: deploy
+  image: node:latest
+  script:
+    - cd be/
+    - npm install heroku
+    - heroku container:push web -a $PRODUCTION_BACKEND
+    - heroku container:release web -a $PRODUCTION_BACKEND
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+
+# deploy frontend (production server)
+deploy-production-frontend:
+  stage: deploy
+  image: node:latest
+  script:
+    - cd fe/
+    - npm install heroku
+    - heroku container:push web -a $PRODUCTION_FRONTEND
+    - heroku container:release web -a $PRODUCTION_FRONTEND
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
