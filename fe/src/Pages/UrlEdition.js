@@ -125,16 +125,6 @@ function UrlEdition() {
 
   function handleAddURL(address) {
     if (address === '') return;
-    const pattern = new RegExp('^(https?:\\/\\/)?' // protocol
-      + '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' // domain name
-      + '((\\d{1,3}\\.){3}\\d{1,3})|localhost)' // OR ip (v4) address
-      + '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' // port and path
-      + '(\\?[;&a-z\\d%_.~+=-]*)?' // query string
-      + '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
-    if (!pattern.test(address)) {
-      alert('Please insert a valid URL.');
-      return;
-    }
 
     urlAddressRef.current.value = null;
     setStyle([' ', ' ', ' ']);
@@ -157,12 +147,31 @@ function UrlEdition() {
       });
   }
 
+  function validateURL(address) {
+    const pattern = new RegExp('^(https?:\\/\\/)?' // protocol
+      + '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' // domain name
+      + '((\\d{1,3}\\.){3}\\d{1,3})|localhost)' // OR ip (v4) address
+      + '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' // port and path
+      + '(\\?[;&a-z\\d%_.~+=-]*)?' // query string
+      + '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+    if (!pattern.test(address)) {
+      return false;
+    }
+
+    return true;
+  }
+
   // adding a new url via text input
   function handleAddTextAreaURLs() {
     const addresses = urlAddressRef.current.value;
     const addressesArray = addresses.split('\n');
 
-    addressesArray.forEach((address) => handleAddURL(address));
+    for(let i = 0; i < uniqueAddressesArray.length; i++) {
+      if(!validateURL(uniqueAddressesArray[i])){
+        alert('Please insert a valid URL.');
+        return;
+      }
+    }
 
     setAnimationState(false);
   }
