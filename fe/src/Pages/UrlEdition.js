@@ -162,14 +162,13 @@ function UrlEdition() {
   }
 
   function removeDupsURLs(addressesArray) {
+    const uniqueAddressesArray = [];
 
-    let uniqueAddressesArray = [];
-
-    for(let i = 0; i < addressesArray.length; i++) {
-      if(!uniqueAddressesArray.includes(addressesArray[i])){
+    for (let i = 0; i < addressesArray.length; i += 1) {
+      if (!uniqueAddressesArray.includes(addressesArray[i])) {
         uniqueAddressesArray.push(addressesArray[i]);
       }
-    } 
+    }
 
     return uniqueAddressesArray;
   }
@@ -181,8 +180,8 @@ function UrlEdition() {
 
     const uniqueAddressesArray = removeDupsURLs(addressesArray);
 
-    for(let i = 0; i < uniqueAddressesArray.length; i++) {
-      if(!validateURL(uniqueAddressesArray[i])){
+    for (let i = 0; i < uniqueAddressesArray.length; i += 1) {
+      if (!validateURL(uniqueAddressesArray[i])) {
         alert('Please insert a valid URL.');
         return;
       }
