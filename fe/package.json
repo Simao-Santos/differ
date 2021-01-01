@@ -31,6 +31,8 @@
     "@testing-library/user-event": "^7.2.1",
     "antd": "^4.9.1",
     "bootstrap": "^4.5.3",
+    "crypto-js": "^4.0.0",
+    "css-selector-generator": "^2.1.2",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-bootstrap": "^1.4.0",

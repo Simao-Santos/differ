@@ -34,12 +34,9 @@ function UrlEdition() {
   const [doAnimation, setAnimationState] = useState(true);
   const [notificationMsg, setNotificationMsg] = useState('');
   const urlAddressRef = useRef();
+  const updateURLStyles = useRef(() => { });
 
-  // useEffects 1. load urls from local storage
-  // 2. save new url on local storage
-  useEffect(() => {
-    getListOfUrls(setBeReply);
-
+  updateURLStyles.current = () => {
     const selectedUrls = urls.filter((url) => url.selected);
 
     if (urls.length > 0) {
@@ -57,10 +54,19 @@ function UrlEdition() {
     } else {
       setStyle(['grey', 'none', '0.25']);
     }
+  };
+
+  // useEffects 1. load urls from local storage
+  // 2. save new url on local storage
+  useEffect(() => {
+    getListOfUrls(setBeReply);
+    updateURLStyles.current();
   }, []);
 
   useEffect(() => {
     console.log('saved urls');
+    const newMinHeight = urls.length * 100 + 100;
+    document.getElementsByTagName('body')[0].style.minHeight = `${newMinHeight}vh`;
   }, [urls]);
 
   useEffect(() => {
@@ -102,7 +108,6 @@ function UrlEdition() {
 
     // once a URL is checked/unchecked update delete button style
     const selectedUrls = newUrls.filter((urlAux) => urlAux.selected);
-    console.log(`there are these many selected => ${selectedUrls.length}`);
 
     if (newUrls.length > 0) {
       if (newUrls.length === selectedUrls.length) {
@@ -238,8 +243,6 @@ function UrlEdition() {
       for (let i = 0; i < selectedUrls.length; i += 1) {
         myUrlIds[i] = selectedUrls[i].id;
       }
-
-      console.log(`so in delete there are these many => ${selectedUrls}`);
 
       setStyle(['grey', 'none', '0.25']);
 
@@ -388,10 +391,10 @@ function UrlEdition() {
 
             <div className="row">
               <label className="under-input-text" htmlFor="file">
-                or
+                <input type="file" name="file" id="file" accept=".txt" onChange={(e) => setFile({ file: e.target.files[0] })} hidden />
+                or&nbsp;
                 <span className="orange-text">submit</span>
-                {' '}
-                a file.
+                &nbsp;a file.
               </label>
               <br />
               <br />
@@ -421,7 +424,12 @@ function UrlEdition() {
             </div>
 
             <button onClick={handleToggleSelectAll} type="button" hidden={selectAllButton[1]}>{selectAllButton[0] ? 'Select all' : 'Unselect all'}</button>
-            <URLList urls={urls} toggleSelected={toggleSelected} />
+            <URLList
+              urls={urls}
+              toggleSelected={toggleSelected}
+              setNotificationMsg={setNotificationMsg}
+              setAnimationState={setAnimationState}
+            />
           </div>
           <div className="right-side col-3">
             <p>

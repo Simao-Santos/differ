@@ -93,7 +93,56 @@ textarea {
 
 /* URL list */
 
+.link-hide {
+    display: none;
+}
 
+.iframe-hide {
+    visibility: hidden;
+}
+
+.url-link.link {
+    width: 100%;
+    display: inline-block;
+    margin: 0 auto;
+    border: 0;
+}
+
+.url-elements.link {
+    margin: 0;
+    width: 100%;
+    border-bottom: 0em;
+    border-left: 0em;
+    border-right: 0em;
+    border-radius: 0em;
+}
+
+.checkbox-label {
+    float: left;
+}
+
+.expand-button {
+    float: right;
+    font-size: 100%;
+    font-weight: bold;
+    margin: 0.5em;
+}
+
+.html-render {
+    width: 100%;
+    height: 20em;
+}
+
+.iframe-div {
+    position: relative;
+}
+
+.spinner{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform:translate3D(-50%, -50%, 0);
+}
 
 /* colors - maybe should be written in another file */
 
@@ -107,4 +156,55 @@ textarea {
     text-decoration-thickness: 2px;
 }
 
+/* URL element selector list */
 
+.element-manager {
+    border: 4px solid black;
+    background-color: white;
+    padding: 1em;
+}
+
+.input-holder {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.input-holder input {
+    width: 90%;
+}
+
+.input-holder button {
+    width: 10%;
+}
+
+.element-list {
+    margin-top: 1em;
+}
+
+.element-selector-holder {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 5em;
+    align-items: center;
+}
+
+.element-selector-holder button {
+    background-color: white;
+}
+
+.element-selector-holder img {
+    max-width: 2em;
+    max-height: 2em;
+}
+
+.element-selector-holder img:hover {
+    cursor: pointer;
+}
+
+.element-selector-holder p {
+    margin: 0;
+    font-size: 1.5em;
+}
