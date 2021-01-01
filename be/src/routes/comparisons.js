@@ -168,12 +168,21 @@ router.get('/byPageId/:id', comparisonController.get_comparisons_by_page_id);
  *          capt_image_location:
  *           type: string
  *           example: /shots/url_1_2020_12_03_00_31_22_670.png
+ *          diff_percentage:
+ *           type: double
+ *           example: 0.5000
  *          comp_capt_id_1:
  *           type: integer
  *           example: 2
  *          comp_capt_id_2:
  *           type: integer
  *           example: 1
+ *          total_pixels:
+ *           type: integer
+ *           example: 100
+ *          diff_pixels:
+ *           type: integer
+ *           example: 50
  *    "400":
  *     description: Invalid parameters supplied
  *    "500":
