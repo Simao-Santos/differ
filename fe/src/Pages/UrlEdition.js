@@ -128,20 +128,8 @@ function UrlEdition() {
     }
   }
 
-  // adding a new url via text input
-  function handleAddURL() {
-    const address = urlAddressRef.current.value;
+  function handleAddURL(address) {
     if (address === '') return;
-    const pattern = new RegExp('^(https?:\\/\\/)?' // protocol
-      + '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' // domain name
-      + '((\\d{1,3}\\.){3}\\d{1,3})|localhost)' // OR ip (v4) address
-      + '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' // port and path
-      + '(\\?[;&a-z\\d%_.~+=-]*)?' // query string
-      + '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
-    if (!pattern.test(address)) {
-      alert('Please insert a valid URL.');
-      return;
-    }
 
     urlAddressRef.current.value = null;
     setStyle([' ', ' ', ' ']);
@@ -162,6 +150,49 @@ function UrlEdition() {
         res.text()
           .then((content) => setBeReply({ type: 'post_url', status: res.status, content: JSON.parse(content) }));
       });
+  }
+
+  function validateURL(address) {
+    const pattern = new RegExp('^(https?:\\/\\/)?' // protocol
+      + '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' // domain name
+      + '((\\d{1,3}\\.){3}\\d{1,3})|localhost)' // OR ip (v4) address
+      + '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' // port and path
+      + '(\\?[;&a-z\\d%_.~+=-]*)?' // query string
+      + '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+    if (!pattern.test(address)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  function removeDupsURLs(addressesArray) {
+    const uniqueAddressesArray = [];
+
+    for (let i = 0; i < addressesArray.length; i += 1) {
+      if (!uniqueAddressesArray.includes(addressesArray[i])) {
+        uniqueAddressesArray.push(addressesArray[i]);
+      }
+    }
+
+    return uniqueAddressesArray;
+  }
+
+  // adding a new url via text input
+  function handleAddTextAreaURLs() {
+    const addresses = urlAddressRef.current.value;
+    const addressesArray = addresses.split('\n');
+
+    const uniqueAddressesArray = removeDupsURLs(addressesArray);
+
+    for (let i = 0; i < uniqueAddressesArray.length; i += 1) {
+      if (!validateURL(uniqueAddressesArray[i])) {
+        alert('Please insert a valid URL.');
+        return;
+      }
+    }
+
+    uniqueAddressesArray.forEach((address) => handleAddURL(address));
 
     setAnimationState(false);
   }
@@ -351,8 +382,11 @@ function UrlEdition() {
       <div className="container">
         <div className="row main-section">
           <div className="left-side col-9">
-            <input type="text" ref={urlAddressRef} placeholder="Insert your URL here" />
-            <button type="button" onClick={handleAddURL} className="next-to-input-button">+</button>
+            <div className="row">
+              <textarea ref={urlAddressRef} placeholder="Insert your URL here" />
+              <button type="button" onClick={handleAddTextAreaURLs} className="next-to-input-button">+</button>
+            </div>
+            <input type="file" name="file" id="file" accept=".txt" onChange={(e) => setFile({ file: e.target.files[0] })} hidden />
             <br />
 
             <div className="row">
