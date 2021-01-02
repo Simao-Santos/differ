@@ -1,16 +1,125 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import '../CSS/URLEdition.css';
 import '../CSS/PrettyChecks.scss';
 import CryptoJS from 'crypto-js';
 import getCssSelector from 'css-selector-generator';
 import Spinner from 'react-bootstrap/Spinner';
+import ElementSelectorList from './ElementSelectorList';
 
-export default function URLLink({ link, toggleSelected }) {
+export default function URLLink({
+  link, toggleSelected, setNotificationMsg, setAnimationState,
+}) {
   const backgroundOn = link.selected;
 
   const [showFull, setShowFull] = useState(false);
   const [extHTML, setExtHTML] = useState('<h1>Oops, you\'re not supposed to here</h1>');
+  const [elementIdentifiers, setElementIdentifiers] = useState([]);
+  const newSelectorRef = useRef();
+  const getElementIdentifiers = useRef(() => { });
+
+  function statusToString(operation, status) {
+    switch (operation) {
+      case 'get':
+        if (status === 500) {
+          setNotificationMsg('There was a problem with the server.');
+        }
+        break;
+      case 'delete':
+        switch (status) {
+          case 200:
+            setNotificationMsg('Gray zone removed.');
+            break;
+          case 404:
+            setNotificationMsg('Gray zone was not found. Try reloading the page.');
+            break;
+          case 500:
+            setNotificationMsg('There was a problem with the server.');
+            break;
+          default:
+            break;
+        }
+        break;
+      case 'post':
+        switch (status) {
+          case 200:
+            setNotificationMsg('Gray zone added.');
+            break;
+          case 404:
+            setNotificationMsg('Associated page was not found.');
+            break;
+          case 500:
+            setNotificationMsg('There was a problem with the server.');
+            break;
+          default:
+            break;
+        }
+        break;
+      default:
+        break;
+    }
+  }
+
+  getElementIdentifiers.current = () => {
+    console.log('getting identifiers from db');
+
+    const requestOptions = {
+      method: 'GET',
+    };
+
+    const endpoint = new URL(`/gray_zones/${link.id}`, process.env.REACT_APP_BACKEND_HOST);
+    fetch(endpoint.toString(), requestOptions)
+      .then((res) => {
+        res.text()
+          .then((content) => setElementIdentifiers(JSON.parse(content)))
+          .then(() => statusToString('get', res.status));
+      });
+
+    setAnimationState(false);
+  };
+
+  function handleAddSelector() {
+    const newSelector = newSelectorRef.current.value;
+
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+      },
+      body: JSON.stringify({ page_id: link.id, gray_zone: newSelector }),
+    };
+
+    const endpoint = new URL('/gray_zones/', process.env.REACT_APP_BACKEND_HOST);
+    fetch(endpoint.toString(), requestOptions)
+      .then((res) => {
+        res.text()
+          .then(() => getElementIdentifiers.current())
+          .then(() => statusToString('post', res.status));
+      });
+
+    setAnimationState(false);
+    newSelectorRef.current.value = null;
+  }
+
+  function deleteSelector(grayZoneId) {
+    const requestOptions = {
+      method: 'DELETE',
+    };
+
+    const endpoint = new URL(`/gray_zones/${grayZoneId}`, process.env.REACT_APP_BACKEND_HOST);
+    fetch(endpoint.toString(), requestOptions)
+      .then((res) => {
+        res.text()
+          .then(() => getElementIdentifiers.current())
+          .then(() => statusToString('delete', res.status));
+      });
+
+    setAnimationState(false);
+  }
+
+  useEffect(() => {
+    getElementIdentifiers.current();
+  }, []);
 
   function mouseOver(event) {
     console.log(`Entered ${event.target}`);
@@ -61,8 +170,6 @@ export default function URLLink({ link, toggleSelected }) {
 
     if (selectedDiv !== null) {
       selectedDiv.remove();
-
-      // TODO request to delete css selector path from the backend
     } else {
       selectedDiv = document.createElement('div');
 
@@ -83,8 +190,6 @@ export default function URLLink({ link, toggleSelected }) {
       selectedDiv.id = `selectedDiv-${hash}`;
 
       iframeBody.appendChild(selectedDiv);
-
-      // TODO request to save css selector in the backend
     }
   }
 
@@ -93,8 +198,6 @@ export default function URLLink({ link, toggleSelected }) {
 
     const iframe = this;
     const iframeBody = iframe.contentWindow.document.querySelector('body');
-
-    // TODO request gray zones from database and create them
 
     const elementList = [{ id: 1, page_id: 1, element_selector: '#main_news' }, { id: 2, page_id: 2, element_selector: '#page_main > div > div:nth-child(6)' }];
 
@@ -259,6 +362,19 @@ export default function URLLink({ link, toggleSelected }) {
             </div>
             <iframe id={`html-render-${link.id}`} className="html-render iframe-hide" sandbox="allow-same-origin allow-scripts" srcDoc={extHTML} title={link.url} />
           </div>
+          <div className="element-manager">
+            <div className="input-holder">
+              <input type="text" ref={newSelectorRef} placeholder="Type css selector of element" />
+              <button type="button" onClick={handleAddSelector}>+</button>
+            </div>
+            <div className="element-list">
+              <ElementSelectorList
+                elementIdentifiers={elementIdentifiers}
+                deleteSelector={deleteSelector}
+                setNotificationMsg={setNotificationMsg}
+              />
+            </div>
+          </div>
         </div>
       </div>
       {
@@ -273,6 +389,8 @@ export default function URLLink({ link, toggleSelected }) {
 }
 
 URLLink.propTypes = {
+  setNotificationMsg: PropTypes.func.isRequired,
+  setAnimationState: PropTypes.func.isRequired,
   toggleSelected: PropTypes.func.isRequired,
   link: PropTypes.exact({
     selected: PropTypes.bool.isRequired,

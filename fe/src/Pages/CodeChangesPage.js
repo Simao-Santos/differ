@@ -37,15 +37,15 @@ class CodeChangesPage extends Component {
   }
 
   componentDidMount() {
-    const { page, data } = this.state;
-    console.log(page);
-    const u = (page - 1) * 20;
-    const v = page * 20;
+    const { page } = this.state;
+    const offset = (page - 1) * 20;
+    const amount = page * 20;
     const requestOptions = {
       method: 'GET',
     };
-    console.log(data);
-    fetch(`${process.env.REACT_APP_BACKEND_HOST}/urls/count`, requestOptions)
+
+    const endpointCount = new URL('/urls/count', process.env.REACT_APP_BACKEND_HOST);
+    fetch(endpointCount.toString(), requestOptions)
       .then((res) => {
         if (res.status === 200) {
           res.clone().text().then((content) => (
@@ -57,7 +57,9 @@ class CodeChangesPage extends Component {
           this.setState(() => ({ error: true, isLoading: false }));
         }
       });
-    fetch(`${process.env.REACT_APP_BACKEND_HOST}/comparisons/range/${u}/${v}`, requestOptions)
+
+    const endpointRange = new URL(`/comparisons/range/${offset}/${amount}`, process.env.REACT_APP_BACKEND_HOST);
+    fetch(endpointRange.toString(), requestOptions)
       .then((res) => {
         if (res.status === 200) {
           res.clone().text().then((content) => (
@@ -77,8 +79,7 @@ class CodeChangesPage extends Component {
       page,
       data: [],
       isLoading: true,
-    }, function () {
-      console.log('set state completed', this.state);
+    }, function resetComponent() {
       this.componentDidMount();
     });
   }
@@ -87,7 +88,7 @@ class CodeChangesPage extends Component {
     const {
       isLoading, data, count, page, error,
     } = this.state;
-    console.log(data);
+
     if (isLoading) {
       return (
         <>
@@ -114,7 +115,7 @@ class CodeChangesPage extends Component {
           {
             data[0].map((ub) => (
               <CodeComparison
-                pageName={`Page ${ub[0].page_id}`}
+                pageName={`Page ${ub[0].page_id} with ${Math.round(ub[0].diff_percentage * 10000.0) / 100.0}% different`}
                 link={ub[0].url}
                 timeStamp1={ub[0].date}
                 timeStamp2={ub[1].date}

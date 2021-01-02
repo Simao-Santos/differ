@@ -13,6 +13,7 @@ const urlsRoute = require('./routes/urls');
 const capturesRoute = require('./routes/captures');
 const comparisonsRoute = require('./routes/comparisons');
 const actionsRoute = require('./routes/actions');
+const grayZonesRoute = require('./routes/gray_zones');
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.use('/urls', urlsRoute);
 app.use('/captures', capturesRoute);
 app.use('/comparisons', comparisonsRoute);
 app.use('/actions', actionsRoute);
+app.use('/gray_zones', grayZonesRoute);
 
 const options = {
   definition: {
@@ -54,7 +56,8 @@ const options = {
     './src/routes/urls.js',
     './src/routes/captures.js',
     './src/routes/comparisons.js',
-    './src/routes/actions.js'],
+    './src/routes/actions.js',
+    './src/routes/gray_zones.js'],
 };
 
 const specs = swaggerJsDoc(options);
