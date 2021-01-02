@@ -27,9 +27,7 @@ URLList.propTypes = {
   toggleSelected: PropTypes.func.isRequired,
   setNotificationMsg: PropTypes.func.isRequired,
   setAnimationState: PropTypes.func.isRequired,
-  urls: PropTypes.exact({
-    map: PropTypes.func,
-  }).isRequired,
+  urls: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default URLList;
