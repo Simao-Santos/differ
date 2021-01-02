@@ -57,7 +57,7 @@ class URLLink extends Component {
     this.state = {
       backgroundOn: props.link.selected,
       showFull: false,
-      extHTML: '<h1>Oops, you\'re not supposed to here</h1>',
+      extHTML: '<h1>Oops, you\'re not supposed to be here</h1>',
       elementIdentifiers: [],
       divList: [],
       currentInput: '',
@@ -418,7 +418,7 @@ class URLLink extends Component {
 
       expandButton.textContent = '∨';
 
-      this.setState({ extHTML: '<h1>Oops, you\'re not supposed to here</h1>' });
+      this.setState({ extHTML: '<h1>Oops, you\'re not supposed to be here</h1>' });
     }
   }
 
