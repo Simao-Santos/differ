@@ -8,147 +8,21 @@ import Spinner from 'react-bootstrap/Spinner';
 import ElementSelectorList from './ElementSelectorList';
 
 class URLLink extends Component {
-
-  constructor(props) {
-    super(props);
-
-    this.props = props;
-
-    this.state = {
-      backgroundOn: props.link.selected,
-      showFull: false,
-      extHTML: '<h1>Oops, you\'re not supposed to here</h1>',
-      elementIdentifiers: [],
-      divList: [],
-      currentInput: '',
+  static isUrlTooBig(auxLink) {
+    if (auxLink.url.length > 80) {
+      return true;
     }
-
-    this.frameInteraction = this.frameInteraction.bind(this);
-    this.handleUrlSelect = this.handleUrlSelect.bind(this);
-    this.handleAddSelector = this.handleAddSelector.bind(this);
-    this.handleInputChange = this.handleInputChange.bind(this);
-    this.deleteSelector = this.deleteSelector.bind(this);
-    this.toggleExpand = this.toggleExpand.bind(this);
+    return false;
   }
 
-  componentDidMount() {
-    this.fetchGrayZones();
-  }
-
-  statusToString(operation, status) {
-    switch (operation) {
-      case 'get':
-        if (status === 200) {
-          const iframe = document.querySelector(`#html-render-${this.props.link.id}`);
-          const iframeBody = iframe.contentWindow.document.querySelector('body');
-
-          this.populateFrame(iframe, iframeBody);
-        }
-        else if (status === 500) {
-          this.props.setNotificationMsg('There was a problem with the server.');
-        }
-        break;
-      case 'delete':
-        switch (status) {
-          case 200:
-            this.props.setNotificationMsg('Gray zone removed.');
-            break;
-          case 404:
-            this.props.setNotificationMsg('Gray zone was not found. Try reloading the page.');
-            break;
-          case 500:
-            this.props.setNotificationMsg('There was a problem with the server.');
-            break;
-          default:
-            break;
-        }
-        break;
-      case 'post':
-        switch (status) {
-          case 200:
-            this.props.setNotificationMsg('Gray zone added.');
-            break;
-          case 404:
-            this.props.setNotificationMsg('Associated page was not found.');
-            break;
-          case 500:
-            this.props.setNotificationMsg('There was a problem with the server.');
-            break;
-          default:
-            break;
-        }
-        break;
-      default:
-        break;
+  static handleUrlSize(auxLink) {
+    if (URLLink.isUrlTooBig(auxLink)) {
+      return `${auxLink.url.substring(0, 65)} (...)`;
     }
+    return auxLink.url;
   }
 
-  fetchGrayZones() {
-    console.log('getting identifiers from db');
-
-    const requestOptions = {
-      method: 'GET',
-    };
-
-    const endpoint = new URL(`/gray_zones/${this.props.link.id}`, process.env.REACT_APP_BACKEND_HOST);
-    fetch(endpoint.toString(), requestOptions)
-      .then((res) => {
-        res.text()
-          .then((content) => this.setState({ elementIdentifiers: JSON.parse(content) }))
-          .then(() => this.statusToString('get', res.status));
-      });
-
-    this.props.setAnimationState(false);
-  };
-
-  handleInputChange(e) {
-    this.setState({ currentInput: e.target.value });
-  }
-
-  handleAddSelector() {
-    this.addSelector(this.state.currentInput);
-
-    this.setState({ currentInput: '' });
-  }
-
-  addSelector(selector) {
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-      },
-      body: JSON.stringify({ page_id: this.props.link.id, gray_zone: selector }),
-    };
-
-    const endpoint = new URL('/gray_zones/', process.env.REACT_APP_BACKEND_HOST);
-    fetch(endpoint.toString(), requestOptions)
-      .then((res) => {
-        res.text()
-          .then(() => this.fetchGrayZones())
-          .then(() => this.statusToString('post', res.status));
-      });
-
-    this.props.setAnimationState(false);
-  }
-
-  deleteSelector(grayZoneId) {
-    const requestOptions = {
-      method: 'DELETE',
-    };
-
-    const endpoint = new URL(`/gray_zones/${grayZoneId}`, process.env.REACT_APP_BACKEND_HOST);
-    fetch(endpoint.toString(), requestOptions)
-      .then((res) => {
-        res.text()
-          .then(() => this.fetchGrayZones())
-          .then(() => this.statusToString('delete', res.status));
-      });
-
-    this.props.setAnimationState(false);
-  }
-
-  mouseOver(iframeBody, event) {
-
+  static mouseOver(iframeBody, event) {
     const overlayDiv = document.createElement('div');
 
     const elemDomRect = event.target.getBoundingClientRect();
@@ -170,12 +44,166 @@ class URLLink extends Component {
     iframeBody.appendChild(overlayDiv);
   }
 
-  mouseOut(iframeBody, event) {
+  static mouseOut(iframeBody) {
     const overlayDivs = iframeBody.querySelectorAll('.overlayDiv');
     overlayDivs.forEach((element) => element.remove());
   }
 
+  constructor(props) {
+    super(props);
+
+    this.props = props;
+
+    this.state = {
+      backgroundOn: props.link.selected,
+      showFull: false,
+      extHTML: '<h1>Oops, you\'re not supposed to here</h1>',
+      elementIdentifiers: [],
+      divList: [],
+      currentInput: '',
+    };
+
+    this.frameInteraction = this.frameInteraction.bind(this);
+    this.handleUrlSelect = this.handleUrlSelect.bind(this);
+    this.handleAddSelector = this.handleAddSelector.bind(this);
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.deleteSelector = this.deleteSelector.bind(this);
+    this.toggleExpand = this.toggleExpand.bind(this);
+  }
+
+  componentDidMount() {
+    this.fetchGrayZones();
+  }
+
+  handleInputChange(e) {
+    this.setState({ currentInput: e.target.value });
+  }
+
+  handleUrlSelect() {
+    const { toggleSelected, link } = this.props;
+    return toggleSelected(link.id);
+  }
+
+  handleAddSelector() {
+    const { currentInput } = this.state;
+
+    this.addSelector(currentInput);
+
+    this.setState({ currentInput: '' });
+  }
+
+  addSelector(selector) {
+    const { link, setAnimationState } = this.props;
+
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+      },
+      body: JSON.stringify({ page_id: link.id, gray_zone: selector }),
+    };
+
+    const endpoint = new URL('/gray_zones/', process.env.REACT_APP_BACKEND_HOST);
+    fetch(endpoint.toString(), requestOptions)
+      .then((res) => {
+        res.text()
+          .then(() => this.fetchGrayZones())
+          .then(() => this.statusToString('post', res.status));
+      });
+
+    setAnimationState(false);
+  }
+
+  statusToString(operation, status) {
+    const { link, setNotificationMsg } = this.props;
+
+    switch (operation) {
+      case 'get':
+        if (status === 200) {
+          const iframe = document.querySelector(`#html-render-${link.id}`);
+          const iframeBody = iframe.contentWindow.document.querySelector('body');
+
+          this.populateFrame(iframe, iframeBody);
+        } else if (status === 500) {
+          setNotificationMsg('There was a problem with the server.');
+        }
+        break;
+      case 'delete':
+        switch (status) {
+          case 200:
+            setNotificationMsg('Gray zone removed.');
+            break;
+          case 404:
+            setNotificationMsg('Gray zone was not found. Try reloading the page.');
+            break;
+          case 500:
+            setNotificationMsg('There was a problem with the server.');
+            break;
+          default:
+            break;
+        }
+        break;
+      case 'post':
+        switch (status) {
+          case 200:
+            setNotificationMsg('Gray zone added.');
+            break;
+          case 404:
+            setNotificationMsg('Associated page was not found.');
+            break;
+          case 500:
+            setNotificationMsg('There was a problem with the server.');
+            break;
+          default:
+            break;
+        }
+        break;
+      default:
+        break;
+    }
+  }
+
+  fetchGrayZones() {
+    const { link, setAnimationState } = this.props;
+
+    console.log('getting identifiers from db');
+
+    const requestOptions = {
+      method: 'GET',
+    };
+
+    const endpoint = new URL(`/gray_zones/${link.id}`, process.env.REACT_APP_BACKEND_HOST);
+    fetch(endpoint.toString(), requestOptions)
+      .then((res) => {
+        res.text()
+          .then((content) => this.setState({ elementIdentifiers: JSON.parse(content) }))
+          .then(() => this.statusToString('get', res.status));
+      });
+
+    setAnimationState(false);
+  }
+
+  deleteSelector(grayZoneId) {
+    const { setAnimationState } = this.props;
+
+    const requestOptions = {
+      method: 'DELETE',
+    };
+
+    const endpoint = new URL(`/gray_zones/${grayZoneId}`, process.env.REACT_APP_BACKEND_HOST);
+    fetch(endpoint.toString(), requestOptions)
+      .then((res) => {
+        res.text()
+          .then(() => this.fetchGrayZones())
+          .then(() => this.statusToString('delete', res.status));
+      });
+
+    setAnimationState(false);
+  }
+
   mouseClick(iframeBody, event) {
+    const { divList } = this.state;
+
     event.stopPropagation();
     event.preventDefault();
 
@@ -188,17 +216,19 @@ class URLLink extends Component {
     let selectedDiv = iframeBody.querySelector(`[id='${divId}']`);
 
     if (selectedDiv !== null) {
+      const { elementIdentifiers } = this.state;
+
       // Remove div from iframe
       selectedDiv.remove();
 
       // Remove div from divList
-      this.state.divList.splice(this.state.divList.indexOf(divId), 1);
+      divList.splice(divList.indexOf(divId), 1);
 
-      const elem = this.state.elementIdentifiers.find(element => {
+      const elem = elementIdentifiers.find((element) => {
         const target = iframeBody.querySelector(element.element_selector);
         const targetCssSelector = getCssSelector(target, { selectors: ['class', 'id', 'tag', 'nthchild'] });
-        const hash = CryptoJS.MD5(targetCssSelector).toString(CryptoJS.enc.Base64);
-        const targetDivId = `selectedDiv-${hash}`;
+        const targetHash = CryptoJS.MD5(targetCssSelector).toString(CryptoJS.enc.Base64);
+        const targetDivId = `selectedDiv-${targetHash}`;
 
         return divId === targetDivId;
       });
@@ -225,19 +255,20 @@ class URLLink extends Component {
 
       iframeBody.appendChild(selectedDiv);
 
-      this.state.divList.push(divId);
+      divList.push(divId);
 
       this.addSelector(cssSelector);
     }
   }
 
   populateFrame(iframe, iframeBody) {
-    const elementsList = [...this.state.elementIdentifiers];
-    const divListCopy = [...this.state.divList];
+    const { elementIdentifiers, divList } = this.state;
+    const elementsList = [...elementIdentifiers];
+    const divListCopy = [...divList];
 
     for (let i = 0; i < divListCopy.length; i += 1) {
-      const element = elementsList.find(element => {
-        const elem = iframe.contentWindow.document.querySelector(element.element_selector);
+      const element = elementsList.find((auxElement) => {
+        const elem = iframe.contentWindow.document.querySelector(auxElement.element_selector);
         const cssSelector = getCssSelector(elem, { selectors: ['class', 'id', 'tag', 'nthchild'] });
         const hash = CryptoJS.MD5(cssSelector).toString(CryptoJS.enc.Base64);
         const divId = `selectedDiv-${hash}`;
@@ -248,10 +279,10 @@ class URLLink extends Component {
       if (element !== undefined) {
         elementsList.splice(elementsList.indexOf(element), 1);
       } else {
-        let selectedDiv = iframeBody.querySelector(`[id='${divListCopy[i]}']`);
+        const selectedDiv = iframeBody.querySelector(`[id='${divListCopy[i]}']`);
         selectedDiv.remove();
 
-        this.state.divList.splice(this.state.divList.indexOf(divListCopy[i]), 1);
+        divList.splice(divList.indexOf(divListCopy[i]), 1);
       }
     }
 
@@ -267,30 +298,30 @@ class URLLink extends Component {
 
         const divId = `selectedDiv-${hash}`;
 
-        let selectedDiv = iframeBody.querySelector(`[id='${divId}']`);
+        const selectedDiv = iframeBody.querySelector(`[id='${divId}']`);
 
         if (selectedDiv === null) {
-          const selectedDiv = document.createElement('div');
+          const newSelectedDiv = document.createElement('div');
 
           const elemDomRect = elem.getBoundingClientRect();
           const bodyDomRect = iframeBody.getBoundingClientRect();
 
-          selectedDiv.style.height = `${Math.round(elemDomRect.height)}px`;
-          selectedDiv.style.width = `${Math.round(elemDomRect.width)}px`;
-          selectedDiv.style.position = 'absolute';
-          selectedDiv.style.zIndex = Number.MAX_SAFE_INTEGER;
-          selectedDiv.style.top = `${Math.round(elemDomRect.top - bodyDomRect.top)}px`;
-          selectedDiv.style.left = `${Math.round(elemDomRect.left - bodyDomRect.left)}px`;
+          newSelectedDiv.style.height = `${Math.round(elemDomRect.height)}px`;
+          newSelectedDiv.style.width = `${Math.round(elemDomRect.width)}px`;
+          newSelectedDiv.style.position = 'absolute';
+          newSelectedDiv.style.zIndex = Number.MAX_SAFE_INTEGER;
+          newSelectedDiv.style.top = `${Math.round(elemDomRect.top - bodyDomRect.top)}px`;
+          newSelectedDiv.style.left = `${Math.round(elemDomRect.left - bodyDomRect.left)}px`;
 
-          selectedDiv.style.backgroundColor = 'rgba(148, 148, 148, 0.5)';
+          newSelectedDiv.style.backgroundColor = 'rgba(148, 148, 148, 0.5)';
 
-          selectedDiv.style.pointerEvents = 'none';
+          newSelectedDiv.style.pointerEvents = 'none';
 
-          selectedDiv.id = `selectedDiv-${hash}`;
+          newSelectedDiv.id = `selectedDiv-${hash}`;
 
-          iframeBody.appendChild(selectedDiv);
+          iframeBody.appendChild(newSelectedDiv);
 
-          this.state.divList.push(divId);
+          divList.push(divId);
         }
       } catch (err) {
         console.log(err);
@@ -307,52 +338,36 @@ class URLLink extends Component {
     const iframeBody = iframe.contentWindow.document.querySelector('body');
 
     setTimeout(() => {
+      const { link } = this.props;
       this.populateFrame(iframe, iframeBody);
 
-      iframeBody.addEventListener('mouseover', this.mouseOver.bind(this, iframeBody));
-      iframeBody.addEventListener('mouseout', this.mouseOut.bind(this, iframeBody));
+      iframeBody.addEventListener('mouseover', URLLink.mouseOver.bind(this, iframeBody));
+      iframeBody.addEventListener('mouseout', URLLink.mouseOut.bind(this, iframeBody));
       iframeBody.addEventListener('click', this.mouseClick.bind(this, iframeBody), true);
 
-      const spinner = document.querySelector(`#spinner-${this.props.link.id}`);
+      const spinner = document.querySelector(`#spinner-${link.id}`);
       spinner.classList.add('link-hide');
       iframe.classList.remove('iframe-hide');
     }, 3000);
   }
 
-  handleUrlSelect() {
-    return this.props.toggleSelected(this.props.link.id);
-  }
-
-  isUrlTooBig(auxLink) {
-    if (auxLink.url.length > 80) {
-      return true;
-    }
-    return false;
-  }
-
-  handleUrlSize(auxLink) {
-    if (this.isUrlTooBig(auxLink)) {
-      return `${auxLink.url.substring(0, 65)} (...)`;
-    }
-    return auxLink.url;
-  }
-
   toggleExpand() {
+    const { link } = this.props;
     const errorHtml = '<h1>There has been an error processing the page</h1>';
 
-    const divLink = document.querySelector(`#link-${this.props.link.id}`);
-    const spinner = document.querySelector(`#spinner-${this.props.link.id}`);
+    const divLink = document.querySelector(`#link-${link.id}`);
+    const spinner = document.querySelector(`#spinner-${link.id}`);
 
-    const expandButton = document.querySelector(`#expand-button-${this.props.link.id}`);
+    const expandButton = document.querySelector(`#expand-button-${link.id}`);
 
-    const iframe = document.querySelector(`#html-render-${this.props.link.id}`);
+    const iframe = document.querySelector(`#html-render-${link.id}`);
 
     iframe.onload = null;
     iframe.classList.add('iframe-hide');
     spinner.classList.remove('link-hide');
 
     if (divLink.classList.contains('link-hide')) {
-      const endpointFile = new URL(`/captures/byPageId/${this.props.link.id}`, process.env.REACT_APP_BACKEND_HOST);
+      const endpointFile = new URL(`/captures/byPageId/${link.id}`, process.env.REACT_APP_BACKEND_HOST);
       fetch(endpointFile.toString())
         .then((response) => {
           if (response.status === 200) {
@@ -377,7 +392,7 @@ class URLLink extends Component {
                             // which refers to the root of the website,
                             // And add the url before it (so it can actually get the content)
                             const regex = /"\/(?!\/)/gi;
-                            const fixedContent = htmlContent.replace(regex, `"${this.props.link.url}${(this.props.link.url.endsWith('/')) ? '' : '/'}`);
+                            const fixedContent = htmlContent.replace(regex, `"${link.url}${(link.url.endsWith('/')) ? '' : '/'}`);
 
                             this.setState({ extHTML: fixedContent });
                           });
@@ -408,51 +423,55 @@ class URLLink extends Component {
   }
 
   render() {
+    const {
+      backgroundOn, extHTML, elementIdentifiers, currentInput, showFull,
+    } = this.state;
+    const { link, setNotificationMsg } = this.props;
     return (
       <>
         <div
-          className={`link ${this.state.backgroundOn ? 'background-orange-fade' : 'background-orange'}`}
+          className={`link ${backgroundOn ? 'background-orange-fade' : 'background-orange'}`}
           onMouseEnter={() => this.setState({ showFull: true })}
           onMouseLeave={() => this.setState({ showFull: false })}
         >
           <div className="link url-link">
             <label htmlFor="id-checkbox" className="checkbox-label checkbox path row">
-              <input id="id-checkbox" type="checkbox" checked={this.props.link.selected} onChange={this.handleUrlSelect} />
-              {this.handleUrlSize(this.props.link)}
+              <input id="id-checkbox" type="checkbox" checked={link.selected} onChange={this.handleUrlSelect} />
+              {URLLink.handleUrlSize(link)}
               <svg viewBox="0 0 21 21">
                 <path d="M5,10.75 L8.5,14.25 L19.4,2.3 C18.8333333,1.43333333 18.0333333,1 17,1 L4,1 C2.35,1 1,2.35 1,4 L1,17 C1,18.65 2.35,20 4,20 L17,20 C18.65,20 20,18.65 20,17 L20,7.99769186" />
               </svg>
             </label>
-            <button type="button" id={`expand-button-${this.props.link.id}`} className="expand-button" onClick={this.toggleExpand}>
+            <button type="button" id={`expand-button-${link.id}`} className="expand-button" onClick={this.toggleExpand}>
               ∨
-              </button>
+            </button>
           </div>
-          <div id={`link-${this.props.link.id}`} className="link url-elements link-hide">
+          <div id={`link-${link.id}`} className="link url-elements link-hide">
             <div className="iframe-div">
-              <div id={`spinner-${this.props.link.id}`} className="spinner">
+              <div id={`spinner-${link.id}`} className="spinner">
                 <Spinner animation="border" variant="dark" />
               </div>
-              <iframe id={`html-render-${this.props.link.id}`} className="html-render iframe-hide" sandbox="allow-same-origin allow-scripts" srcDoc={this.state.extHTML} title={this.props.link.url} />
+              <iframe id={`html-render-${link.id}`} className="html-render iframe-hide" sandbox="allow-same-origin allow-scripts" srcDoc={extHTML} title={link.url} />
             </div>
             <div className="element-manager">
               <div className="input-holder">
-                <input type="text" value={this.state.currentInput} onChange={this.handleInputChange} placeholder="Type css selector of element" />
+                <input type="text" value={currentInput} onChange={this.handleInputChange} placeholder="Type css selector of element" />
                 <button type="button" onClick={this.handleAddSelector}>+</button>
               </div>
               <div className="element-list">
                 <ElementSelectorList
-                  elementIdentifiers={this.state.elementIdentifiers}
+                  elementIdentifiers={elementIdentifiers}
                   deleteSelector={this.deleteSelector}
-                  setNotificationMsg={this.props.setNotificationMsg}
+                  setNotificationMsg={setNotificationMsg}
                 />
               </div>
             </div>
           </div>
         </div>
         {
-          this.state.showFull && this.isUrlTooBig(this.props.link) && (
+          showFull && URLLink.isUrlTooBig(link) && (
             <div className="full-url-box">
-              { this.props.link.url}
+              { link.url}
             </div>
           )
         }
