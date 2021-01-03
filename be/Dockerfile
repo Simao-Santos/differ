@@ -57,7 +57,7 @@ RUN npm install
 
 COPY . ./
 
-RUN mkdir src/public/shots
+RUN mkdir -p src/public/shots
 
 RUN chmod 777 src/public/shots
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import * as Sentry from "@sentry/react";
-import { Integrations } from "@sentry/tracing";
+import * as Sentry from '@sentry/react';
+import { Integrations } from '@sentry/tracing';
 import './CSS/index.css';
 
 import Row from 'react-bootstrap/Row';
@@ -16,7 +16,7 @@ import Layout from './Components/Layout';
 import UrlEdition from './Pages/UrlEdition';
 
 Sentry.init({
-  dsn: "https://439000db541d46e78d80a7f1e6403c00@o474730.ingest.sentry.io/5511474",
+  dsn: 'https://439000db541d46e78d80a7f1e6403c00@o474730.ingest.sentry.io/5511474',
   autoSessionTracking: true,
   integrations: [
     new Integrations.BrowserTracing(),
