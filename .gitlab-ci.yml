@@ -210,47 +210,67 @@ test_frontend:
 # deploy backend (staging server)
 deploy-staging-backend:
   stage: deploy
-  image: node:latest
+  services:
+    - docker:dind
+  before_script:
+    - npm install -g heroku
   script:
-    - cd be/
-    - npm install heroku
-    - heroku container:push web -a $STAGING_BACKEND
-    - heroku container:release web -a $STAGING_BACKEND
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+    - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+    - docker pull registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend_$CI_COMMIT_REF_SLUG
+    - docker tag registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend_$CI_COMMIT_REF_SLUG registry.heroku.com/$STAGING_BACKEND/web
+    - docker push registry.heroku.com/$STAGING_BACKEND/web
+    - heroku container:release --app=$STAGING_BACKEND web
   rules:
     - if: $CI_COMMIT_BRANCH == "develop"
 
 # deploy frontend (staging server)
 deploy-staging-frontend:
   stage: deploy
-  image: node:latest
+  services:
+    - docker:dind
+  before_script:
+    - npm install -g heroku
   script:
     - cd fe/
-    - npm install heroku
-    - heroku container:push web -a $STAGING_FRONTEND
-    - heroku container:release web -a $STAGING_FRONTEND
+    - echo "REACT_APP_BACKEND_HOST=https://$STAGING_BACKEND.herokuapp.com" > .env
+    - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+    - docker build -t registry.heroku.com/$STAGING_FRONTEND/web .
+    - docker push registry.heroku.com/$STAGING_FRONTEND/web
+    - heroku container:release --app=$STAGING_FRONTEND web
   rules:
     - if: $CI_COMMIT_BRANCH == "develop"
 
 # deploy backend (production server)
 deploy-production-backend:
   stage: deploy
-  image: node:latest
+  services:
+    - docker:dind
+  before_script:
+    - npm install -g heroku
   script:
-    - cd be/
-    - npm install heroku
-    - heroku container:push web -a $PRODUCTION_BACKEND
-    - heroku container:release web -a $PRODUCTION_BACKEND
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+    - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+    - docker pull registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend_$CI_COMMIT_REF_SLUG
+    - docker tag registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend_$CI_COMMIT_REF_SLUG registry.heroku.com/$PRODUCTION_BACKEND/web
+    - docker push registry.heroku.com/$PRODUCTION_BACKEND/web
+    - heroku container:release --app=$PRODUCTION_BACKEND web
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
 
 # deploy frontend (production server)
 deploy-production-frontend:
   stage: deploy
-  image: node:latest
+  services:
+    - docker:dind
+  before_script:
+    - npm install -g heroku
   script:
     - cd fe/
-    - npm install heroku
-    - heroku container:push web -a $PRODUCTION_FRONTEND
-    - heroku container:release web -a $PRODUCTION_FRONTEND
+    - echo "REACT_APP_BACKEND_HOST=https://$PRODUCTION_BACKEND.herokuapp.com" > .env
+    - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+    - docker build -t registry.heroku.com/$PRODUCTION_FRONTEND/web .
+    - docker push registry.heroku.com/$PRODUCTION_FRONTEND/web
+    - heroku container:release --app=$PRODUCTION_FRONTEND web
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
