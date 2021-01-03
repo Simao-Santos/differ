@@ -137,11 +137,13 @@ function dbQuery(databaseQuery, url, filename, saveFolder) {
       } else {
         // Get grey zones from database
         // A rare bug can occur when launching Chrome.
-        // From what I understand it's related to the GNU C library, don't know what we can do about it.
+        // From what I understand it's related to the GNU C library, 
+        // don't know what we can do about it.
         // It is very rare though. As of now, it has only happened once.
         // https://github.com/puppeteer/puppeteer/issues/2207
         //
-        // There are still problems with some characters and some images that aren't displayed correctly
+        // There are still problems with some characters
+        //  and some images that aren't displayed correctly
 
         // Process the response from db and make it appropriate for the Pageres
         const elementSelectors = [];
