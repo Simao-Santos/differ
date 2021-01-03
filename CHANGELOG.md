@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 ### Added
-- Gray zone visual selector in the frontend. ([#27](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/issues/27))
+- Gray zone visual selector in the frontend. ([#27](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/issues/27), [!37](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/merge_requests/37))
 
 ### Changed
 - URL building code to be less error-prone. ([b0958f6a](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/commit/b0958f6a1d8b01a040779cf7e6d75ca9f5a72fd4))
