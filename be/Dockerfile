@@ -57,6 +57,10 @@ RUN npm install
 
 COPY . ./
 
+RUN mkdir src/public/shots
+
+RUN chmod 777 src/public/shots
+
 # Change the 'wait for postgres' script permissions 
 RUN chmod 777 wait-for-pg.sh
 
