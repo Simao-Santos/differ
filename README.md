@@ -12,7 +12,15 @@ Work developed for the course of LDSO at FEUP by:
 
 The product owner is **Marco Sousa (marco.sousa@zerozero.pt)** of zerozero.pt /ZOS Lda.
 
+# Link to the application
+
+https://differ-frontend.herokuapp.com
+
 # For the Developers
+
+### Link to the staging application
+
+https://differ-staging-frontend.herokuapp.com/
 
 ### Adding tests to frontend and backend
 Every time a new feature is implemented, unit tests for it should be added. Before accepting a merge request, the developers have to make sure that this rule is being followed.
