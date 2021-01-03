@@ -29,7 +29,8 @@ class URLLink extends Component {
     const bodyDomRect = iframeBody.getBoundingClientRect();
 
     // Adds pointer cursor to the element to show it can be selected
-    event.target.style.cursor = 'pointer';
+    const elem = event.target;
+    elem.style.cursor = 'pointer';
 
     overlayDiv.style.height = `${Math.round(elemDomRect.height)}px`;
     overlayDiv.style.width = `${Math.round(elemDomRect.width)}px`;
@@ -50,7 +51,8 @@ class URLLink extends Component {
   static mouseOut(iframeBody, event) {
     // Removes pointer cursor from element (probably not necessary,
     // but it's better to leave things as they were)
-    event.target.style.cursor = 'auto';
+    const elem = event.target;
+    elem.style.cursor = 'auto';
 
     const overlayDivs = iframeBody.querySelectorAll('.overlayDiv');
     overlayDivs.forEach((element) => element.remove());
