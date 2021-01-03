@@ -61,6 +61,20 @@ CREATE TABLE comparison
 
 TABLESPACE pg_default;
 
+-- Table: gray_zone
+CREATE TABLE gray_zone
+(
+    id integer GENERATED ALWAYS AS IDENTITY NOT NULL,
+    page_id integer,
+    element_selector text,
+    deleted boolean NOT NULL DEFAULT FALSE,
+    PRIMARY KEY (id),
+    FOREIGN KEY (page_id)
+        REFERENCES page (id)
+)
+
+TABLESPACE pg_default;
+
 -- FUNCTIONS
 CREATE OR REPLACE FUNCTION delete_page_connections()
   RETURNS TRIGGER 
@@ -70,6 +84,9 @@ $$
 BEGIN
     IF OLD.deleted = FALSE AND NEW.deleted = TRUE THEN
         UPDATE capture
+        SET deleted = TRUE
+        WHERE page_id = NEW.id AND deleted = FALSE;
+        UPDATE gray_zone
         SET deleted = TRUE
         WHERE page_id = NEW.id AND deleted = FALSE;
 	END IF;
@@ -94,6 +111,22 @@ BEGIN
 END;
 $$;
 
+CREATE FUNCTION insert_gray_zone()
+  RETURNS TRIGGER 
+  LANGUAGE PLPGSQL
+  AS
+$$
+BEGIN
+    IF (SELECT deleted FROM page WHERE NEW.page_id = page.id) = TRUE OR NOT EXISTS (SELECT 1 FROM page where page.id = NEW.page_id) THEN
+
+    RAISE EXCEPTION 'INVALID_PAGE_ID';
+
+	END IF;
+
+    RETURN NEW;
+END;
+$$;
+
 -- TRIGGERS
 CREATE TRIGGER delete_page_trigger
     BEFORE UPDATE
@@ -106,3 +139,9 @@ CREATE TRIGGER delete_capture_trigger
     ON capture
     FOR EACH ROW
     EXECUTE PROCEDURE delete_capture_connections();
+
+CREATE TRIGGER insert_gray_zone_trigger
+    BEFORE INSERT
+    ON gray_zone
+    FOR EACH ROW
+    EXECUTE PROCEDURE insert_gray_zone();    

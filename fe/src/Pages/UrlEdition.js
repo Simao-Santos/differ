@@ -34,12 +34,9 @@ function UrlEdition() {
   const [doAnimation, setAnimationState] = useState(true);
   const [notificationMsg, setNotificationMsg] = useState('');
   const urlAddressRef = useRef();
+  const updateURLStyles = useRef(() => { });
 
-  // useEffects 1. load urls from local storage
-  // 2. save new url on local storage
-  useEffect(() => {
-    getListOfUrls(setBeReply);
-
+  updateURLStyles.current = () => {
     const selectedUrls = urls.filter((url) => url.selected);
 
     if (urls.length > 0) {
@@ -57,10 +54,19 @@ function UrlEdition() {
     } else {
       setStyle(['grey', 'none', '0.25']);
     }
+  };
+
+  // useEffects 1. load urls from local storage
+  // 2. save new url on local storage
+  useEffect(() => {
+    getListOfUrls(setBeReply);
+    updateURLStyles.current();
   }, []);
 
   useEffect(() => {
     console.log('saved urls');
+    const newMinHeight = urls.length * 100 + 100;
+    document.getElementsByTagName('body')[0].style.minHeight = `${newMinHeight}vh`;
   }, [urls]);
 
   useEffect(() => {
@@ -102,7 +108,6 @@ function UrlEdition() {
 
     // once a URL is checked/unchecked update delete button style
     const selectedUrls = newUrls.filter((urlAux) => urlAux.selected);
-    console.log(`there are these many selected => ${selectedUrls.length}`);
 
     if (newUrls.length > 0) {
       if (newUrls.length === selectedUrls.length) {
@@ -123,20 +128,8 @@ function UrlEdition() {
     }
   }
 
-  // adding a new url via text input
-  function handleAddURL() {
-    const address = urlAddressRef.current.value;
+  function handleAddURL(address) {
     if (address === '') return;
-    const pattern = new RegExp('^(https?:\\/\\/)?' // protocol
-      + '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' // domain name
-      + '((\\d{1,3}\\.){3}\\d{1,3})|localhost)' // OR ip (v4) address
-      + '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' // port and path
-      + '(\\?[;&a-z\\d%_.~+=-]*)?' // query string
-      + '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
-    if (!pattern.test(address)) {
-      alert('Please insert a valid URL.');
-      return;
-    }
 
     urlAddressRef.current.value = null;
     setStyle([' ', ' ', ' ']);
@@ -157,6 +150,49 @@ function UrlEdition() {
         res.text()
           .then((content) => setBeReply({ type: 'post_url', status: res.status, content: JSON.parse(content) }));
       });
+  }
+
+  function validateURL(address) {
+    const pattern = new RegExp('^(https?:\\/\\/)?' // protocol
+      + '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' // domain name
+      + '((\\d{1,3}\\.){3}\\d{1,3})|localhost)' // OR ip (v4) address
+      + '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' // port and path
+      + '(\\?[;&a-z\\d%_.~+=-]*)?' // query string
+      + '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+    if (!pattern.test(address)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  function removeDupsURLs(addressesArray) {
+    const uniqueAddressesArray = [];
+
+    for (let i = 0; i < addressesArray.length; i += 1) {
+      if (!uniqueAddressesArray.includes(addressesArray[i])) {
+        uniqueAddressesArray.push(addressesArray[i]);
+      }
+    }
+
+    return uniqueAddressesArray;
+  }
+
+  // adding a new url via text input
+  function handleAddTextAreaURLs() {
+    const addresses = urlAddressRef.current.value;
+    const addressesArray = addresses.split('\n');
+
+    const uniqueAddressesArray = removeDupsURLs(addressesArray);
+
+    for (let i = 0; i < uniqueAddressesArray.length; i += 1) {
+      if (!validateURL(uniqueAddressesArray[i])) {
+        alert('Please insert a valid URL.');
+        return;
+      }
+    }
+
+    uniqueAddressesArray.forEach((address) => handleAddURL(address));
 
     setAnimationState(false);
   }
@@ -207,8 +243,6 @@ function UrlEdition() {
       for (let i = 0; i < selectedUrls.length; i += 1) {
         myUrlIds[i] = selectedUrls[i].id;
       }
-
-      console.log(`so in delete there are these many => ${selectedUrls}`);
 
       setStyle(['grey', 'none', '0.25']);
 
@@ -348,17 +382,19 @@ function UrlEdition() {
       <div className="container">
         <div className="row main-section">
           <div className="left-side col-9">
-            <input type="text" ref={urlAddressRef} placeholder="Insert your URL here" />
-            <button type="button" onClick={handleAddURL} className="next-to-input-button">+</button>
+            <div className="row">
+              <textarea ref={urlAddressRef} placeholder="Insert your URL here" />
+              <button type="button" onClick={handleAddTextAreaURLs} className="next-to-input-button">+</button>
+            </div>
             <input type="file" name="file" id="file" accept=".txt" onChange={(e) => setFile({ file: e.target.files[0] })} hidden />
             <br />
 
             <div className="row">
               <label className="under-input-text" htmlFor="file">
-                or
+                <input type="file" name="file" id="file" accept=".txt" onChange={(e) => setFile({ file: e.target.files[0] })} hidden />
+                or&nbsp;
                 <span className="orange-text">submit</span>
-                {' '}
-                a file.
+                &nbsp;a file.
               </label>
               <br />
               <br />
@@ -388,7 +424,12 @@ function UrlEdition() {
             </div>
 
             <button onClick={handleToggleSelectAll} type="button" hidden={selectAllButton[1]}>{selectAllButton[0] ? 'Select all' : 'Unselect all'}</button>
-            <URLList urls={urls} toggleSelected={toggleSelected} />
+            <URLList
+              urls={urls}
+              toggleSelected={toggleSelected}
+              setNotificationMsg={setNotificationMsg}
+              setAnimationState={setAnimationState}
+            />
           </div>
           <div className="right-side col-3">
             <p>

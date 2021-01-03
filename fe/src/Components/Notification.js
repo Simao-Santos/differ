@@ -5,7 +5,7 @@ import '../CSS/Notification.scss';
 
 export default function Notification({ message, toggleAnimation, animate }) {
   return (
-    <div id="pop-up-notification" className={animate ? 'notification hide-opacity' : 'notification'}>
+    <div id="pop-up-notification" className={animate ? 'notification hide-opacity' : 'notification'} hidden={message.length === 0}>
       <button
         id="close-pop-up"
         type="button"

@@ -42,14 +42,12 @@ class VisualChangesPage extends Component {
   }
 
   componentDidMount() {
-    const { page, data } = this.state;
+    const { page } = this.state;
     const u = (page - 1) * 20;
     const v = page * 20;
     const requestOptions = {
       method: 'GET',
     };
-
-    console.log(data);
 
     const endpointCount = new URL('/urls/count', process.env.REACT_APP_BACKEND_HOST);
     fetch(endpointCount.toString(), requestOptions)
@@ -81,13 +79,11 @@ class VisualChangesPage extends Component {
   }
 
   onChange(page) {
-    console.log(page);
     this.setState({
       page,
       data: [],
       isLoading: true,
-    }, function () {
-      console.log('set state completed', this.state);
+    }, function resetComponent() {
       this.componentDidMount();
     });
   }
@@ -127,7 +123,7 @@ class VisualChangesPage extends Component {
 
               return (
                 <VisualComparison
-                  pageName={`Page ${ub[0].page_id}`}
+                  pageName={`Page ${ub[0].page_id} with ${Math.round(ub[0].diff_percentage * 10000.0) / 100.0}% different`}
                   link={ub[0].url}
                   timeStamp1={ub[0].date}
                   timeStamp2={ub[1].date}
