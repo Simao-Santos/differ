@@ -57,6 +57,10 @@ RUN npm install
 
 COPY . ./
 
+RUN mkdir src/public/shots
+
+RUN chmod 777 src/public/shots
+
 # Change the 'wait for postgres' script permissions 
 RUN chmod 777 wait-for-pg.sh
 
@@ -80,5 +84,7 @@ USER differuser
 
 # Makes sure the backend is only started when the database is ready
 ENTRYPOINT ["./wait-for-pg.sh"]
+
+ENV NODE_ENV production
 
 CMD npm start

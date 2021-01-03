@@ -33,6 +33,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       BACKEND_HOST: ${BACKEND_HOST}
+      NODE_ENV: development
     build:
       context: ./be
       dockerfile: Dockerfile
