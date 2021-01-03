@@ -6,7 +6,6 @@ import Notification from '../Components/Notification';
 
 function getListOfUrls(setBeReply) {
   console.log('getting urls from db');
-
   const requestOptions = {
     method: 'GET',
   };
