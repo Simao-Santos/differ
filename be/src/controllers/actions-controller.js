@@ -201,6 +201,11 @@ async function captureUrlAsync(id, url, compareNext) {
   // Get content from url
   const body = await request.getRequest(url);
 
+  var firstvariable = "<no-capture>";
+  var secondvariable = "</no-capture>";
+  
+  body.match(new RegExp(firstvariable + "(.*)" + secondvariable));
+
   const contentPath = `${folder + ((folder.endsWith('/')) ? '' : '/') + filename}.html`;
 
   // Saves the url content to file
