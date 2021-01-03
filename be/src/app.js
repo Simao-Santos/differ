@@ -43,10 +43,6 @@ app.use('/comparisons', comparisonsRoute);
 app.use('/actions', actionsRoute);
 app.use('/gray_zones', grayZonesRoute);
 
-app.get('/debug-sentry', function mainHandler(req, res) {
-  throw new Error('My first Sentry error!');
-});
-
 const options = {
   definition: {
     openapi: '3.0.0',
