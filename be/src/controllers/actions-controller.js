@@ -8,8 +8,8 @@ const database = require('../database');
 const utils = require('../utils');
 const diffLib = require('../lib/diff.js');
 const { baseText, newText } = require('../lib/constants.js');
-const jsdom = require("jsdom");
-const { JSDOM } = jsdom;
+const { JSDOM } = require('jsdom');
+const Simmer = require('simmerjs').default;
 
 // Function that compares two captures
 async function compareCaptures(id1, id2, textLocation1, textLocation2,
@@ -130,7 +130,7 @@ async function compareUrlAsync(id) {
   });
 }
 
-function dbQuery(databaseQuery, url, filename, saveFolder) {
+function dbQuery(databaseQuery, url, filename, saveFolder, hideElementsList) {
   return new Promise((data) => {
     database.query(databaseQuery, async (error, result) => {
       if (error) {
@@ -138,7 +138,7 @@ function dbQuery(databaseQuery, url, filename, saveFolder) {
         throw error;
       } else {
         // Process the response from db and make it appropriate for the Pageres
-        const elementSelectors = [];
+        const elementSelectors = hideElementsList;
         result.rows.forEach((element) => {
           elementSelectors.push(element.element_selector);
         });
@@ -164,7 +164,7 @@ function dbQuery(databaseQuery, url, filename, saveFolder) {
 }
 
 // Function that will screenshot the url page
-async function saveUrlScreenshot(url, filename, saveFolder, id) {
+async function saveUrlScreenshot(url, filename, saveFolder, id, hideElementsList) {
   console.log('Generating page screenshot...');
 
   // Get grey zones from database
@@ -179,7 +179,49 @@ async function saveUrlScreenshot(url, filename, saveFolder, id) {
     values: [false, id],
   };
 
-  return dbQuery(query, url, filename, saveFolder);
+  return dbQuery(query, url, filename, saveFolder, hideElementsList);
+}
+
+// Get list of elements to hide
+function findElements(simmer, children, list) {
+  let auxList = list;
+
+  let goToChildren = true;
+
+  for (let i = 0; i < children.length; i += 1) {
+    // 1 = ELEMENT_NODE
+    // 8 = COMMENT_NODE
+    if (children[i].nodeType === 8) {
+      if (children[i].nodeValue.trim() === '<no-capture>') {
+        if (goToChildren) {
+          goToChildren = false;
+        } else {
+          return null;
+        }
+      } else if (children[i].nodeValue.trim() === '</no-capture>') {
+        if (goToChildren) {
+          return null;
+        }
+        goToChildren = true;
+      }
+    } else if (children[i].nodeType === 1) {
+      if (goToChildren) {
+        auxList = findElements(simmer, children[i].childNodes, auxList);
+
+        if (auxList === null) {
+          break;
+        }
+      } else {
+        auxList.push(simmer(children[i]));
+      }
+    }
+  }
+
+  if (!goToChildren) {
+    return null;
+  }
+
+  return auxList;
 }
 
 // Asynchronous function that will capture the url content and screenshot
@@ -201,19 +243,20 @@ async function captureUrlAsync(id, url, compareNext) {
   const filename = `url_${id}_${date}`;
 
   // Get content from url
-  
-
-  var omegatest;
-
   const body = await request.getRequest(url);
-  var aux = /<!-- <no-capture> -->.*?<!-- <\/no-capture> -->/gs;
 
-  omegatest = body.match(aux);
-  console.log(body);
-  console.log(omegatest);
+  console.log('Parsing no-capture elements');
 
-  var badedas = new jsdom.JSDOM(omegatest[0]);
-  console.log(badedas.window.document.querySelector("p").textContent);
+  const jsdom = new JSDOM(body);
+  const simmer = new Simmer(jsdom.window.document);
+
+  const rootChildren = jsdom.window.document.body.childNodes;
+  let hideElementsList = findElements(simmer, rootChildren, []);
+
+  // If error, then list empty
+  if (hideElementsList === null) {
+    hideElementsList = [];
+  }
 
   const contentPath = `${folder + ((folder.endsWith('/')) ? '' : '/') + filename}.html`;
 
@@ -227,7 +270,7 @@ async function captureUrlAsync(id, url, compareNext) {
       fs.writeFileSync(`./src/public${contentPath}`, body);
       console.log('Page content saved!');
 
-      const screenshotPath = await saveUrlScreenshot(url, filename, folder, id);
+      const screenshotPath = await saveUrlScreenshot(url, filename, folder, id, hideElementsList);
 
       const query = {
         text: 'INSERT INTO capture (page_id, image_location, text_location, date) VALUES ($1, $2, $3, $4) RETURNING id',
