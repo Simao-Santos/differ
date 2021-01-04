@@ -288,6 +288,7 @@ function UrlEdition() {
           .then((res) => {
             if (res.status === 200) {
               console.log(`Capture for id ${id} has started`);
+              setNotificationMsg('Capturing URL');
             } else if (res.status === 400 || res.status === 404 || res.status === 500) {
               setNotificationMsg('Could not capture URL');
             }
@@ -330,6 +331,7 @@ function UrlEdition() {
         .then((res) => {
           if (res.status === 200) {
             console.log(`Comparison for id ${id} has started`);
+            setNotificationMsg('Comparison has started');
           } else if (res.status === 412) {
             console.log(`Comparison for id ${id} has not started because there is no older capture for this URL`);
             setNotificationMsg('Comparison has not started because there is no older capture for this URL');
