@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+- Gray zone visual selector in the frontend. ([#27](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/issues/27), [!37](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/merge_requests/37))
+
+### Changed
+- URL building code to be less error-prone. ([b0958f6a](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/commit/b0958f6a1d8b01a040779cf7e6d75ca9f5a72fd4))
+
+### Removed
+
+### Fixed
+- Environment variables usage. ([f6fe0f51](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/commit/f6fe0f510bd2639955fd669b035679916dbe83d8))
+
 ## Sprint 3
 The main focus of this Sprint was to improve the UI when accessing the different main pages that make up the application. After finishing the feature of the API that saves the necessary information for the frontend to display in a directory, the frontend was improved so that users can now actually see the changes in visually and in the code in a user friendly way.
 Some minor adjustments were also done in order to either fix some running aspect of the application or make it more secure.

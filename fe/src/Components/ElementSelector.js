@@ -16,7 +16,7 @@ export default function ElementSelector({ identifier, deleteSelector }) {
 
 ElementSelector.propTypes = {
   deleteSelector: PropTypes.func.isRequired,
-  identifier: PropTypes.exact({
+  identifier: PropTypes.shape({
     id: PropTypes.number.isRequired,
     element_selector: PropTypes.string.isRequired,
   }).isRequired,
