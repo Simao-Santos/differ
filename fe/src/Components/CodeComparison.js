@@ -58,10 +58,7 @@ class CodeComparison extends Component {
       <>
         <div className="Comparison-Component">
           <div className="Component-Header">
-            <h2>{pageName}</h2>
-            <Button style={{ float: 'right' }} type="submit" className="btn btn-outline-light">
-              Update
-            </Button>
+            <h2 style={{ paddingBottom: '4px' }}>{`${pageName} - ${difference}`}</h2>
           </div>
 
           <div className="Comparison-Card">
