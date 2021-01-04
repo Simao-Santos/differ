@@ -8,6 +8,8 @@ const database = require('../database');
 const utils = require('../utils');
 const diffLib = require('../lib/diff.js');
 const { baseText, newText } = require('../lib/constants.js');
+const jsdom = require("jsdom");
+const { JSDOM } = jsdom;
 
 // Function that compares two captures
 async function compareCaptures(id1, id2, textLocation1, textLocation2,
@@ -199,12 +201,19 @@ async function captureUrlAsync(id, url, compareNext) {
   const filename = `url_${id}_${date}`;
 
   // Get content from url
-  const body = await request.getRequest(url);
-
-  var firstvariable = "<no-capture>";
-  var secondvariable = "</no-capture>";
   
-  body.match(new RegExp(firstvariable + "(.*)" + secondvariable));
+
+  var omegatest;
+
+  const body = await request.getRequest(url);
+  var aux = /<!-- <no-capture> -->.*?<!-- <\/no-capture> -->/gs;
+
+  omegatest = body.match(aux);
+  console.log(body);
+  console.log(omegatest);
+
+  var badedas = new jsdom.JSDOM(omegatest[0]);
+  console.log(badedas.window.document.querySelector("p").textContent);
 
   const contentPath = `${folder + ((folder.endsWith('/')) ? '' : '/') + filename}.html`;
 
