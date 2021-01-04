@@ -3,6 +3,8 @@ const pixelmatch = require('pixelmatch');
 const sharp = require('sharp');
 const fs = require('fs');
 const { PNG } = require('pngjs');
+const { JSDOM } = require('jsdom');
+const Simmer = require('simmerjs').default;
 const request = require('../html_request');
 const database = require('../database');
 const utils = require('../utils');
@@ -128,7 +130,7 @@ async function compareUrlAsync(id) {
   });
 }
 
-function dbQuery(databaseQuery, url, filename, saveFolder) {
+function dbQuery(databaseQuery, url, filename, saveFolder, hideElementsList) {
   return new Promise((data) => {
     database.query(databaseQuery, async (error, result) => {
       if (error) {
@@ -146,7 +148,7 @@ function dbQuery(databaseQuery, url, filename, saveFolder) {
         //  and some images that aren't displayed correctly
 
         // Process the response from db and make it appropriate for the Pageres
-        const elementSelectors = [];
+        const elementSelectors = hideElementsList;
         result.rows.forEach((element) => {
           elementSelectors.push(element.element_selector);
         });
@@ -179,7 +181,7 @@ function dbQuery(databaseQuery, url, filename, saveFolder) {
 }
 
 // Function that will screenshot the url page
-async function saveUrlScreenshot(url, filename, saveFolder, id) {
+async function saveUrlScreenshot(url, filename, saveFolder, id, hideElementsList) {
   console.log('Generating page screenshot...');
 
   const query = {
@@ -187,7 +189,49 @@ async function saveUrlScreenshot(url, filename, saveFolder, id) {
     values: [false, id],
   };
 
-  return dbQuery(query, url, filename, saveFolder);
+  return dbQuery(query, url, filename, saveFolder, hideElementsList);
+}
+
+// Get list of elements to hide
+function findElements(simmer, children, list) {
+  let auxList = list;
+
+  let goToChildren = true;
+
+  for (let i = 0; i < children.length; i += 1) {
+    // 1 = ELEMENT_NODE
+    // 8 = COMMENT_NODE
+    if (children[i].nodeType === 8) {
+      if (children[i].nodeValue.trim() === '<no-capture>') {
+        if (goToChildren) {
+          goToChildren = false;
+        } else {
+          return null;
+        }
+      } else if (children[i].nodeValue.trim() === '</no-capture>') {
+        if (goToChildren) {
+          return null;
+        }
+        goToChildren = true;
+      }
+    } else if (children[i].nodeType === 1) {
+      if (goToChildren) {
+        auxList = findElements(simmer, children[i].childNodes, auxList);
+
+        if (auxList === null) {
+          break;
+        }
+      } else {
+        auxList.push(simmer(children[i]));
+      }
+    }
+  }
+
+  if (!goToChildren) {
+    return null;
+  }
+
+  return auxList;
 }
 
 // Asynchronous function that will capture the url content and screenshot
@@ -211,6 +255,19 @@ async function captureUrlAsync(id, url, compareNext) {
   // Get content from url
   const body = await request.getRequest(url);
 
+  console.log('Parsing no-capture elements');
+
+  const jsdom = new JSDOM(body);
+  const simmer = new Simmer(jsdom.window.document);
+
+  const rootChildren = jsdom.window.document.body.childNodes;
+  let hideElementsList = findElements(simmer, rootChildren, []);
+
+  // If error, then list empty
+  if (hideElementsList === null) {
+    hideElementsList = [];
+  }
+
   const contentPath = `${folder + ((folder.endsWith('/')) ? '' : '/') + filename}.html`;
 
   // Saves the url content to file
@@ -223,7 +280,7 @@ async function captureUrlAsync(id, url, compareNext) {
       fs.writeFileSync(`./src/public${contentPath}`, body);
       console.log('Page content saved!');
 
-      const screenshotPath = await saveUrlScreenshot(url, filename, folder, id);
+      const screenshotPath = await saveUrlScreenshot(url, filename, folder, id, hideElementsList);
 
       const query = {
         text: 'INSERT INTO capture (page_id, image_location, text_location, date) VALUES ($1, $2, $3, $4) RETURNING id',
