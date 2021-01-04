@@ -107,6 +107,7 @@ class CodeComparison extends Component {
 
 CodeComparison.propTypes = {
   pageName: PropTypes.string.isRequired,
+  difference: PropTypes.string.isRequired,
   link: PropTypes.string.isRequired,
   timeStamp1: PropTypes.string.isRequired,
   timeStamp2: PropTypes.string.isRequired,
