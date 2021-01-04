@@ -69,6 +69,10 @@ build_backend:
       when: on_success
     - if: $CI_COMMIT_MESSAGE =~ /\[build-backend\]/
       when: on_success
+    - if: $CI_COMMIT_BRANCH == "develop"
+      when: on_success
+    - if: $CI_COMMIT_BRANCH == "master"
+      when: on_success
 
 build_frontend:
   stage: build
