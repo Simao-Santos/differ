@@ -374,7 +374,7 @@ function UrlEdition() {
           toggleAnimation={setAnimationState}
           animate={doAnimation}
         />
-        <h1> Insert your URL&apos;s here!</h1>
+        <h1> Insert your URLs here!</h1>
         <p>
           {' '}
           Each page will be saved in our database. In the future, all you need to do is
@@ -437,7 +437,7 @@ function UrlEdition() {
             <p>
               {urls.filter((url) => url.selected).length}
               {' '}
-              URL&apos;s selected
+              URLs selected
             </p>
             <div className="row justify-content-center selection-buttons">
               <button type="button" onClick={handleDeleteUrls} style={{ background: deleteButtonStyle[0], pointerEvents: deleteButtonStyle[1], opacity: deleteButtonStyle[2] }}>Delete</button>
