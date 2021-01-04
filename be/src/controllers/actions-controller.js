@@ -83,7 +83,7 @@ async function compareCaptures(id1, id2, textLocation1, textLocation2,
   const { width, height } = img1;
   const diff = new PNG({ width, height });
 
-  const diffPixels = pixelmatch(img1.data, img2.data, diff.data, width, height,
+  const diffPixels = pixelmatch(img2.data, img1.data, diff.data, width, height,
     { threshold: 0.1, diffColorAlt: [0, 200, 0], alpha: 0.5 });
 
   fs.writeFileSync(`./src/public${imageFile}`, PNG.sync.write(diff));
