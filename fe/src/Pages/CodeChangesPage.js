@@ -115,7 +115,8 @@ class CodeChangesPage extends Component {
           {
             data[0].map((ub) => (
               <CodeComparison
-                pageName={`Page ${ub[0].page_id} with ${Math.round(ub[0].diff_percentage * 10000.0) / 100.0}% different`}
+                pageName={`Page ${ub[0].page_id}`}
+                difference={`${Math.round(ub[0].diff_percentage * 10000.0) / 100.0}% difference`}
                 link={ub[0].url}
                 timeStamp1={ub[0].date}
                 timeStamp2={ub[1].date}

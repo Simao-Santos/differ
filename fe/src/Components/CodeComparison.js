@@ -34,7 +34,7 @@ class CodeComparison extends Component {
 
   render() {
     const {
-      pageName, link, timeStamp1, timeStamp2,
+      pageName, difference, link, timeStamp1, timeStamp2,
     } = this.props;
 
     const {
