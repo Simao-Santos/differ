@@ -7,6 +7,9 @@ be/src/public/shots/
 # Ignore test reports
 be/tests/reports
 
+# Ignore stryker temp folder
+be/.stryker-tmp
+
 # Ignore database data
 pgdata
 

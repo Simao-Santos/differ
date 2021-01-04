@@ -8,6 +8,9 @@
     "coveragePathIgnorePatterns": [
       "./src/lib/"
     ],
+    "modulePathIgnorePatterns": [
+      ".stryker-tmp"
+    ],
     "reporters": [
       "default",
       [
@@ -30,7 +33,7 @@
   },
   "scripts": {
     "start": "node ./src/bin/www",
-    "test": "jest --forceExit",
+    "test": "jest --forceExit && npx stryker run",
     "lint": "eslint ./",
     "lint-fix": "eslint ./ --fix"
   },
@@ -58,6 +61,8 @@
     "xmlhttprequest": "^1.8.0"
   },
   "devDependencies": {
+    "@stryker-mutator/core": "^4.3.1",
+    "@stryker-mutator/jest-runner": "^4.3.1",
     "eslint": "^7.13.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1",
