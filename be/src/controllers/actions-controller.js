@@ -3,13 +3,13 @@ const pixelmatch = require('pixelmatch');
 const sharp = require('sharp');
 const fs = require('fs');
 const { PNG } = require('pngjs');
+const { JSDOM } = require('jsdom');
+const Simmer = require('simmerjs').default;
 const request = require('../html_request');
 const database = require('../database');
 const utils = require('../utils');
 const diffLib = require('../lib/diff.js');
 const { baseText, newText } = require('../lib/constants.js');
-const { JSDOM } = require('jsdom');
-const Simmer = require('simmerjs').default;
 
 // Function that compares two captures
 async function compareCaptures(id1, id2, textLocation1, textLocation2,
