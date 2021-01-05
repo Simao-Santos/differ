@@ -22,7 +22,9 @@ class CodeComparison extends Component {
     const requestOptions = {
       method: 'GET',
     };
-    fetch(`http://localhost:8000${comparison}`, requestOptions)
+
+    const endpoint = new URL(comparison, process.env.REACT_APP_BACKEND_HOST);
+    fetch(endpoint.toString(), requestOptions)
       .then((res) => (res.clone().text()))
       .then((res) => (this.setState(() => ({
         jsonFile: JSON.parse(res),
@@ -32,7 +34,7 @@ class CodeComparison extends Component {
 
   render() {
     const {
-      pageName, link, timeStamp1, timeStamp2,
+      pageName, difference, link, timeStamp1, timeStamp2,
     } = this.props;
 
     const {
@@ -56,10 +58,7 @@ class CodeComparison extends Component {
       <>
         <div className="Comparison-Component">
           <div className="Component-Header">
-            <h2>{pageName}</h2>
-            <Button style={{ float: 'right' }} type="submit" className="btn btn-outline-light">
-              Update
-            </Button>
+            <h2 style={{ paddingBottom: '4px' }}>{`${pageName} - ${difference}`}</h2>
           </div>
 
           <div className="Comparison-Card">
@@ -108,6 +107,7 @@ class CodeComparison extends Component {
 
 CodeComparison.propTypes = {
   pageName: PropTypes.string.isRequired,
+  difference: PropTypes.string.isRequired,
   link: PropTypes.string.isRequired,
   timeStamp1: PropTypes.string.isRequired,
   timeStamp2: PropTypes.string.isRequired,

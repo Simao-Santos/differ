@@ -4,7 +4,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## Sprint 4
+This sprint brought the application new features with the main goal of enabling users to define what we call gray zones. These are elements that will be hidden from any comparisons ran on pages. Furthermore, some enhancements were made which are described below.
+
+### Added
+- Gray zone visual selector in the frontend. ([#27](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/issues/27), [!37](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/merge_requests/37))
+- Gray zone delimiters support in source code. ([#28](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/issues/28), [!40](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/merge_requests/40))
+- Gray zone management interface in the frontend. ([#26](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/issues/26), [!33](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/merge_requests/33))
+- Gray zone support in backend and database. ([#25](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/issues/25), [!32](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/merge_requests/32))
+- Sentry error tracking support to backend and frontend. ([!39](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/merge_requests/39))
+
+
+### Changed
+- API specification. ([!29](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/merge_requests/29))
+- URL building code to be less error-prone. ([b0958f6a](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/commit/b0958f6a1d8b01a040779cf7e6d75ca9f5a72fd4))
+- Order the comparisons appear; they now appear sorted by differences. ([#30](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/issues/30), [!35](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/merge_requests/35))
+- URL input so it supports multiple URL insertion. ([#29](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/issues/29), [!34](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/merge_requests/34))
+- Footer date. ([614bf3ce](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/commit/614bf3ce3672850fa15307b4fee08f164d758069))
+- Comparison objects title. ([8488af1c](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/commit/8488af1caca36d5224b2269327f0da02de2b1be5))
+
+### Removed
+- Useless text from header. ([0e9c7506](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/commit/0e9c75060e5c24962f31ed2adc6e62a6204b7a9a))
+- Useless buttons from comparison objects. ([085c4145](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/commit/085c4145a2eaf6c5ed6f35d1dfbd13b8f5605737))
+
+### Fixed
+- Environment variables usage. ([f6fe0f51](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/commit/f6fe0f510bd2639955fd669b035679916dbe83d8))
+- Inverted change color bug. ([6314f814](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/commit/6314f81423bd70e9140fafea2b3cf30daa2ed106))
+- Notification messages. ([558dd843](https://gitlab.com/feup-tbs/ldso2021/t1g1/-/commit/558dd843daa8f5cc4c06542425f13f706b4475c3))
 
 ## Sprint 3
 The main focus of this Sprint was to improve the UI when accessing the different main pages that make up the application. After finishing the feature of the API that saves the necessary information for the frontend to display in a directory, the frontend was improved so that users can now actually see the changes in visually and in the code in a user friendly way.

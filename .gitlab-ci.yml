@@ -2,7 +2,6 @@ image: registry.gitlab.com/feup-tbs/ldso2021/t1g1:ci_image_$CI_COMMIT_REF_SLUG
  
 include:
   - template: Security/Dependency-Scanning.gitlab-ci.yml
-  - template: Security/License-Scanning.gitlab-ci.yml
   - template: Security/SAST.gitlab-ci.yml
   - template: Security/Secret-Detection.gitlab-ci.yml
 
@@ -21,12 +20,12 @@ stages:
 ########################################################################
 # Override template jobs to also run on merge requests
 
-license_scanning:
+eslint-sast:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
     - when: on_success
 
-eslint-sast:
+nodejs-scan-sast:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
     - when: on_success
@@ -69,6 +68,10 @@ build_backend:
       - be/wait-for-pg.sh
       when: on_success
     - if: $CI_COMMIT_MESSAGE =~ /\[build-backend\]/
+      when: on_success
+    - if: $CI_COMMIT_BRANCH == "develop"
+      when: on_success
+    - if: $CI_COMMIT_BRANCH == "master"
       when: on_success
 
 build_frontend:
@@ -120,9 +123,7 @@ eslint-backend:
   script:
     - cd be/
     - npm install eslint
-    - echo "Linting Backend..."
     - npm run lint
-    - echo "Linting found no problems"
   # lint can fail, but only when not in the develop or master branch and when not in a merge request
   allow_failure: true
   rules:
@@ -141,9 +142,7 @@ eslint-frontend:
   script:
     - cd fe/
     - npm install eslint
-    - echo "Linting Frontend..."
     - npm run lint
-    - echo "Linting found no problems"
   # lint can fail, but only when not in the develop or master branch and when not in a merge request
   allow_failure: true
   rules:
@@ -211,3 +210,71 @@ test_frontend:
 ########################################################################
 
 ### DEPLOY
+
+# deploy backend (staging server)
+deploy-staging-backend:
+  stage: deploy
+  services:
+    - docker:dind
+  before_script:
+    - npm install -g heroku
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+    - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+    - docker pull registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend_$CI_COMMIT_REF_SLUG
+    - docker tag registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend_$CI_COMMIT_REF_SLUG registry.heroku.com/$STAGING_BACKEND/web
+    - docker push registry.heroku.com/$STAGING_BACKEND/web
+    - heroku container:release --app=$STAGING_BACKEND web
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+
+# deploy frontend (staging server)
+deploy-staging-frontend:
+  stage: deploy
+  services:
+    - docker:dind
+  before_script:
+    - npm install -g heroku
+  script:
+    - cd fe/
+    - echo "REACT_APP_BACKEND_HOST=https://$STAGING_BACKEND.herokuapp.com" > .env
+    - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+    - docker build -t registry.heroku.com/$STAGING_FRONTEND/web .
+    - docker push registry.heroku.com/$STAGING_FRONTEND/web
+    - heroku container:release --app=$STAGING_FRONTEND web
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+
+# deploy backend (production server)
+deploy-production-backend:
+  stage: deploy
+  services:
+    - docker:dind
+  before_script:
+    - npm install -g heroku
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+    - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+    - docker pull registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend_$CI_COMMIT_REF_SLUG
+    - docker tag registry.gitlab.com/feup-tbs/ldso2021/t1g1:backend_$CI_COMMIT_REF_SLUG registry.heroku.com/$PRODUCTION_BACKEND/web
+    - docker push registry.heroku.com/$PRODUCTION_BACKEND/web
+    - heroku container:release --app=$PRODUCTION_BACKEND web
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+
+# deploy frontend (production server)
+deploy-production-frontend:
+  stage: deploy
+  services:
+    - docker:dind
+  before_script:
+    - npm install -g heroku
+  script:
+    - cd fe/
+    - echo "REACT_APP_BACKEND_HOST=https://$PRODUCTION_BACKEND.herokuapp.com" > .env
+    - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+    - docker build -t registry.heroku.com/$PRODUCTION_FRONTEND/web .
+    - docker push registry.heroku.com/$PRODUCTION_FRONTEND/web
+    - heroku container:release --app=$PRODUCTION_FRONTEND web
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"

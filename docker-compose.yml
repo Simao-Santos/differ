@@ -4,9 +4,13 @@ services:
   frontend:
     image: ldso/frontend
     container_name: frontend
+    environment:
+      # React environment variables need the REACT_APP_ prefix
+      REACT_APP_BACKEND_HOST: ${BACKEND_HOST}
     build:
       context: ./fe
       dockerfile: Dockerfile
+    command: npm start
     tty: true
     volumes:
       - ./fe/src/:/app/fe/src/
@@ -22,11 +26,13 @@ services:
     image: ldso/backend
     container_name: backend
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      BACKEND_HOST: ${BACKEND_HOST}
+      NODE_ENV: development
     build:
       context: ./be
       dockerfile: Dockerfile
@@ -46,17 +52,18 @@ services:
 
   db:
     image: postgres:latest
-    container_name: postgres
+    container_name: ${POSTGRES_HOST}
     restart: always
     environment:
+      PGPORT: ${POSTGRES_PORT}
+      POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_NAME}
     volumes:
       - ./pgdata:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
-      - 5432:5432
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
     networks:
       - app
 

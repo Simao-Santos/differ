@@ -8,8 +8,8 @@ import 'antd/dist/antd.css';
 function groupInformation(response) {
   const test = [];
   for (let i = 0; i < (response.length - 1); i += 1) {
-    if (response[i].id === response[i + 1].id) {
-      if (response[i].complocation != null && response[i + 1].complocation != null) {
+    if (response[i].page_id === response[i + 1].page_id) {
+      if (response[i].comp_text_location != null && response[i + 1].comp_text_location != null) {
         if (response[i].date > response[i + 1].date) {
           test.push([response[i + 1], response[i]]);
         } else test.push([response[i], response[i + 1]]);
@@ -29,6 +29,7 @@ class CodeChangesPage extends Component {
       count: 0,
       page: 1,
       isLoading: true,
+      error: false,
       data: [],
     };
 
@@ -36,21 +37,41 @@ class CodeChangesPage extends Component {
   }
 
   componentDidMount() {
-    const { page, data } = this.state;
-    console.log(page);
-    const u = (page - 1) * 20;
-    const v = page * 20;
+    const { page } = this.state;
+    const offset = (page - 1) * 20;
+    const amount = page * 20;
     const requestOptions = {
       method: 'GET',
     };
-    console.log(data);
-    fetch('http://localhost:8000/captures/count', requestOptions).then((res) => (res.clone().text())).then((res) => (this.setState(() => ({
-      count: parseInt(JSON.parse(res).captures[0].count, 10),
-    }))));
-    fetch(`http://localhost:8000/comparisons/comparisonRange/${u}/${v}`, requestOptions).then((res) => (res.clone().text())).then((res) => (this.setState((prevState) => ({
-      isLoading: !prevState.isLoading,
-      data: [...prevState.data, groupInformation(JSON.parse(res).captures)],
-    }))));
+
+    const endpointCount = new URL('/urls/count', process.env.REACT_APP_BACKEND_HOST);
+    fetch(endpointCount.toString(), requestOptions)
+      .then((res) => {
+        if (res.status === 200) {
+          res.clone().text().then((content) => (
+            this.setState(() => ({
+              count: JSON.parse(content).count,
+            }))
+          ));
+        } else if (res.status === 500) {
+          this.setState(() => ({ error: true, isLoading: false }));
+        }
+      });
+
+    const endpointRange = new URL(`/comparisons/range/${offset}/${amount}`, process.env.REACT_APP_BACKEND_HOST);
+    fetch(endpointRange.toString(), requestOptions)
+      .then((res) => {
+        if (res.status === 200) {
+          res.clone().text().then((content) => (
+            this.setState((prevState) => ({
+              isLoading: !prevState.isLoading,
+              data: [...prevState.data, groupInformation(JSON.parse(content))],
+            }))
+          ));
+        } else if (res.status === 400 || res.status === 500) {
+          this.setState(() => ({ error: true, isLoading: false }));
+        }
+      });
   }
 
   onChange(page) {
@@ -58,17 +79,16 @@ class CodeChangesPage extends Component {
       page,
       data: [],
       isLoading: true,
-    }, function () {
-      console.log('set state completed', this.state);
+    }, function resetComponent() {
       this.componentDidMount();
     });
   }
 
   render() {
     const {
-      isLoading, data, count, page,
+      isLoading, data, count, page, error,
     } = this.state;
-    console.log(data);
+
     if (isLoading) {
       return (
         <>
@@ -79,17 +99,28 @@ class CodeChangesPage extends Component {
         </>
       );
     }
+    if (error) {
+      return (
+        <>
+          <div className="centered">
+            <h1>Oops, something went wrong...</h1>
+            <h1>Try again later!</h1>
+          </div>
+        </>
+      );
+    }
     return (
       <>
         <div className="Comparison-Cards">
           {
             data[0].map((ub) => (
               <CodeComparison
-                pageName={`Page ${ub[0].id}`}
+                pageName={`Page ${ub[0].page_id}`}
+                difference={`${Math.round(ub[0].diff_percentage * 10000.0) / 100.0}% difference`}
                 link={ub[0].url}
                 timeStamp1={ub[0].date}
                 timeStamp2={ub[1].date}
-                comparison={ub[0].complocation}
+                comparison={ub[0].comp_text_location}
               />
 
             ))

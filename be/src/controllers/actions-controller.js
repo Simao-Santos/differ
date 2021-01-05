@@ -3,6 +3,8 @@ const pixelmatch = require('pixelmatch');
 const sharp = require('sharp');
 const fs = require('fs');
 const { PNG } = require('pngjs');
+const { JSDOM } = require('jsdom');
+const Simmer = require('simmerjs').default;
 const request = require('../html_request');
 const database = require('../database');
 const utils = require('../utils');
@@ -81,7 +83,7 @@ async function compareCaptures(id1, id2, textLocation1, textLocation2,
   const { width, height } = img1;
   const diff = new PNG({ width, height });
 
-  const diffPixels = pixelmatch(img1.data, img2.data, diff.data, width, height,
+  const diffPixels = pixelmatch(img2.data, img1.data, diff.data, width, height,
     { threshold: 0.1, diffColorAlt: [0, 200, 0], alpha: 0.5 });
 
   fs.writeFileSync(`./src/public${imageFile}`, PNG.sync.write(diff));
@@ -128,24 +130,108 @@ async function compareUrlAsync(id) {
   });
 }
 
+function dbQuery(databaseQuery, url, filename, saveFolder, hideElementsList) {
+  return new Promise((data) => {
+    database.query(databaseQuery, async (error, result) => {
+      if (error) {
+        console.log('There was an error...');
+        throw error;
+      } else {
+        // Get grey zones from database
+        // A rare bug can occur when launching Chrome.
+        // From what I understand it's related to the GNU C library,
+        // don't know what we can do about it.
+        // It is very rare though. As of now, it has only happened once.
+        // https://github.com/puppeteer/puppeteer/issues/2207
+        //
+        // There are still problems with some characters
+        //  and some images that aren't displayed correctly
+
+        // Process the response from db and make it appropriate for the Pageres
+        const elementSelectors = hideElementsList;
+        result.rows.forEach((element) => {
+          elementSelectors.push(element.element_selector);
+        });
+
+        // This is needed because Pageres does not accept empty data
+        let params = { filename };
+        if (elementSelectors.length !== 0) {
+          params = { filename, hide: elementSelectors };
+        }
+
+        // Turns on sandbox mode if in server
+        let argsArray;
+        if (process.env.NODE_ENV === 'production') argsArray = ['--no-sandbox', '--disable-setuid-sandbox'];
+        else if (process.env.NODE_ENV === 'development') argsArray = [];
+
+        const launchOpts = { args: argsArray };
+
+        await new Pageres({ delay: 2, launchOptions: launchOpts })
+          .src(url, ['1920x1080'], params)
+          .dest(`./src/public${saveFolder}`)
+          .run();
+
+        console.log('Finished generating screenshot!');
+
+        // Set the promise to the correct path
+        data(`${saveFolder + ((saveFolder.endsWith('/')) ? '' : '/') + filename}.png`);
+      }
+    });
+  });
+}
+
 // Function that will screenshot the url page
-async function saveUrlScreenshot(url, filename, saveFolder) {
+async function saveUrlScreenshot(url, filename, saveFolder, id, hideElementsList) {
   console.log('Generating page screenshot...');
 
-  // A rare bug can occur when launching Chrome.
-  // From what I understand it's related to the GNU C library, don't know what we can do about it.
-  // It is very rare though. As of now, it has only happened once.
-  // https://github.com/puppeteer/puppeteer/issues/2207
-  //
-  // There are still problems with some characters and some images that aren't displayed correctly
-  await new Pageres({ delay: 2 })
-    .src(url, ['1920x1080'], { filename })
-    .dest(`./src/public${saveFolder}`)
-    .run();
+  const query = {
+    text: 'SELECT element_selector FROM gray_zone WHERE page_id=$2 AND deleted=$1',
+    values: [false, id],
+  };
 
-  console.log('Finished generating screenshot!');
+  return dbQuery(query, url, filename, saveFolder, hideElementsList);
+}
 
-  return `${saveFolder + ((saveFolder.endsWith('/')) ? '' : '/') + filename}.png`;
+// Get list of elements to hide
+function findElements(simmer, children, list) {
+  let auxList = list;
+
+  let goToChildren = true;
+
+  for (let i = 0; i < children.length; i += 1) {
+    // 1 = ELEMENT_NODE
+    // 8 = COMMENT_NODE
+    if (children[i].nodeType === 8) {
+      if (children[i].nodeValue.trim() === '<no-capture>') {
+        if (goToChildren) {
+          goToChildren = false;
+        } else {
+          return null;
+        }
+      } else if (children[i].nodeValue.trim() === '</no-capture>') {
+        if (goToChildren) {
+          return null;
+        }
+        goToChildren = true;
+      }
+    } else if (children[i].nodeType === 1) {
+      if (goToChildren) {
+        auxList = findElements(simmer, children[i].childNodes, auxList);
+
+        if (auxList === null) {
+          break;
+        }
+      } else {
+        auxList.push(simmer(children[i]));
+      }
+    }
+  }
+
+  if (!goToChildren) {
+    return null;
+  }
+
+  return auxList;
 }
 
 // Asynchronous function that will capture the url content and screenshot
@@ -169,6 +255,19 @@ async function captureUrlAsync(id, url, compareNext) {
   // Get content from url
   const body = await request.getRequest(url);
 
+  console.log('Parsing no-capture elements');
+
+  const jsdom = new JSDOM(body);
+  const simmer = new Simmer(jsdom.window.document);
+
+  const rootChildren = jsdom.window.document.body.childNodes;
+  let hideElementsList = findElements(simmer, rootChildren, []);
+
+  // If error, then list empty
+  if (hideElementsList === null) {
+    hideElementsList = [];
+  }
+
   const contentPath = `${folder + ((folder.endsWith('/')) ? '' : '/') + filename}.html`;
 
   // Saves the url content to file
@@ -181,7 +280,7 @@ async function captureUrlAsync(id, url, compareNext) {
       fs.writeFileSync(`./src/public${contentPath}`, body);
       console.log('Page content saved!');
 
-      const screenshotPath = await saveUrlScreenshot(url, filename, folder);
+      const screenshotPath = await saveUrlScreenshot(url, filename, folder, id, hideElementsList);
 
       const query = {
         text: 'INSERT INTO capture (page_id, image_location, text_location, date) VALUES ($1, $2, $3, $4) RETURNING id',

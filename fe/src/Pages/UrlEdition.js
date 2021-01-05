@@ -11,7 +11,8 @@ function getListOfUrls(setBeReply) {
     method: 'GET',
   };
 
-  fetch('http://localhost:8000/urls/', requestOptions)
+  const endpoint = new URL('/urls/', process.env.REACT_APP_BACKEND_HOST);
+  fetch(endpoint.toString(), requestOptions)
     .then((res) => {
       res.text()
         .then((content) => setBeReply({ type: 'get_urls', status: res.status, content: JSON.parse(content) }));
@@ -33,12 +34,9 @@ function UrlEdition() {
   const [doAnimation, setAnimationState] = useState(true);
   const [notificationMsg, setNotificationMsg] = useState('');
   const urlAddressRef = useRef();
+  const updateURLStyles = useRef(() => { });
 
-  // useEffects 1. load urls from local storage
-  // 2. save new url on local storage
-  useEffect(() => {
-    getListOfUrls(setBeReply);
-
+  updateURLStyles.current = () => {
     const selectedUrls = urls.filter((url) => url.selected);
 
     if (urls.length > 0) {
@@ -56,10 +54,19 @@ function UrlEdition() {
     } else {
       setStyle(['grey', 'none', '0.25']);
     }
+  };
+
+  // useEffects 1. load urls from local storage
+  // 2. save new url on local storage
+  useEffect(() => {
+    getListOfUrls(setBeReply);
+    updateURLStyles.current();
   }, []);
 
   useEffect(() => {
     console.log('saved urls');
+    const newMinHeight = urls.length * 100 + 100;
+    document.getElementsByTagName('body')[0].style.minHeight = `${newMinHeight}vh`;
   }, [urls]);
 
   useEffect(() => {
@@ -101,7 +108,6 @@ function UrlEdition() {
 
     // once a URL is checked/unchecked update delete button style
     const selectedUrls = newUrls.filter((urlAux) => urlAux.selected);
-    console.log(`there are these many selected => ${selectedUrls.length}`);
 
     if (newUrls.length > 0) {
       if (newUrls.length === selectedUrls.length) {
@@ -122,20 +128,8 @@ function UrlEdition() {
     }
   }
 
-  // adding a new url via text input
-  function handleAddURL() {
-    const address = urlAddressRef.current.value;
+  function handleAddURL(address) {
     if (address === '') return;
-    const pattern = new RegExp('^(https?:\\/\\/)?' // protocol
-      + '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' // domain name
-      + '((\\d{1,3}\\.){3}\\d{1,3})|localhost)' // OR ip (v4) address
-      + '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' // port and path
-      + '(\\?[;&a-z\\d%_.~+=-]*)?' // query string
-      + '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
-    if (!pattern.test(address)) {
-      alert('Please insert a valid URL.');
-      return;
-    }
 
     urlAddressRef.current.value = null;
     setStyle([' ', ' ', ' ']);
@@ -149,11 +143,56 @@ function UrlEdition() {
       },
       body: JSON.stringify({ url: address }),
     };
-    fetch('http://localhost:8000/urls', requestOptions)
+
+    const endpoint = new URL('/urls/', process.env.REACT_APP_BACKEND_HOST);
+    fetch(endpoint.toString(), requestOptions)
       .then((res) => {
         res.text()
           .then((content) => setBeReply({ type: 'post_url', status: res.status, content: JSON.parse(content) }));
       });
+  }
+
+  function validateURL(address) {
+    const pattern = new RegExp('^(https?:\\/\\/)?' // protocol
+      + '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' // domain name
+      + '((\\d{1,3}\\.){3}\\d{1,3})|localhost)' // OR ip (v4) address
+      + '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' // port and path
+      + '(\\?[;&a-z\\d%_.~+=-]*)?' // query string
+      + '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+    if (!pattern.test(address)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  function removeDupsURLs(addressesArray) {
+    const uniqueAddressesArray = [];
+
+    for (let i = 0; i < addressesArray.length; i += 1) {
+      if (!uniqueAddressesArray.includes(addressesArray[i])) {
+        uniqueAddressesArray.push(addressesArray[i]);
+      }
+    }
+
+    return uniqueAddressesArray;
+  }
+
+  // adding a new url via text input
+  function handleAddTextAreaURLs() {
+    const addresses = urlAddressRef.current.value;
+    const addressesArray = addresses.split('\n');
+
+    const uniqueAddressesArray = removeDupsURLs(addressesArray);
+
+    for (let i = 0; i < uniqueAddressesArray.length; i += 1) {
+      if (!validateURL(uniqueAddressesArray[i])) {
+        alert('Please insert a valid URL.');
+        return;
+      }
+    }
+
+    uniqueAddressesArray.forEach((address) => handleAddURL(address));
 
     setAnimationState(false);
   }
@@ -184,7 +223,9 @@ function UrlEdition() {
       },
       body: JSON.stringify({ url: address }),
     };
-    fetch('http://localhost:8000/urls', requestOptions)
+
+    const endpoint = new URL('/urls/', process.env.REACT_APP_BACKEND_HOST);
+    fetch(endpoint.toString(), requestOptions)
       .then((res) => {
         res.text()
           .then((content) => setBeReply({ type: 'post_url', status: res.status, content: JSON.parse(content) }));
@@ -203,8 +244,6 @@ function UrlEdition() {
         myUrlIds[i] = selectedUrls[i].id;
       }
 
-      console.log(`so in delete there are these many => ${selectedUrls}`);
-
       setStyle(['grey', 'none', '0.25']);
 
       if (selectedUrls.length !== urls.length) {
@@ -215,11 +254,14 @@ function UrlEdition() {
         method: 'DELETE',
       };
 
-      myUrlIds.forEach((id) => fetch(`http://localhost:8000/urls/${id}`, requestOptions)
-        .then((res) => {
-          res.text()
-            .then((content) => setBeReply({ type: 'delete_url', status: res.status, content: JSON.parse(content) }));
-        }));
+      myUrlIds.forEach((id) => {
+        const endpoint = new URL(`/urls/${id}`, process.env.REACT_APP_BACKEND_HOST);
+        fetch(endpoint.toString(), requestOptions)
+          .then((res) => {
+            res.text()
+              .then((content) => setBeReply({ type: 'delete_url', status: res.status, content: JSON.parse(content) }));
+          });
+      });
 
       setAnimationState(false);
     }
@@ -240,14 +282,18 @@ function UrlEdition() {
 
       };
 
-      myUrlIds.forEach((id) => fetch(`http://localhost:8000/actions/capture/${id}`, requestOptions)
-        .then((res) => {
-          if (res.status === 200) {
-            console.log(`Capture for id ${id} has started`);
-          } else if (res.status === 400 || res.status === 404 || res.status === 500) {
-            setNotificationMsg('Could not capture URL');
-          }
-        }));
+      myUrlIds.forEach((id) => {
+        const endpoint = new URL(`/actions/capture/${id}`, process.env.REACT_APP_BACKEND_HOST);
+        fetch(endpoint.toString(), requestOptions)
+          .then((res) => {
+            if (res.status === 200) {
+              console.log(`Capture for id ${id} has started`);
+              setNotificationMsg('Capturing URL');
+            } else if (res.status === 400 || res.status === 404 || res.status === 500) {
+              setNotificationMsg('Could not capture URL');
+            }
+          });
+      });
 
       setAnimationState(false);
     }
@@ -279,17 +325,21 @@ function UrlEdition() {
       method: 'GET',
     };
 
-    myUrlIds.forEach((id) => fetch(`http://localhost:8000/actions/compare/${id}`, requestOptions)
-      .then((res) => {
-        if (res.status === 200) {
-          console.log(`Comparison for id ${id} has started`);
-        } else if (res.status === 412) {
-          console.log(`Comparison for id ${id} has not started because there is no older capture for this URL`);
-          setNotificationMsg('Comparison has not started because there is no older capture for this URL');
-        } else if (res.status === 400 || res.status === 404 || res.status === 500) {
-          setNotificationMsg('Could not compare URL');
-        }
-      }));
+    myUrlIds.forEach((id) => {
+      const endpoint = new URL(`/actions/compare/${id}`, process.env.REACT_APP_BACKEND_HOST);
+      fetch(endpoint.toString(), requestOptions)
+        .then((res) => {
+          if (res.status === 200) {
+            console.log(`Comparison for id ${id} has started`);
+            setNotificationMsg('Comparison has started');
+          } else if (res.status === 412) {
+            console.log(`Comparison for id ${id} has not started because there is no older capture for this URL`);
+            setNotificationMsg('Comparison has not started because there is no older capture for this URL');
+          } else if (res.status === 400 || res.status === 404 || res.status === 500) {
+            setNotificationMsg('Could not compare URL');
+          }
+        });
+    });
 
     setAnimationState(false);
   }
@@ -324,7 +374,7 @@ function UrlEdition() {
           toggleAnimation={setAnimationState}
           animate={doAnimation}
         />
-        <h1> Insert your URL&apos;s here!</h1>
+        <h1> Insert your URLs here!</h1>
         <p>
           {' '}
           Each page will be saved in our database. In the future, all you need to do is
@@ -334,17 +384,19 @@ function UrlEdition() {
       <div className="container">
         <div className="row main-section">
           <div className="left-side col-9">
-            <input type="text" ref={urlAddressRef} placeholder="Insert your URL here" />
-            <button type="button" onClick={handleAddURL} className="next-to-input-button">+</button>
+            <div className="row">
+              <textarea ref={urlAddressRef} placeholder="Insert your URL here" />
+              <button type="button" onClick={handleAddTextAreaURLs} className="next-to-input-button">+</button>
+            </div>
             <input type="file" name="file" id="file" accept=".txt" onChange={(e) => setFile({ file: e.target.files[0] })} hidden />
             <br />
 
             <div className="row">
               <label className="under-input-text" htmlFor="file">
-                or
+                <input type="file" name="file" id="file" accept=".txt" onChange={(e) => setFile({ file: e.target.files[0] })} hidden />
+                or&nbsp;
                 <span className="orange-text">submit</span>
-                {' '}
-                a file.
+                &nbsp;a file.
               </label>
               <br />
               <br />
@@ -374,13 +426,18 @@ function UrlEdition() {
             </div>
 
             <button onClick={handleToggleSelectAll} type="button" hidden={selectAllButton[1]}>{selectAllButton[0] ? 'Select all' : 'Unselect all'}</button>
-            <URLList urls={urls} toggleSelected={toggleSelected} />
+            <URLList
+              urls={urls}
+              toggleSelected={toggleSelected}
+              setNotificationMsg={setNotificationMsg}
+              setAnimationState={setAnimationState}
+            />
           </div>
           <div className="right-side col-3">
             <p>
               {urls.filter((url) => url.selected).length}
               {' '}
-              URL&apos;s selected
+              URLs selected
             </p>
             <div className="row justify-content-center selection-buttons">
               <button type="button" onClick={handleDeleteUrls} style={{ background: deleteButtonStyle[0], pointerEvents: deleteButtonStyle[1], opacity: deleteButtonStyle[2] }}>Delete</button>

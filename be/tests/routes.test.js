@@ -10,6 +10,13 @@ describe('/urls/ Route', () => {
     expect(res.body).toEqual([]);
   });
 
+  it('should get url count (empty)', async () => {
+    const res = await request(app)
+      .get('/urls/count').send();
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toHaveProperty('count', 0);
+  });
+
   it('should fail to add url (invalid url)', async () => {
     const res = await request(app)
       .post('/urls')
@@ -28,6 +35,13 @@ describe('/urls/ Route', () => {
       });
     expect(res.statusCode).toEqual(200);
     expect(res.body).toHaveProperty('id', 1);
+  });
+
+  it('should get url count (1)', async () => {
+    const res = await request(app)
+      .get('/urls/count').send();
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toHaveProperty('count', 1);
   });
 
   it('should get url', async () => {
@@ -166,18 +180,64 @@ describe('/comparisons/ Route', () => {
 
     const { rows: rowsPage } = await database.query('INSERT INTO page (username, url) VALUES (default, $1) RETURNING id', [url]);
     const { rows: rowsCapture1 } = await database.query('INSERT INTO capture (page_id, image_location, text_location, date) VALUES ($1, $2, $3, $4) RETURNING id',
-      [rowsPage[0].id, '/shots/test.png', '/shots/test.html', today1]);
+      [rowsPage[0].id, '/shots/test_1.png', '/shots/test_1.html', today1]);
     const { rows: rowsCapture2 } = await database.query('INSERT INTO capture (page_id, image_location, text_location, date) VALUES ($1, $2, $3, $4) RETURNING id',
-      [rowsPage[0].id, '/shots/test.png', '/shots/test.html', today2]);
+      [rowsPage[0].id, '/shots/test_2.png', '/shots/test_2.html', today2]);
 
     await database.query('INSERT INTO comparison (capture_1_id, capture_2_id, image_location, text_location, diff_pixels, total_pixels, date) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',
-      [rowsCapture1[0].id, rowsCapture2[0].id, '/shots/test.png', '/shots/test.html', 100, 200, today2]);
+      [rowsCapture2[0].id, rowsCapture1[0].id, '/shots/test_comp.png', '/shots/test_comp.json', 100, 200, today2]);
 
     const res = await request(app)
       .get('/comparisons').send();
     expect(res.statusCode).toEqual(200);
     expect(res.body.length).toEqual(1);
     expect(res.body[0]).toHaveProperty('id', 1);
+  });
+
+  it('should get comparison from range (amount 20)', async () => {
+    const res = await request(app)
+      .get('/comparisons/range/0/20').send();
+    expect(res.statusCode).toEqual(200);
+    expect(res.body.length).toEqual(2);
+    expect(res.body[0]).toHaveProperty('page_id', 3);
+    expect(res.body[0]).toHaveProperty('comp_id', 1);
+    expect(res.body[0]).toHaveProperty('comp_capt_id_1', 3);
+    expect(res.body[0]).toHaveProperty('comp_capt_id_2', 2);
+    expect(res.body[0]).toHaveProperty('url', 'http://wttr.in/');
+    expect(res.body[0]).toHaveProperty('comp_text_location', '/shots/test_comp.json');
+    expect(res.body[0]).toHaveProperty('comp_image_location', '/shots/test_comp.png');
+    expect(res.body[0]).toHaveProperty('capt_image_location', '/shots/test_1.png');
+    expect(res.body[1]).toHaveProperty('capt_image_location', '/shots/test_2.png');
+  });
+
+  it('should get comparison from range (amount 1)', async () => {
+    const res = await request(app)
+      .get('/comparisons/range/0/1').send();
+    expect(res.statusCode).toEqual(200);
+    expect(res.body.length).toEqual(1);
+    expect(res.body[0]).toHaveProperty('page_id', 3);
+    expect(res.body[0]).toHaveProperty('comp_id', 1);
+    expect(res.body[0]).toHaveProperty('comp_capt_id_1', 3);
+    expect(res.body[0]).toHaveProperty('comp_capt_id_2', 2);
+    expect(res.body[0]).toHaveProperty('url', 'http://wttr.in/');
+    expect(res.body[0]).toHaveProperty('comp_text_location', '/shots/test_comp.json');
+    expect(res.body[0]).toHaveProperty('comp_image_location', '/shots/test_comp.png');
+    expect(res.body[0]).toHaveProperty('capt_image_location', '/shots/test_1.png');
+  });
+
+  it('should get comparison from range (offset 1)', async () => {
+    const res = await request(app)
+      .get('/comparisons/range/1/20').send();
+    expect(res.statusCode).toEqual(200);
+    expect(res.body.length).toEqual(1);
+    expect(res.body[0]).toHaveProperty('page_id', 3);
+    expect(res.body[0]).toHaveProperty('comp_id', 1);
+    expect(res.body[0]).toHaveProperty('comp_capt_id_1', 3);
+    expect(res.body[0]).toHaveProperty('comp_capt_id_2', 2);
+    expect(res.body[0]).toHaveProperty('url', 'http://wttr.in/');
+    expect(res.body[0]).toHaveProperty('comp_text_location', '/shots/test_comp.json');
+    expect(res.body[0]).toHaveProperty('comp_image_location', '/shots/test_comp.png');
+    expect(res.body[0]).toHaveProperty('capt_image_location', '/shots/test_2.png');
   });
 
   it('should get comparison', async () => {
@@ -283,5 +343,158 @@ describe('/actions/ Route', () => {
     const res = await request(app)
       .get(`/actions/compare/${rows[0].id}`).send();
     expect(res.statusCode).toEqual(412);
+  });
+});
+
+describe('/gray_zones/ Route', () => {
+  it('should fail get the gray zones of the page (invalid page id)', async () => {
+    const res = await request(app)
+      .get('/gray_zones/1foo').send();
+    expect(res.statusCode).toEqual(400);
+  });
+
+  it('should succeed and send an empty array (non-existent page id)', async () => {
+    const res = await request(app)
+      .get('/gray_zones/10').send();
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toEqual([]);
+  });
+
+  it('should fail due to the invalid params', async () => {
+    const res = await request(app)
+      .post('/gray_zones')
+      .send({
+        url: 'https://www.google.pt/',
+        page_id: 1,
+      });
+    expect(res.statusCode).toEqual(400);
+  });
+
+  it('should fail due to the invalid params (page id should be integer)', async () => {
+    const res = await request(app)
+      .post('/gray_zones')
+      .send({
+        page_id: 'a',
+        gray_zone: 'body',
+      });
+    expect(res.statusCode).toEqual(400);
+  });
+
+  it('should fail because the page id does not exist', async () => {
+    const res = await request(app)
+      .post('/gray_zones')
+      .send({
+        page_id: 96,
+        gray_zone: 'body',
+      });
+    expect(res.statusCode).toEqual(404);
+  });
+
+  it('should fail because of the invalid gray zone param', async () => {
+    const res = await request(app)
+      .post('/gray_zones')
+      .send({
+        page_id: 96,
+        gray_zone: 4,
+      });
+    expect(res.statusCode).toEqual(400);
+  });
+
+  it('should succeed and add gray zone', async () => {
+    let res = await request(app)
+      .post('/urls')
+      .send({
+        url: 'https://www.google.com/',
+        doNotCapture: true,
+      });
+
+    res = await request(app)
+      .post('/gray_zones')
+      .send({
+        page_id: 6,
+        gray_zone: 'body',
+      });
+    expect(res.statusCode).toEqual(200);
+  });
+
+  it('should succeed to get the only gray zone of the page', async () => {
+    const res = await request(app)
+      .get('/gray_zones/6').send();
+    expect(res.statusCode).toEqual(200);
+    expect(res.body.length).toEqual(1);
+    expect(res.body[0].page_id).toEqual(6);
+    expect(res.body[0].element_selector).toEqual('body');
+  });
+
+  it('should succeed to add a new gray zone and get the 2 existing gray zones of the page', async () => {
+    let res = await request(app)
+      .post('/gray_zones')
+      .send({
+        page_id: 6,
+        gray_zone: 'header',
+      });
+
+    res = await request(app)
+      .get('/gray_zones/6').send();
+    expect(res.statusCode).toEqual(200);
+    expect(res.body.length).toEqual(2);
+    expect(res.body[0].page_id).toEqual(6);
+    expect(res.body[0].element_selector).toEqual('body');
+    expect(res.body[1].page_id).toEqual(6);
+    expect(res.body[1].element_selector).toEqual('header');
+  });
+
+  it('should succeed to add a new gray zone and delete it', async () => {
+    let res = await request(app)
+      .post('/gray_zones')
+      .send({
+        page_id: 6,
+        gray_zone: 'header',
+      });
+    res = await request(app)
+      .delete('/gray_zones/4').send();
+
+    expect(res.statusCode).toEqual(200);
+    expect(res.body.id).toEqual(4);
+
+    res = await request(app)
+      .get('/gray_zones/6').send();
+    expect(res.body.length).toEqual(2);
+    expect(res.body[0].id).toEqual(2);
+    expect(res.body[1].id).toEqual(3);
+  });
+
+  it('should fail to delete the gray zone (invalid id)', async () => {
+    const res = await request(app)
+      .delete('/gray_zones/a').send();
+
+    expect(res.statusCode).toEqual(400);
+  });
+
+  it('should fail to delete the gray zone (id does not exist)', async () => {
+    const res = await request(app)
+      .delete('/gray_zones/8').send();
+
+    expect(res.statusCode).toEqual(404);
+  });
+
+  it('should succeed to delete the page from the database and delete all associated gray zones', async () => {
+    let res = await request(app)
+      .delete('/urls/6').send();
+
+    res = await request(app)
+      .get('/gray_zones/6').send();
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toEqual([]);
+  });
+
+  it('should fail because the page in question has been deleted', async () => {
+    const res = await request(app)
+      .post('/gray_zones')
+      .send({
+        page_id: 6,
+        gray_zone: 'body',
+      });
+    expect(res.statusCode).toEqual(404);
   });
 });
