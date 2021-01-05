@@ -16,6 +16,10 @@ The product owner is **Marco Sousa (marco.sousa@zerozero.pt)** of zerozero.pt /Z
 
 https://differ-frontend.herokuapp.com
 
+# Link to the backend API docs
+
+https://differ-backend.herokuapp.com/api-docs
+
 # For the Developers
 
 ### Link to the staging application
