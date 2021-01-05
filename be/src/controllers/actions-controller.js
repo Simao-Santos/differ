@@ -32,8 +32,8 @@ async function compareCaptures(id1, id2, textLocation1, textLocation2,
   const imageFile = `${saveFolder + ((saveFolder.endsWith('/')) ? '' : '/') + filename}.png`;
   const textFile = `${saveFolder + ((saveFolder.endsWith('/')) ? '' : '/') + filename}.json`;
 
-  const codeCaptureOld = fs.readFileSync(`./src/public${textLocation1}`).toString();
-  const codeCaptureActual = fs.readFileSync(`./src/public${textLocation2}`).toString();
+  const codeCaptureActual = fs.readFileSync(`./src/public${textLocation1}`).toString();
+  const codeCaptureOld = fs.readFileSync(`./src/public${textLocation2}`).toString();
 
   const lc = diffLib.lib.stringAsLines(codeCaptureOld);
   const rc = diffLib.lib.stringAsLines(codeCaptureActual);

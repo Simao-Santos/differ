@@ -64,19 +64,6 @@ function UrlEdition() {
   }, []);
 
   useEffect(() => {
-    console.log('saved urls');
-    const newMinHeight = urls.length * 100 + 100;
-    document.getElementsByTagName('body')[0].style.minHeight = `${newMinHeight}vh`;
-  }, [urls]);
-
-  useEffect(() => {
-
-  }, [file]);
-
-  useEffect(() => {
-  }, [doAnimation]);
-
-  useEffect(() => {
     switch (beReply.type) {
       case 'get_urls':
         if (beReply.status === 200) setUrls(beReply.content);
